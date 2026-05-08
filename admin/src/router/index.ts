@@ -167,15 +167,13 @@ const PUBLIC_ROUTES = ['/signin', '/signup', '/error-404']
 
 router.beforeEach((to, _from, next) => {
   document.title = `${to.meta.title} | Amigo Merch Admin`
-  // TODO: Restaurar autenticación — bypass temporal para acceso sin usuario
-  // const token = localStorage.getItem('amigo_admin_token')
-  // const isPublic = PUBLIC_ROUTES.includes(to.path)
-  // if (!token && !isPublic) {
-  //   next('/signin')
-  // } else if (token && to.path === '/signin') {
-  //   next('/')
-  // } else {
-  //   next()
-  // }
-  next()
+  const token = localStorage.getItem('amigo_admin_token')
+  const isPublic = PUBLIC_ROUTES.includes(to.path)
+  if (!token && !isPublic) {
+    next('/signin')
+  } else if (token && to.path === '/signin') {
+    next('/')
+  } else {
+    next()
+  }
 })
