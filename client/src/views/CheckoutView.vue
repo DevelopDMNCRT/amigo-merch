@@ -10,7 +10,7 @@
         <!-- Formulario -->
         <div class="checkout-form-section">
           <h2>{{ t('checkout.contactData') }}</h2>
-          <form class="checkout-form" @submit.prevent="processCheckout">
+          <form @submit.prevent="processCheckout" class="checkout-form" v-show="!showPaymentBrick">
             
             <div class="form-row">
               <div class="form-group">
@@ -96,9 +96,17 @@
             </button>
 
             <button type="submit" class="pay-btn" :disabled="cartState.items.length === 0 || loading">
-              {{ loading ? 'Procesando...' : 'Confirmar Pedido' }}
+              {{ loading ? 'Procesando...' : 'Continuar al Pago' }}
             </button>
           </form>
+
+          <div v-show="showPaymentBrick" class="payment-brick-section mt-4">
+            <h3 style="margin-bottom: 20px;">Información de Pago</h3>
+            <div id="paymentBrick_container"></div>
+            <button @click="showPaymentBrick = false" class="btn-location" style="margin-top: 20px;">
+              Volver a mis datos
+            </button>
+          </div>
         </div>
 
         <!-- Resumen -->
@@ -167,6 +175,7 @@ import { useRouter } from 'vue-router'
 import { cartState, cartGetters, cartActions } from '../store/cart.js'
 import { useLocale } from '../composables/useLocale.js'
 import { formatPrice } from '../store/locale.js'
+import { loadMercadoPago } from '@mercadopago/sdk-js'
 
 const { t } = useLocale()
 
@@ -315,6 +324,7 @@ onMounted(() => {
 })
 
 const loading = ref(false)
+const showPaymentBrick = ref(false)
 
 const processCheckout = async () => {
   if (cartState.items.length === 0) return;
@@ -380,16 +390,65 @@ const processCheckout = async () => {
     if (!mpRes.ok) throw new Error('Error al crear preferencia de pago');
     const mpData = await mpRes.json();
 
-    // 3. Limpiar carrito y redirigir a Mercado Pago
-    cartActions.clearCart();
-    // Redirigir al pago real de Mercado Pago
-    window.location.href = mpData.init_point;
+    // 3. Mostrar el Payment Brick de Mercado Pago
+    showPaymentBrick.value = true;
+    loading.value = false;
+    
+    // Iniciar el Brick
+    await initPaymentBrick(mpData.preference_id, mpData.public_key, pedido.id);
 
   } catch (error) {
     console.error(error);
     alert('Ocurrió un error al procesar el pedido. Intenta nuevamente.');
     loading.value = false;
   }
+}
+
+const initPaymentBrick = async (preferenceId, publicKey, pedidoId) => {
+  await loadMercadoPago();
+  const mp = new window.MercadoPago(publicKey, { locale: 'es-MX' });
+  const bricksBuilder = mp.bricks();
+  
+  bricksBuilder.create("payment", "paymentBrick_container", {
+    initialization: {
+      amount: cartGetters.totalPrice.value + cartGetters.shippingCost.value,
+      preferenceId: preferenceId,
+    },
+    customization: {
+      paymentMethods: {
+        creditCard: "all",
+        debitCard: "all",
+      },
+    },
+    callbacks: {
+      onReady: () => {
+        // Brick listo
+      },
+      onSubmit: ({ selectedPaymentMethod, formData }) => {
+        return new Promise((resolve, reject) => {
+          fetch("/api/pagos/procesar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ formData, pedidoId })
+          })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.status === 'approved' || res.status === 'in_process' || res.status === 'pending') {
+               resolve();
+               cartActions.clearCart();
+               window.location.href = `/pago/exito?pedido_id=${pedidoId}`;
+            } else {
+               reject(new Error(res.status_detail || 'Pago rechazado'));
+            }
+          })
+          .catch((err) => reject(err));
+        });
+      },
+      onError: (error) => {
+        console.error("Brick Error:", error);
+      }
+    }
+  });
 }
 
 </script>

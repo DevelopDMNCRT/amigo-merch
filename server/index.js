@@ -1030,10 +1030,37 @@ app.post('/api/pagos/crear-preferencia', async (req, res) => {
       preference_id: response.id,
       init_point: response.init_point,        // producción
       sandbox_init_point: response.sandbox_init_point, // pruebas
+      public_key: process.env.MERCADOPAGO_PUBLIC_KEY,
     });
   } catch (err) {
     console.error('[MP] Error creando preferencia:', err);
     res.status(500).json({ error: 'Error al crear preferencia de pago', details: err.message });
+  }
+});
+
+// POST /api/pagos/procesar — Recibe datos del Brick y procesa el pago directo
+app.post('/api/pagos/procesar', async (req, res) => {
+  try {
+    const { formData, pedidoId } = req.body;
+
+    if (!formData || !pedidoId) {
+      return res.status(400).json({ error: 'Faltan datos del pago o pedidoId' });
+    }
+
+    const body = {
+      ...formData,
+      external_reference: String(pedidoId),
+      notification_url: `${process.env.SERVER_URL || 'http://localhost:3000'}/api/pagos/webhook`,
+    };
+
+    const payment = new Payment(mpClient);
+    const result = await payment.create({ body });
+
+    // result contendrá status: 'approved', 'in_process', 'rejected', etc.
+    res.json(result);
+  } catch (err) {
+    console.error('[MP] Error procesando pago con Brick:', err);
+    res.status(500).json({ error: 'Error al procesar el pago', details: err.message });
   }
 });
 
