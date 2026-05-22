@@ -382,8 +382,8 @@ const processCheckout = async () => {
 
     // 3. Limpiar carrito y redirigir a Mercado Pago
     cartActions.clearCart();
-    // En pruebas usar sandbox_init_point, en producción usar init_point
-    window.location.href = mpData.sandbox_init_point || mpData.init_point;
+    // Redirigir al pago real de Mercado Pago
+    window.location.href = mpData.init_point;
 
   } catch (error) {
     console.error(error);
