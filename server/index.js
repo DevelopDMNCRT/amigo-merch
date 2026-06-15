@@ -357,10 +357,13 @@ app.put('/api/products/:id', upload.any(), async (req, res) => {
     if (existing.rows.length === 0) throw new Error('Product not found');
 
     let imagen_url = existing.rows[0].imagen_url;
+    if (req.body.imagen_eliminada === 'true') {
+      imagen_url = null;
+    }
     const newMainImg = files.find(f => f.fieldname === 'imagen');
     if (newMainImg) imagen_url = newMainImg.path;
 
-    let galeria_urls = existing.rows[0].galeria_urls || [];
+    let galeria_urls = req.body.galeria_existente ? JSON.parse(req.body.galeria_existente) : existing.rows[0].galeria_urls || [];
     const newGaleria = files.filter(f => f.fieldname === 'galeria');
     if (newGaleria.length) galeria_urls = [...galeria_urls, ...newGaleria.map(f => f.path)];
 
@@ -1330,6 +1333,22 @@ app.post('/api/reglas-envio', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al crear regla de envio' });
+  }
+});
+
+app.put('/api/reglas-envio/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { pais, estados, precio } = req.body;
+    const result = await pool.query(
+      'UPDATE reglas_envio SET pais = $1, estados = $2, precio = $3 WHERE id = $4 RETURNING *',
+      [pais, estados ? JSON.stringify(estados) : null, precio, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Regla no encontrada' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al actualizar regla de envio' });
   }
 });
 

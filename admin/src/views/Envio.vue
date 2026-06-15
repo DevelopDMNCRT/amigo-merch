@@ -6,7 +6,7 @@
       <div>
         <div class="flex items-center justify-between mb-4">
           <h1 class="text-xl font-semibold text-gray-800 dark:text-white/90">Envío</h1>
-          <button @click="abrirModalRegla" class="bg-[#111827] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-800 transition-colors">
+          <button @click="abrirModalRegla" class="bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-brand-600 transition-colors">
             <span>+</span> Nueva Regla
           </button>
         </div>
@@ -37,7 +37,14 @@
                   </td>
                   <td class="px-6 py-4 font-semibold text-gray-800 dark:text-white/90">${{ Number(regla.precio).toLocaleString('es-MX', { minimumFractionDigits: 2 }) }}</td>
                   <td class="px-6 py-4">
-                    <button @click="eliminarRegla(regla.id)" class="text-red-500 hover:text-red-700 font-medium">Eliminar</button>
+                    <div class="flex items-center gap-3">
+                      <button @click="editarRegla(regla)" class="text-brand-500 hover:text-brand-700 transition" title="Editar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </button>
+                      <button @click="eliminarRegla(regla.id)" class="text-red-500 hover:text-red-700 transition" title="Eliminar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr v-if="reglas.length === 0">
@@ -55,7 +62,7 @@
       <!-- Modal Nueva Regla -->
       <div v-if="mostrarModalRegla" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-[480px] rounded-2xl bg-white p-7 shadow-xl dark:bg-gray-900">
-          <h3 class="mb-5 text-[18px] font-bold text-[#111827] dark:text-white">Agregar Regla de Envío</h3>
+          <h3 class="mb-5 text-[18px] font-bold text-[#111827] dark:text-white">{{ nuevaRegla.id ? 'Editar' : 'Agregar' }} Regla de Envío</h3>
           
           <div class="space-y-5">
             <div>
@@ -138,7 +145,7 @@
             <button @click="mostrarModalRegla = false" class="rounded-xl px-5 py-2.5 text-[14px] font-semibold text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800">
               Cancelar
             </button>
-            <button @click="guardarRegla" :disabled="savingRegla" class="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-gray-800 disabled:opacity-70 transition-colors">
+            <button @click="guardarRegla" :disabled="savingRegla" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-brand-600 disabled:opacity-70 transition-colors">
               <svg v-if="savingRegla" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
               Guardar Regla
             </button>
@@ -217,6 +224,19 @@ const abrirModalRegla = () => {
   mostrarModalRegla.value = true;
 };
 
+// EDITAR Regla
+const editarRegla = (regla) => {
+  nuevaRegla.value = {
+    id: regla.id,
+    paises: regla.pais.split(',').map(p => p.trim()),
+    estados: parseEstados(regla.estados),
+    precio: Number(regla.precio)
+  };
+  paisBusqueda.value = '';
+  estadoBusqueda.value = '';
+  mostrarModalRegla.value = true;
+};
+
 // CHIPS Logic
 const addPaisOpcion = (pais) => {
   nuevaRegla.value.paises.push(pais);
@@ -241,19 +261,36 @@ const guardarRegla = async () => {
   if (nuevaRegla.value.paises.length === 0) return;
   savingRegla.value = true;
   
+  const payload = {
+    pais: nuevaRegla.value.paises.join(', '),
+    estados: nuevaRegla.value.estados.length ? nuevaRegla.value.estados : null,
+    precio: nuevaRegla.value.precio || 0
+  };
+
   try {
-    const res = await fetch('/api/reglas-envio', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pais: nuevaRegla.value.paises.join(', '),
-        estados: nuevaRegla.value.estados.length ? nuevaRegla.value.estados : null,
-        precio: nuevaRegla.value.precio || 0
-      })
-    });
+    let res;
+    if (nuevaRegla.value.id) {
+      res = await fetch(`/api/reglas-envio/${nuevaRegla.value.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } else {
+      res = await fetch('/api/reglas-envio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+
     if (res.ok) {
       const guardada = await res.json();
-      reglas.value.unshift(guardada);
+      if (nuevaRegla.value.id) {
+        const idx = reglas.value.findIndex(r => r.id === guardada.id);
+        if (idx !== -1) reglas.value[idx] = guardada;
+      } else {
+        reglas.value.unshift(guardada);
+      }
       mostrarModalRegla.value = false;
     }
   } catch (e) { console.error('Error saving regla:', e); }

@@ -705,7 +705,7 @@ const guardar = async () => {
         stock:      v.stock,
         peso:       v.peso,
         color:      v.color,
-        imagen_url: v.imagen instanceof File ? null : (v.imagen_url || null)
+        imagen_url: v.imagen instanceof File ? null : (v.imagenPreview && !v.imagenPreview.startsWith('blob:') ? v.imagenPreview : null)
       }));
       fd.append('variaciones', JSON.stringify(varsForJson));
       // Send each new variation image as a separate field
@@ -716,7 +716,13 @@ const guardar = async () => {
 
     if (form.imagen instanceof File) {
       fd.append('imagen', form.imagen);
+    } else if (!form.imagenPreview) {
+      fd.append('imagen_eliminada', 'true');
     }
+
+    const galeriaAntigua = form.galeriaPreview.filter(url => typeof url === 'string' && !url.startsWith('blob:'));
+    fd.append('galeria_existente', JSON.stringify(galeriaAntigua));
+
     form.galeria.forEach(file => {
       if (file instanceof File) fd.append('galeria', file);
     });
