@@ -51,7 +51,7 @@
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase mb-1">Total Pedidos</p>
-                <p class="text-sm font-bold text-gray-800 dark:text-white/90">{{ pedidos.length }}</p>
+                <p class="text-sm font-bold text-gray-800 dark:text-white/90">{{ totalPedidos }}</p>
               </div>
             </div>
 
@@ -179,6 +179,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 const route   = useRoute()
 const loading = ref(true)
 const pedidos = ref([])   // lista de pedidos del cliente (raw de la API)
+const rawCliente = ref(null)
 
 const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
 
@@ -193,7 +194,9 @@ onMounted(async () => {
     const correo = decodeURIComponent(route.params.id)
     const res = await fetch(`/api/clientes/${encodeURIComponent(correo)}`)
     if (!res.ok) throw new Error()
-    pedidos.value = await res.json()   // array ordenado desc por created_at
+    const data = await res.json()
+    pedidos.value = data.pedidos   // array ordenado desc por created_at
+    rawCliente.value = data.historico
   } catch {
     // cliente quedará null → muestra "not found"
   } finally {
@@ -203,21 +206,50 @@ onMounted(async () => {
 
 // Datos del cliente derivados de los pedidos (todos comparten correo/nombre/teléfono)
 const cliente = computed(() => {
-  if (pedidos.value.length === 0) return null
-  const newest = pedidos.value[0]                          // más reciente (desc)
-  const oldest = pedidos.value[pedidos.value.length - 1]  // más antiguo
-  return {
-    nombre:       newest.nombre,
-    correo:       newest.correo,
-    telefono:     newest.telefono,
-    primeraCompra: oldest.created_at,
-    ultimaCompra:  newest.created_at,
+  if (pedidos.value.length === 0 && !rawCliente.value) return null
+  
+  let nombre = '', correo = '', telefono = '', primeraCompra = null, ultimaCompra = null
+
+  if (rawCliente.value) {
+    nombre = rawCliente.value.nombre
+    correo = rawCliente.value.correo
+    telefono = rawCliente.value.telefono || '—'
+    primeraCompra = rawCliente.value.created_at
+    ultimaCompra = rawCliente.value.ultima_actividad
   }
+
+  if (pedidos.value.length > 0) {
+    const newest = pedidos.value[0]
+    const oldest = pedidos.value[pedidos.value.length - 1]
+    nombre = newest.nombre || nombre
+    correo = newest.correo || correo
+    telefono = newest.telefono || telefono
+    
+    if (!primeraCompra || new Date(oldest.created_at) < new Date(primeraCompra)) {
+        primeraCompra = oldest.created_at
+    }
+    if (!ultimaCompra || new Date(newest.created_at) > new Date(ultimaCompra)) {
+        ultimaCompra = newest.created_at
+    }
+  }
+
+  return { nombre, correo, telefono, primeraCompra, ultimaCompra }
 })
 
-// Métricas
-const totalGastado  = computed(() => pedidos.value.reduce((s, p) => s + parseFloat(p.total), 0))
-const promedioOrden = computed(() => pedidos.value.length ? totalGastado.value / pedidos.value.length : 0)
+const totalGastado  = computed(() => {
+  const pSum = pedidos.value.reduce((s, p) => s + parseFloat(p.total), 0)
+  const hSum = rawCliente.value ? parseFloat(rawCliente.value.total_gastado_historico || 0) : 0
+  return pSum + hSum
+})
+
+const totalPedidos = computed(() => {
+  const pCount = pedidos.value.length
+  const hCount = rawCliente.value ? parseInt(rawCliente.value.total_pedidos_historico || 0) : 0
+  return pCount + hCount
+})
+
+const promedioOrden = computed(() => totalPedidos.value ? totalGastado.value / totalPedidos.value : 0)
+
 const completados   = computed(() => pedidos.value.filter(p => p.estado === 'Completado').length)
 const cancelados    = computed(() => pedidos.value.filter(p => p.estado === 'Cancelado' || p.estado === 'Fallido').length)
 

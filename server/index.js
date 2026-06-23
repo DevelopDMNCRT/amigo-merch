@@ -1117,15 +1117,26 @@ app.get('/api/clientes', async (_req, res) => {
 app.get('/api/clientes/:correo', async (req, res) => {
   try {
     const { correo } = req.params;
-    const result = await pool.query(
+    
+    const clienteRes = await pool.query('SELECT * FROM clientes WHERE LOWER(correo) = LOWER($1)', [correo]);
+    const historico = clienteRes.rows[0] || null;
+
+    const pedidosRes = await pool.query(
       `SELECT id, orden, nombre, correo, telefono, ciudad, estado, total, created_at
        FROM pedidos
        WHERE LOWER(correo) = LOWER($1)
        ORDER BY created_at DESC`,
       [correo]
     );
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Cliente no encontrado' });
-    res.json(result.rows);
+
+    if (pedidosRes.rows.length === 0 && !historico) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    res.json({
+      historico,
+      pedidos: pedidosRes.rows
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch cliente pedidos' });
