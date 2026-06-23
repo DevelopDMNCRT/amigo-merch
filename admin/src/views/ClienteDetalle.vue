@@ -195,8 +195,13 @@ onMounted(async () => {
     const res = await fetch(`/api/clientes/${encodeURIComponent(correo)}`)
     if (!res.ok) throw new Error()
     const data = await res.json()
-    pedidos.value = data.pedidos   // array ordenado desc por created_at
-    rawCliente.value = data.historico
+    if (Array.isArray(data)) {
+      pedidos.value = data
+      rawCliente.value = null
+    } else {
+      pedidos.value = data?.pedidos || []
+      rawCliente.value = data?.historico || null
+    }
   } catch {
     // cliente quedará null → muestra "not found"
   } finally {
