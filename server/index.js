@@ -446,7 +446,7 @@ app.get('/db-test', async (_req, res) => {
 // GET all tiendas
 app.get('/api/tiendas', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM tiendas WHERE deleted_at IS NULL ORDER BY created_at DESC');
+    const result = await pool.query('SELECT * FROM tiendas WHERE deleted_at IS NULL ORDER BY nombre ASC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
