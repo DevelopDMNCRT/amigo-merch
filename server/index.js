@@ -11,7 +11,7 @@ const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const fs = require('fs');
 const csv = require('csv-parser');
 
-const localUpload = multer({ dest: 'uploads/' });
+const localUpload = multer({ dest: '/tmp/' });
 // ── Mercado Pago ───────────────────────────────────────────────────────────
 const mpClient = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
