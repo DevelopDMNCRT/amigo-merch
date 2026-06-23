@@ -116,7 +116,7 @@ import ClientesTable from '@/components/tables/ClientesTable.vue'
 
 const pagina    = ref(1)
 const paginaInput = ref(1)
-const porPagina = 5
+const porPagina = 10
 const busqueda  = ref('')
 const clientes  = ref([])
 const loading   = ref(true)
