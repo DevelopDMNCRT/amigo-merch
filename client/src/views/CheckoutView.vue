@@ -14,24 +14,24 @@
             
             <div class="form-row">
               <div class="form-group">
-                <label>{{ t('checkout.fullName') }}</label>
+                <label>{{ t('checkout.fullName') }} *</label>
                 <input type="text" required placeholder="Juan Pérez" v-model="form.nombre" class="form-input">
               </div>
               <div class="form-group">
-                <label>{{ t('checkout.phone') }}</label>
+                <label>{{ t('checkout.phone') }} *</label>
                 <input type="tel" required placeholder="(55) 1234 5678" v-model="form.telefono" class="form-input">
               </div>
             </div>
 
             <div class="form-group">
-              <label>{{ t('checkout.email') }}</label>
+              <label>{{ t('checkout.email') }} *</label>
               <input type="email" required placeholder="tu@correo.com" v-model="form.correo" class="form-input">
             </div>
 
             <h2 class="mt-4">{{ t('checkout.shippingAddress') }}</h2>
             
             <div class="form-group">
-              <label>{{ t('checkout.country') }}</label>
+              <label>{{ t('checkout.country') }} *</label>
               <select required class="form-input" v-model="form.pais" @change="onPaisChange">
                 <option value="México">México</option>
                 <option value="Estados Unidos">Estados Unidos</option>
@@ -44,25 +44,25 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label>{{ t('checkout.stateProvince') }}</label>
+                <label>{{ t('checkout.stateProvince') }} *</label>
                 <select required class="form-input" v-model="form.estado">
                   <option value="" disabled selected>{{ t('checkout.selectState') }}</option>
                   <option v-for="estado in currentStates" :key="estado" :value="estado">{{ estado }}</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>{{ t('checkout.city') }}</label>
+                <label>{{ t('checkout.city') }} *</label>
                 <input type="text" required placeholder="Ej. Monterrey" v-model="form.ciudad" class="form-input">
               </div>
             </div>
 
             <div class="form-row mt-3">
               <div class="form-group" style="flex: 2;">
-                <label>{{ t('checkout.street') }}</label>
+                <label>{{ t('checkout.street') }} *</label>
                 <input type="text" required placeholder="Av. Insurgentes Sur" v-model="form.calle" class="form-input">
               </div>
               <div class="form-group" style="flex: 1;">
-                <label>{{ t('checkout.numExt') }}</label>
+                <label>{{ t('checkout.numExt') }} *</label>
                 <input type="text" required placeholder="123" v-model="form.numExt" class="form-input">
               </div>
               <div class="form-group" style="flex: 1;">
@@ -73,11 +73,11 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label>{{ t('checkout.colonia') }}</label>
+                <label>{{ t('checkout.colonia') }} *</label>
                 <input type="text" required placeholder="Roma Norte" v-model="form.colonia" class="form-input">
               </div>
               <div class="form-group">
-                <label>{{ t('checkout.postalCode') }}</label>
+                <label>{{ t('checkout.postalCode') }} *</label>
                 <input type="text" required placeholder="06700" v-model="form.cp" class="form-input">
               </div>
             </div>
