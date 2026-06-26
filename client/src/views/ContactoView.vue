@@ -57,7 +57,7 @@
               </div>
               <div class="info-text">
                 <h3>{{ t('home.contactEmailLabel') }}</h3>
-                <p><a href="mailto:hola@amigomerch.mx">hola@amigomerch.mx</a></p>
+                <p><a href="mailto:amigomerchmx@gmail.com">amigomerchmx@gmail.com</a></p>
               </div>
             </div>
           </div>
