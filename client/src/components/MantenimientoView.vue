@@ -27,3 +27,4 @@ onUnmounted(() => {
   document.body.style.removeProperty('overflow')
 })
 </script>
+<style scoped></style>

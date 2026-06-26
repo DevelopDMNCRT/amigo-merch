@@ -39,7 +39,7 @@ const EMAIL_TRIGGERS = {
         <p>Tu pedido <strong>#${p.orden}</strong> ya está siendo preparado por nuestro equipo. Pronto lo enviaremos a tu domicilio.</p>
         <p style="color:#666">Puedes rastrear tu pedido en <a href="https://amigo-merch.vercel.app/rastreo" style="color:#237650">amigo-merch.vercel.app/rastreo</a> usando el número <strong>#${p.orden}</strong>.</p>
         <p>¡Gracias por tu compra!</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — hola@amigomerch.mx</p>
+        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
       </div>
     `
   }),
@@ -50,9 +50,9 @@ const EMAIL_TRIGGERS = {
         <h2 style="color:#237650">¡Tu pedido fue entregado! ✅</h2>
         <p>Hola <strong>${p.nombre}</strong>,</p>
         <p>Tu pedido <strong>#${p.orden}</strong> ha sido marcado como entregado. Esperamos que estés disfrutando tu merch.</p>
-        <p>Si tienes algún problema con tu pedido, contáctanos en <a href="mailto:hola@amigomerch.mx" style="color:#237650">hola@amigomerch.mx</a>.</p>
+        <p>Si tienes algún problema con tu pedido, contáctanos en <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
         <p>¡Gracias por confiar en Amigo Merch! 🎉</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — hola@amigomerch.mx</p>
+        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
       </div>
     `
   }),
@@ -63,8 +63,8 @@ const EMAIL_TRIGGERS = {
         <h2 style="color:#c62828">Pedido cancelado</h2>
         <p>Hola <strong>${p.nombre}</strong>,</p>
         <p>Lamentamos informarte que tu pedido <strong>#${p.orden}</strong> ha sido cancelado.</p>
-        <p>Si tienes preguntas o crees que esto es un error, contáctanos en <a href="mailto:hola@amigomerch.mx" style="color:#237650">hola@amigomerch.mx</a>.</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — hola@amigomerch.mx</p>
+        <p>Si tienes preguntas o crees que esto es un error, contáctanos en <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
+        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
       </div>
     `
   }),
@@ -75,8 +75,8 @@ const EMAIL_TRIGGERS = {
         <h2 style="color:#c62828">Problema con tu pedido</h2>
         <p>Hola <strong>${p.nombre}</strong>,</p>
         <p>Tuvimos un problema al procesar tu pedido <strong>#${p.orden}</strong>. El pago no pudo ser completado.</p>
-        <p>Te invitamos a intentar nuevamente o contáctanos para ayudarte: <a href="mailto:hola@amigomerch.mx" style="color:#237650">hola@amigomerch.mx</a>.</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — hola@amigomerch.mx</p>
+        <p>Te invitamos a intentar nuevamente o contáctanos para ayudarte: <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
+        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
       </div>
     `
   }),
@@ -557,19 +557,28 @@ app.post('/api/contact', async (req, res) => {
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Nombre, correo y mensaje son requeridos' });
   }
+  const subjectMap = {
+    pedido: 'Duda sobre mi pedido',
+    maquila: 'Cotización de Maquila',
+    otro: 'Otro'
+  };
+  const displaySubject = subjectMap[subject] || subject || 'Sin asunto';
 
   try {
     await mailer.sendMail({
       from: `"Contacto Amigo Merch" <${process.env.SMTP_USER}>`,
       to: 'amigomerchmx@gmail.com',
       replyTo: email,
-      subject: `Nuevo mensaje de contacto: ${subject || 'Sin asunto'}`,
+      subject: displaySubject,
       html: `
         <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-          <h2 style="color:#237650">Nuevo mensaje de contacto</h2>
+          <div style="display: flex; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #237650; padding-bottom: 15px;">
+            <img src="https://www.amigomerch.mx/logo.png" alt="Amigo Merch" style="height: 40px; margin-right: 15px;">
+            <h2 style="color:#237650; margin: 0;">Amigo Merch | Soporte</h2>
+          </div>
           <p><strong>Nombre:</strong> ${name}</p>
           <p><strong>Correo:</strong> ${email}</p>
-          <p><strong>Asunto:</strong> ${subject}</p>
+          <p><strong>Asunto:</strong> ${displaySubject}</p>
           <p><strong>Mensaje:</strong></p>
           <p style="white-space: pre-wrap; background:#f9f9f9; padding: 15px; border-radius: 8px;">${message}</p>
         </div>
@@ -789,11 +798,11 @@ const getEnviaPayload = async (pedido) => {
 
   return {
     origin: {
-      name: 'Amigo Merch', company: 'Amigo Merch', email: 'hola@amigomerch.mx', phone: '3312345678',
+      name: 'Amigo Merch', company: 'Amigo Merch', email: 'amigomerchmx@gmail.com', phone: '3312345678',
       street: 'Bodega Principal', number: '1', district: 'Centro', city: 'Zapopan', state: 'JA', country: 'MX', postalCode: '45200', reference: ''
     },
     destination: {
-      name: pedido.nombre, company: '', email: pedido.correo || 'hola@amigomerch.mx', phone: pedido.telefono || '3300000000',
+      name: pedido.nombre, company: '', email: pedido.correo || 'amigomerchmx@gmail.com', phone: pedido.telefono || '3300000000',
       street: pedido.calle || 'Conocida', number: pedido.num_ext || 'SN', district: pedido.colonia || 'Centro', city: pedido.ciudad || 'Ciudad', state: stateCode, country: pedido.pais === 'Mexico' ? 'MX' : 'MX', postalCode: pedido.cp || '00000', reference: pedido.notas || ''
     },
     packages: [{
