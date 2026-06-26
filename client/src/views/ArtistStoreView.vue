@@ -141,10 +141,14 @@ onMounted(async () => {
   padding-bottom: 80px;
 }
 
-/* Header de 420px */
+/* Header de 1920x420 */
 .store-hero {
   position: relative;
-  height: 420px;
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  aspect-ratio: 1920 / 420;
+  height: auto;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
