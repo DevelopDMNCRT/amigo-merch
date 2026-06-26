@@ -31,7 +31,7 @@ const mailer = nodemailer.createTransport({
 // Estados que disparan correo al cliente y la plantilla correspondiente
 const EMAIL_TRIGGERS = {
   'En proceso': (p) => ({
-    subject: `Tu pedido #${p.orden} está en proceso — Amigo Merch`,
+    subject: `¡Gracias por tu compra! Tu pedido #${p.orden} está en proceso — Amigo Merch`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
         <h2 style="color:#237650">¡Tu pedido está en preparación! 📦</h2>
