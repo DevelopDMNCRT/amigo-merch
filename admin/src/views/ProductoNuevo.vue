@@ -97,6 +97,8 @@
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Peso (kg)</label>
                 <input v-model="form.peso" type="number" step="0.001" placeholder="0.000" :disabled="form.esVariable"
+                  class="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50 disabled:bg-gray-50 dark:disabled:bg-gray-800/50" />
+              </div>
               <!-- Descuento -->
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Desc. (%)</label>
