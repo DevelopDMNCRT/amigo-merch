@@ -11,7 +11,11 @@
     <section class="product-details-section">
       <div class="product-grid">
         <!-- Image Gallery -->
-        <div class="product-image-col">
+        <div class="product-image-col relative">
+          <!-- Discount Badge -->
+          <div v-if="product.descuento > 0" class="absolute top-4 left-4 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow-md">
+            -{{ product.descuento }}%
+          </div>
           <div class="main-image-container">
             <div v-if="!selectedImage" class="product-placeholder">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="placeholder-icon">
@@ -40,7 +44,15 @@
         <div class="product-info-col">
           <span class="product-artist">{{ product.tienda }}</span>
           <h1 class="product-name-title">{{ product.nombre }}</h1>
-          <p class="product-price-large">{{ formatPrice(displayPrice) }}</p>
+          <div class="product-price-container mb-4">
+            <template v-if="product.descuento > 0">
+              <span class="product-price-large text-red-600 mr-3">{{ formatPrice(discountedPrice) }}</span>
+              <del class="text-gray-400 text-lg">{{ formatPrice(displayPrice) }}</del>
+            </template>
+            <template v-else>
+              <p class="product-price-large">{{ formatPrice(displayPrice) }}</p>
+            </template>
+          </div>
 
           <p v-if="product.descripcion" class="product-description">
             {{ product.descripcion }}
@@ -161,7 +173,15 @@
               <span class="product-artist">{{ relProduct.tienda }}</span>
               <h3 class="product-name">{{ relProduct.nombre }}</h3>
               <div class="product-footer">
-                <span class="product-price">{{ formatPrice(relProduct.precio) }}</span>
+                <div class="product-price-container mt-1">
+                  <template v-if="relProduct.descuento > 0">
+                    <span class="product-price text-red-600 mr-2">{{ formatPrice(relProduct.precio * (1 - relProduct.descuento/100)) }}</span>
+                    <del class="text-gray-400 text-xs">{{ formatPrice(relProduct.precio) }}</del>
+                  </template>
+                  <template v-else>
+                    <span class="product-price">{{ formatPrice(relProduct.precio) }}</span>
+                  </template>
+                </div>
               </div>
             </div>
           </router-link>
@@ -295,6 +315,13 @@ const displayPrice = computed(() => {
   return product.value.precio;
 });
 
+const discountedPrice = computed(() => {
+  if (product.value?.descuento > 0) {
+    return displayPrice.value * (1 - product.value.descuento / 100);
+  }
+  return displayPrice.value;
+});
+
 const loadProduct = async () => {
   const id = route.params.id;
   try {
@@ -319,7 +346,7 @@ onMounted(() => { loadProduct(); });
 watch(() => route.params.id, () => { loadProduct(); });
 
 const addToCart = () => {
-  const productToCart = { ...product.value, precio: displayPrice.value };
+  const productToCart = { ...product.value, precio: discountedPrice.value };
   const label = Object.values(selectedAttrs.value).join(' - ') || selectedVariation.value?.valor || '';
   cartActions.addItem(productToCart, label, quantity.value);
 };

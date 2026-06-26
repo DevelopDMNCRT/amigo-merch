@@ -53,7 +53,7 @@
           <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90 mb-5">Datos Generales</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-5">
               <!-- Tienda -->
               <div class="lg:col-span-2">
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Tienda</label>
@@ -97,7 +97,14 @@
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Peso (kg)</label>
                 <input v-model="form.peso" type="number" step="0.001" placeholder="0.000" :disabled="form.esVariable"
-                  class="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 disabled:opacity-50 disabled:bg-gray-50 dark:disabled:bg-gray-800/50" />
+              <!-- Descuento -->
+              <div>
+                <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Desc. (%)</label>
+                <div class="relative">
+                  <input v-model="form.descuento" type="number" min="0" max="100" placeholder="0"
+                    class="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -365,6 +372,7 @@ const form = reactive({
   stock: '',
   envioEspecial: '',
   peso: '',
+  descuento: 0,
   esVariable: false,
   esPublico: true,
   
@@ -423,6 +431,7 @@ onMounted(async () => {
       form.stock = data.stock || '';
       form.envioEspecial = data.envio_especial || '';
       form.peso = data.peso || '';
+      form.descuento = data.descuento || 0;
       form.esVariable = data.es_variable;
       form.esPublico = data.es_publico;
       if (data.atributos) {
@@ -716,7 +725,8 @@ const guardar = async () => {
     } else {
       fd.append('envio_especial', '');
     }
-    fd.append('es_variable',    form.esVariable ? 'true' : 'false');
+    fd.append('descuento', form.descuento || 0);
+    fd.append('es_variable', form.esVariable ? 'true' : 'false');
     fd.append('es_publico',     form.esPublico ? 'true' : 'false');
     fd.append('slug',           slug.value);
     fd.append('atributos',      JSON.stringify(form.atributos));

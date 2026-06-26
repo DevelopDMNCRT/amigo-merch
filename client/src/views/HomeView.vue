@@ -212,6 +212,9 @@ const submitContactForm = async () => {
                 </svg>
               </div>
               <img v-else :src="product.imagen_url" :alt="product.nombre" class="product-image" loading="lazy">
+              <div v-if="product.descuento > 0" class="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow-md">
+                -{{ product.descuento }}%
+              </div>
               <span class="product-tag" v-if="product.flag">{{ product.flag }}</span>
               <div class="product-overlay">
                 <button class="overlay-btn">{{ t('home.viewProduct') }}</button>
@@ -221,7 +224,15 @@ const submitContactForm = async () => {
               <span class="product-artist">{{ product.tienda }}</span>
               <h3 class="product-name">{{ product.nombre }}</h3>
               <div class="product-footer">
-                <span class="product-price">{{ formatPrice(product.precio) }}</span>
+                <div class="product-price-container">
+                  <template v-if="product.descuento > 0">
+                    <span class="product-price text-red-600 mr-2">{{ formatPrice(product.precio * (1 - product.descuento/100)) }}</span>
+                    <del class="text-gray-400 text-xs">{{ formatPrice(product.precio) }}</del>
+                  </template>
+                  <template v-else>
+                    <span class="product-price">{{ formatPrice(product.precio) }}</span>
+                  </template>
+                </div>
               </div>
             </div>
           </router-link>

@@ -275,7 +275,7 @@ app.get('/api/products/:id', async (req, res) => {
 
 // POST create product
 app.post('/api/products', upload.any(), async (req, res) => {
-  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso } = req.body;
+  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
 
@@ -299,8 +299,8 @@ app.post('/api/products', upload.any(), async (req, res) => {
       .replace(/\s+/g, '-');
 
     const result = await client.query(
-      `INSERT INTO products (nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, imagen_url, galeria_urls, atributos, tienda, flag, preventa_inicio, preventa_fin, peso)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,
+      `INSERT INTO products (nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, imagen_url, galeria_urls, atributos, tienda, flag, preventa_inicio, preventa_fin, peso, descuento)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING *`,
       [
         nombre, descripcion || null,
         precio ? parseFloat(precio) : null,
@@ -311,7 +311,8 @@ app.post('/api/products', upload.any(), async (req, res) => {
         atributos || null, tienda || 'General', flag || null,
         (flag === 'Preventa' && preventa_inicio) ? preventa_inicio : null,
         (flag === 'Preventa' && preventa_fin)    ? preventa_fin    : null,
-        peso ? parseFloat(peso) : 0
+        peso ? parseFloat(peso) : 0,
+        descuento ? parseInt(descuento) : 0
       ]
     );
 
@@ -345,7 +346,7 @@ app.post('/api/products', upload.any(), async (req, res) => {
 // PUT update product
 app.put('/api/products/:id', upload.any(), async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso } = req.body;
+  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
 
@@ -381,7 +382,7 @@ app.put('/api/products/:id', upload.any(), async (req, res) => {
     if (newGaleria.length) galeria_urls = [...galeria_urls, ...newGaleria.map(f => f.path)];
 
     const result = await client.query(
-      `UPDATE products SET nombre=$1, descripcion=$2, precio=$3, stock=$4, envio_especial=$5, es_variable=$6, es_publico=$7, slug=$8, imagen_url=$9, galeria_urls=$10, atributos=$11, tienda=$13, flag=$14, preventa_inicio=$15, preventa_fin=$16, peso=$17
+      `UPDATE products SET nombre=$1, descripcion=$2, precio=$3, stock=$4, envio_especial=$5, es_variable=$6, es_publico=$7, slug=$8, imagen_url=$9, galeria_urls=$10, atributos=$11, tienda=$13, flag=$14, preventa_inicio=$15, preventa_fin=$16, peso=$17, descuento=$18
        WHERE id=$12 RETURNING *`,
       [
         nombre, descripcion || null,
@@ -393,7 +394,8 @@ app.put('/api/products/:id', upload.any(), async (req, res) => {
         atributos || null, id, tienda || 'General', flag || null,
         (flag === 'Preventa' && preventa_inicio) ? preventa_inicio : null,
         (flag === 'Preventa' && preventa_fin)    ? preventa_fin    : null,
-        peso ? parseFloat(peso) : 0
+        peso ? parseFloat(peso) : 0,
+        descuento ? parseInt(descuento) : 0
       ]
     );
 
