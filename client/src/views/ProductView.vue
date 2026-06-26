@@ -42,8 +42,8 @@
           <h1 class="product-name-title">{{ product.nombre }}</h1>
           <p class="product-price-large">{{ formatPrice(displayPrice) }}</p>
 
-          <p class="product-description">
-            {{ product.descripcion || t('product.defaultDesc') }}
+          <p v-if="product.descripcion" class="product-description">
+            {{ product.descripcion }}
           </p>
 
           <div class="product-options">
