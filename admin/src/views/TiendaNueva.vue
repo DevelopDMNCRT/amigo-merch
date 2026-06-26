@@ -53,7 +53,7 @@
                   <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
                     {{ form.imagenPreview ? 'Haz clic para cambiar la foto' : 'Haz clic o arrastra una imagen aquí' }}
                   </p>
-                  <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">JPG, JPEG, PNG — máx. 800×800 px — máx. 1 MB</p>
+                  <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">JPG, JPEG, PNG — máx. 800×800 px — máx. 5 MB</p>
                 </div>
                 <p v-if="imagenError" class="mt-1.5 text-xs text-error-500">{{ imagenError }}</p>
               </div>
@@ -88,7 +88,7 @@
                   <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
                     {{ form.headerPreview ? 'Haz clic para cambiar el header' : 'Haz clic o arrastra el header aquí' }}
                   </p>
-                  <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">JPG, JPEG, PNG — exactamente 1920×420 px — máx. 1.5 MB</p>
+                  <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">JPG, JPEG, PNG — exactamente 1920×420 px — máx. 5 MB</p>
                 </div>
                 <p v-if="headerError" class="mt-1.5 text-xs text-error-500">{{ headerError }}</p>
               </div>
@@ -241,7 +241,7 @@ const onEditorCancel = () => {
 
 // ── Foto handlers ───────────────────────────────────────────────────────────
 
-const IMAGEN_CONSTRAINTS = { maxSize: 1024 * 1024, maxWidth: 800, maxHeight: 800 };
+const IMAGEN_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, maxWidth: 800, maxHeight: 800 };
 
 const handleImagen = async (file) => {
   imagenError.value = '';
@@ -272,7 +272,7 @@ const onDrop = async (e) => {
 
 // ── Header handlers ─────────────────────────────────────────────────────────
 
-const HEADER_CONSTRAINTS = { maxSize: 1.5 * 1024 * 1024, exactWidth: 1920, exactHeight: 420 };
+const HEADER_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, exactWidth: 1920, exactHeight: 420 };
 
 const handleHeader = async (file) => {
   headerError.value = '';

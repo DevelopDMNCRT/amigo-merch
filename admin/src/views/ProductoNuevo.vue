@@ -284,7 +284,7 @@
               <div v-else class="flex flex-col items-center justify-center py-12 gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 <p class="text-sm text-gray-500 font-medium">Sube una imagen</p>
-                <p class="text-xs text-gray-400">JPG, JPEG, PNG — máx. 1000×1000 px — máx. 800 KB</p>
+                <p class="text-xs text-gray-400">JPG, JPEG, PNG — máx. 1000×1000 px — máx. 5 MB</p>
               </div>
               <input ref="imgPrincipal" type="file" accept="image/jpeg,image/jpg,image/png" class="hidden" @change="onImgChange" />
               <div v-if="form.imagenPreview" class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
@@ -321,7 +321,7 @@
             </div>
             <input ref="imgGaleria" type="file" accept="image/jpeg,image/jpg,image/png" multiple class="hidden" @change="onGaleriaChange" />
             <p v-if="galeriaError" class="mt-2 text-xs text-error-500">{{ galeriaError }}</p>
-            <p class="mt-2 text-xs text-gray-400">JPG, JPEG, PNG — máx. 1000×1000 px — máx. 800 KB por imagen</p>
+            <p class="mt-2 text-xs text-gray-400">JPG, JPEG, PNG — máx. 1000×1000 px — máx. 5 MB por imagen</p>
           </div>
 
         </div>
@@ -553,7 +553,7 @@ const clearVarImg = (index) => {
 
 // ── Imagen principal ─────────────────────────────────────────────────────────
 
-const IMG_CONSTRAINTS = { maxSize: 800 * 1024, maxWidth: 1000, maxHeight: 1000 };
+const IMG_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, maxWidth: 1000, maxHeight: 1000 };
 
 const handleImagen = async (file) => {
   imagenError.value = '';
