@@ -92,7 +92,13 @@
                 </td>
                 <!-- Precio -->
                 <td class="px-5 py-4 sm:px-6">
-                  <span v-if="p.precio" class="font-semibold text-gray-800 dark:text-white/90 text-theme-sm">${{ Number(p.precio).toFixed(2) }} MXN</span>
+                  <div v-if="p.precio" class="flex flex-col">
+                    <span v-if="p.descuento > 0" class="text-xs text-gray-400 line-through">${{ Number(p.precio).toFixed(2) }} MXN</span>
+                    <span class="font-semibold text-gray-800 dark:text-white/90 text-theme-sm" :class="{'!text-red-600': p.descuento > 0}">
+                      ${{ (Number(p.precio) * (1 - (p.descuento || 0)/100)).toFixed(2) }} MXN 
+                      <span v-if="p.descuento > 0" class="ml-1 text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 px-1 py-0.5 rounded border border-red-200 dark:border-red-800">-{{p.descuento}}%</span>
+                    </span>
+                  </div>
                   <span v-else class="text-xs text-gray-400 italic">Por variación</span>
                 </td>
                 <!-- Stock -->
