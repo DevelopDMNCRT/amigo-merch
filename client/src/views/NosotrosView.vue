@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocale } from '../composables/useLocale.js'
 import { formatPrice } from '../store/locale.js'
@@ -117,19 +117,31 @@ import { formatPrice } from '../store/locale.js'
 const router = useRouter()
 const { t, tTag } = useLocale()
 
-const bestSellers = [
-  { id: 101, name: 'Playera Tour 2026', artist: 'Caloncho', price: 450, image: '/images/product1.png', tag: 'Nuevo' },
-  { id: 102, name: 'Sudadera Clásica', artist: 'Juan Gabriel', price: 850, image: '/images/product2.png', tag: 'Agotado' },
-  { id: 103, name: 'Gorra Bordada', artist: 'Bruses', price: 350, image: '/images/product3.png', tag: '' },
-  { id: 104, name: 'Totebag Eco', artist: 'Andrés Obregón', price: 250, image: '/images/product1.png', tag: 'Popular' }
-]
+const bestSellers = ref([])
 
 const goToProduct = (id) => {
   router.push(`/producto/${id}`)
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.scrollTo(0, 0)
+  try {
+    const res = await fetch('/api/products')
+    const data = await res.json()
+    bestSellers.value = data
+      .filter(p => p.es_publico)
+      .slice(0, 4)
+      .map(p => ({
+        id: p.id,
+        name: p.nombre,
+        artist: p.tienda,
+        price: p.precio,
+        image: p.imagen_url || '/images/product1.png',
+        tag: p.flag || ''
+      }))
+  } catch (err) {
+    console.error('Error fetching products:', err)
+  }
 })
 </script>
 
