@@ -65,7 +65,7 @@ const status = computed(() => {
 const info = computed(() => {
   if (status.value === 'exito') return {
     titulo: '¡Pago recibido! 🎉',
-    subtitulo: 'Tu pedido ha sido registrado y está siendo procesado. Recibirás actualizaciones por correo.'
+    subtitulo: 'Tu pedido ha sido registrado y está siendo procesado. Recibirás actualizaciones por correo (Por favor, revisa tu carpeta de Spam o Correo no deseado).'
   }
   if (status.value === 'fallido') return {
     titulo: 'Pago no completado',
