@@ -419,8 +419,9 @@ onMounted(async () => {
 }
 
 @media (max-width: 768px) {
-  .store-hero { height: 320px; }
-  .store-hero h1 { font-size: 2.5rem; }
+  .store-hero { height: auto; }
+  .store-hero h1 { font-size: 5vw; margin-bottom: 2px; }
+  .store-hero-content p { font-size: 2.5vw; }
   .products-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   
   .store-controls {
