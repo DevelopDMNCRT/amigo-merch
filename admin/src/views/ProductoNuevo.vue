@@ -425,7 +425,13 @@ onMounted(async () => {
       form.peso = data.peso || '';
       form.esVariable = data.es_variable;
       form.esPublico = data.es_publico;
-      if (data.atributos) form.atributos = data.atributos;
+      if (data.atributos) {
+        try {
+          form.atributos = typeof data.atributos === 'string' ? JSON.parse(data.atributos) : data.atributos;
+        } catch (e) {
+          console.warn('Error parsing atributos:', e);
+        }
+      }
       form.variaciones = data.variaciones.map(v => ({
         ...v,
         peso: v.peso || '',
@@ -434,7 +440,16 @@ onMounted(async () => {
         imagen: null                           // null = sin nuevo archivo
       }));
       if (data.imagen_url) form.imagenPreview = data.imagen_url;
-      if (data.galeria_urls && data.galeria_urls.length > 0) form.galeriaPreview = data.galeria_urls;
+      if (data.galeria_urls) {
+        try {
+          const parsed = typeof data.galeria_urls === 'string' ? JSON.parse(data.galeria_urls) : data.galeria_urls;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            form.galeriaPreview = parsed;
+          }
+        } catch (e) {
+          console.warn('Error parsing galeria_urls:', e);
+        }
+      }
     } catch (err) {
       console.error('Error fetching product:', err);
       alert('Error al cargar el producto para editar');
