@@ -17,11 +17,13 @@
 </template>
 
 <script setup>
-</script>
+import { onMounted, onUnmounted } from 'vue'
 
-<style scoped>
-/* Evitar scroll global cuando está montado */
-:global(body) {
-  overflow: hidden !important;
-}
-</style>
+onMounted(() => {
+  document.body.style.setProperty('overflow', 'hidden', 'important')
+})
+
+onUnmounted(() => {
+  document.body.style.removeProperty('overflow')
+})
+</script>

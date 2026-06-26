@@ -12,21 +12,21 @@
       <div class="contact-content-stacked">
           <!-- Formulario -->
           <div class="contact-form-card">
-            <form class="contact-form" @submit.prevent>
+            <form class="contact-form" @submit.prevent="submitForm">
               <div class="form-group">
                 <label for="name">{{ t('home.contactName') }}</label>
-                <input type="text" id="name" :placeholder="t('home.contactNamePh')" required>
+                <input type="text" id="name" v-model="contactForm.name" :placeholder="t('home.contactNamePh')" required :disabled="isSubmitting">
               </div>
               
               <div class="form-group">
                 <label for="email">{{ t('home.contactEmail') }}</label>
-                <input type="email" id="email" :placeholder="t('home.contactEmailPh')" required>
+                <input type="email" id="email" v-model="contactForm.email" :placeholder="t('home.contactEmailPh')" required :disabled="isSubmitting">
               </div>
               
               <div class="form-group">
                 <label for="subject">{{ t('home.contactSubject') }}</label>
-                <select id="subject" required>
-                  <option value="" disabled selected>{{ t('home.contactSubjectPh') }}</option>
+                <select id="subject" v-model="contactForm.subject" required :disabled="isSubmitting">
+                  <option value="" disabled>{{ t('home.contactSubjectPh') }}</option>
                   <option value="pedido">{{ t('home.contactOrder') }}</option>
                   <option value="maquila">{{ t('home.contactMaquila') }}</option>
                   <option value="otro">{{ t('home.contactOther') }}</option>
@@ -35,10 +35,13 @@
               
               <div class="form-group">
                 <label for="message">{{ t('home.contactMessage') }}</label>
-                <textarea id="message" rows="4" :placeholder="t('home.contactMessagePh')" required></textarea>
+                <textarea id="message" v-model="contactForm.message" rows="4" :placeholder="t('home.contactMessagePh')" required :disabled="isSubmitting"></textarea>
               </div>
               
-              <button type="submit" class="submit-btn">{{ t('home.contactSend') }}</button>
+              <button type="submit" class="submit-btn" :disabled="isSubmitting">
+                <span v-if="isSubmitting">...</span>
+                <span v-else>{{ t('home.contactSend') }}</span>
+              </button>
             </form>
           </div>
 
@@ -75,10 +78,41 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useLocale } from '../composables/useLocale.js'
 
 const { t } = useLocale()
+
+const contactForm = ref({
+  name: '',
+  email: '',
+  subject: '',
+  message: ''
+})
+const isSubmitting = ref(false)
+
+const submitForm = async () => {
+  if (isSubmitting.value) return;
+  isSubmitting.value = true;
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contactForm.value)
+    });
+    if (res.ok) {
+      alert('Mensaje enviado correctamente');
+      contactForm.value = { name: '', email: '', subject: '', message: '' };
+    } else {
+      alert('Hubo un error al enviar el mensaje. Inténtalo de nuevo.');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Hubo un error al enviar el mensaje. Inténtalo de nuevo.');
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)

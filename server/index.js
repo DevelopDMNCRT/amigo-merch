@@ -551,6 +551,37 @@ app.post('/api/upload', upload.single('imagen'), (req, res) => {
   res.json({ url: req.file.path, public_id: req.file.filename });
 });
 
+// Contact route
+app.post('/api/contact', async (req, res) => {
+  const { name, email, subject, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'Nombre, correo y mensaje son requeridos' });
+  }
+
+  try {
+    await mailer.sendMail({
+      from: `"Contacto Amigo Merch" <${process.env.SMTP_USER}>`,
+      to: 'amigomerchmx@gmail.com',
+      replyTo: email,
+      subject: `Nuevo mensaje de contacto: ${subject || 'Sin asunto'}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+          <h2 style="color:#237650">Nuevo mensaje de contacto</h2>
+          <p><strong>Nombre:</strong> ${name}</p>
+          <p><strong>Correo:</strong> ${email}</p>
+          <p><strong>Asunto:</strong> ${subject}</p>
+          <p><strong>Mensaje:</strong></p>
+          <p style="white-space: pre-wrap; background:#f9f9f9; padding: 15px; border-radius: 8px;">${message}</p>
+        </div>
+      `,
+    });
+    res.json({ success: true, message: 'Mensaje enviado correctamente' });
+  } catch (err) {
+    console.error('[CONTACT EMAIL ERROR]', err);
+    res.status(500).json({ error: 'Error enviando el mensaje' });
+  }
+});
+
 // Basic routes
 app.get('/', (_req, res) => res.json({ message: 'Amigo Merch API is running' }));
 
