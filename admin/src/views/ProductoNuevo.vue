@@ -427,7 +427,13 @@ onMounted(async () => {
       form.esPublico = data.es_publico;
       if (data.atributos) {
         try {
-          form.atributos = typeof data.atributos === 'string' ? JSON.parse(data.atributos) : data.atributos;
+          let parsed = data.atributos;
+          while (typeof parsed === 'string') {
+            parsed = JSON.parse(parsed);
+          }
+          if (Array.isArray(parsed)) {
+            form.atributos = parsed;
+          }
         } catch (e) {
           console.warn('Error parsing atributos:', e);
         }
@@ -442,7 +448,10 @@ onMounted(async () => {
       if (data.imagen_url) form.imagenPreview = data.imagen_url;
       if (data.galeria_urls) {
         try {
-          const parsed = typeof data.galeria_urls === 'string' ? JSON.parse(data.galeria_urls) : data.galeria_urls;
+          let parsed = data.galeria_urls;
+          while (typeof parsed === 'string') {
+            parsed = JSON.parse(parsed);
+          }
           if (Array.isArray(parsed) && parsed.length > 0) {
             form.galeriaPreview = parsed;
           }
