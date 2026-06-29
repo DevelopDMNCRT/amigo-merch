@@ -35,10 +35,12 @@
               <input v-model="form.nombre" type="text" placeholder="Ej. Playera Tour 2026"
                 class="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
               <!-- Slug Preview -->
-              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 flex-wrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Enlace: <span class="text-brand-600 dark:text-brand-400 font-mono">https://amigo-merch.vercel.app/producto/{{ slug }}</span>
-              </p>
+                Enlace: <span class="text-brand-600 dark:text-brand-400 font-mono">https://amigo-merch.vercel.app/producto/</span>
+                <input v-model="form.slug" @input="slugEditado = true" type="text"
+                  class="flex-1 min-w-[150px] bg-transparent border-b border-dashed border-gray-300 dark:border-gray-600 text-brand-600 dark:text-brand-400 font-mono focus:border-brand-500 focus:outline-none p-0 h-5" />
+              </div>
             </div>
 
             <!-- Descripción -->
@@ -365,6 +367,7 @@ const isEditing = computed(() => !!route.params.id);
 
 const form = reactive({
   nombre: '',
+  slug: '',
   descripcion: '',
   tienda: 'General',
   flag: '',
@@ -404,12 +407,12 @@ watch(() => form.flag, (val) => {
   }
 });
 
-// Computed property for URL preview
-const slug = computed(() => {
-  if (form.nombre) {
-    return form.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+const slugEditado = ref(false);
+
+watch(() => form.nombre, (newVal) => {
+  if (!slugEditado.value) {
+    form.slug = newVal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
   }
-  return '';
 });
 
 onMounted(async () => {
@@ -424,6 +427,8 @@ onMounted(async () => {
     try {
       const { data } = await axios.get(`/api/products/${route.params.id}`);
       form.nombre = data.nombre;
+      form.slug = data.slug || data.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+      slugEditado.value = true;
       form.descripcion = data.descripcion || '';
       form.tienda = data.tienda || 'General';
       form.flag = data.flag || '';
@@ -730,7 +735,7 @@ const guardar = async () => {
     fd.append('descuento', form.descuento || 0);
     fd.append('es_variable', form.esVariable ? 'true' : 'false');
     fd.append('es_publico',     form.esPublico ? 'true' : 'false');
-    fd.append('slug',           slug.value);
+    fd.append('slug',           form.slug);
     fd.append('atributos',      JSON.stringify(form.atributos));
 
     if (form.esVariable && form.variaciones.length > 0) {
