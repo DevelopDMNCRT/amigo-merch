@@ -748,6 +748,50 @@ app.post('/api/pedidos', async (req, res) => {
   }
 });
 
+async function manejarDescuentoStock(pedidoId, nuevoEstado) {
+  const ESTADOS_DESCUENTO = ['Nuevo', 'En proceso', 'Completado'];
+  if (!ESTADOS_DESCUENTO.includes(nuevoEstado)) return;
+
+  try {
+    const pRes = await pool.query('SELECT items, stock_descontado FROM pedidos WHERE id = $1', [pedidoId]);
+    if (pRes.rows.length === 0) return;
+    const pedido = pRes.rows[0];
+
+    if (pedido.stock_descontado) return; // Ya se descontó
+
+    const items = typeof pedido.items === 'string' ? JSON.parse(pedido.items) : (pedido.items || []);
+    
+    for (const item of items) {
+      const pId = item.producto_id;
+      const varName = item.variante;
+      const qty = item.cantidad || 1;
+
+      if (!pId) continue;
+
+      const prodRes = await pool.query('SELECT es_variable FROM products WHERE id = $1', [pId]);
+      if (prodRes.rows.length === 0) continue;
+      const es_variable = prodRes.rows[0].es_variable;
+
+      if (es_variable && varName) {
+        await pool.query(
+          'UPDATE product_variations SET stock = stock - $1 WHERE product_id = $2 AND valor = $3',
+          [qty, pId, varName]
+        );
+      } else {
+        await pool.query(
+          'UPDATE products SET stock = stock - $1 WHERE id = $2',
+          [qty, pId]
+        );
+      }
+    }
+
+    await pool.query('UPDATE pedidos SET stock_descontado = true WHERE id = $1', [pedidoId]);
+    console.log(`[STOCK] Stock descontado para pedido ${pedidoId}`);
+  } catch (err) {
+    console.error(`[STOCK] Error al descontar stock del pedido ${pedidoId}:`, err);
+  }
+}
+
 // PUT update pedido estado (+ dispara correo según el estado)
 app.put('/api/pedidos/:id/estado', async (req, res) => {
   try {
@@ -764,6 +808,10 @@ app.put('/api/pedidos/:id/estado', async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ error: 'Pedido no encontrado' });
 
     const pedido = result.rows[0];
+    
+    // Descontar stock si aplica
+    await manejarDescuentoStock(id, estado);
+
     // Enviar correo en background (no bloqueamos la respuesta)
     sendStatusEmail(pedido, estado).catch(console.error);
 
@@ -1632,6 +1680,7 @@ app.post('/api/pagos/webhook', async (req, res) => {
           [nuevoEstado, pedidoId]
         );
         if (result.rows.length > 0) {
+          await manejarDescuentoStock(pedidoId, nuevoEstado);
           sendStatusEmail(result.rows[0], nuevoEstado).catch(console.error);
           console.log(`[MP WEBHOOK] Pedido ${pedidoId} → ${nuevoEstado} (MP: ${mpStatus})`);
         }
