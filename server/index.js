@@ -820,25 +820,62 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
     const { id } = req.params;
     const { rows } = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);
     if (!rows.length) return res.status(404).json({ error: 'Pedido no encontrado' });
-    
-    const payload = await getEnviaPayload(rows[0]);
-    // Request basic carriers to quote
-    const carriers = ['fedex', 'dhl', 'estafeta', 'redpack'];
-    const rates = [];
 
-    for (const carrier of carriers) {
-      try {
-        const ratePayload = { ...payload, shipment: { carrier, type: 1 } };
-        const response = await fetch(`${process.env.ENVIA_API_URL}/ship/rate/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.ENVIA_API_KEY}` },
-          body: JSON.stringify(ratePayload)
-        });
-        const data = await response.json();
-        if (data.meta === 'rate' && data.data && data.data.length > 0) {
-          rates.push(...data.data);
-        }
-      } catch (e) { console.error(`Error rating ${carrier}:`, e); }
+    const payload = await getEnviaPayload(rows[0]);
+    const enviaApiUrl = process.env.ENVIA_API_URL || 'https://api-test.envia.com';
+    const enviaApiKey = process.env.ENVIA_API_KEY;
+    const enviaQueriesUrl = enviaApiUrl.includes('api-test') ? 'https://queries-test.envia.com' : 'https://queries.envia.com';
+
+    // Step 1: Dynamically fetch all active carriers for this account
+    let carrierList = [];
+    try {
+      const carriersRes = await fetch(`${enviaQueriesUrl}/carrier?country_code=MX`, {
+        headers: { 'Authorization': `Bearer ${enviaApiKey}` }
+      });
+      const carriersData = await carriersRes.json();
+      if (Array.isArray(carriersData.data)) {
+        carrierList = carriersData.data.map(c => c.carrier_code || c.code || c.name).filter(Boolean);
+      }
+    } catch (e) {
+      console.warn('Could not fetch carrier list from Envia, will try without carrier filter:', e.message);
+    }
+
+    let rates = [];
+
+    // Step 2a: Try a single multicarrier call (no carrier specified) — returns all available rates
+    try {
+      const multiPayload = { ...payload };
+      // Remove shipment field to let Envia return all carriers
+      delete multiPayload.shipment;
+      const response = await fetch(`${enviaApiUrl}/ship/rate/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${enviaApiKey}` },
+        body: JSON.stringify(multiPayload)
+      });
+      const data = await response.json();
+      if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
+        rates = data.data;
+      }
+    } catch (e) {
+      console.warn('Multicarrier rate call failed, falling back to per-carrier calls:', e.message);
+    }
+
+    // Step 2b: Fallback — if multicarrier call returned nothing, iterate over each carrier individually
+    if (rates.length === 0 && carrierList.length > 0) {
+      for (const carrier of carrierList) {
+        try {
+          const ratePayload = { ...payload, shipment: { carrier, type: 1 } };
+          const response = await fetch(`${enviaApiUrl}/ship/rate/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${enviaApiKey}` },
+            body: JSON.stringify(ratePayload)
+          });
+          const data = await response.json();
+          if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
+            rates.push(...data.data);
+          }
+        } catch (e) { console.error(`Error rating carrier ${carrier}:`, e.message); }
+      }
     }
 
     res.json({ rates });
