@@ -146,77 +146,188 @@
         </div>
 
         <!-- ═══ LOGÍSTICA CARD ═══ -->
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] max-w-md">
-          <div class="px-6 pt-6 pb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-800 dark:text-gray-300">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <h2 class="text-[15px] font-bold text-[#111827] dark:text-white/90">Logística (Envia.com)</h2>
-          </div>
-          
-          <div class="px-6 pb-6 pt-1">
-            <!-- If guía exists -->
-            <div v-if="pedido.tracking_number" class="w-full">
-              <div class="bg-[#F8F9FA] dark:bg-gray-800/50 rounded-xl py-6 px-4 text-center border border-gray-100 dark:border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-700 dark:text-gray-300 mb-2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <p class="text-[13px] font-medium text-gray-700 dark:text-gray-300 mb-1">Guía Generada</p>
-                <p class="text-[17px] font-bold text-[#111827] dark:text-white">{{ pedido.tracking_number }}</p>
+        <div class="col-span-12 lg:col-span-8 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] overflow-hidden">
+          <!-- Header -->
+          <div class="px-6 pt-5 pb-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[#00B4AA]/10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00B4AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="1"/><circle cx="12" cy="19" r="2"/><circle cx="20" cy="19" r="2"/></svg>
               </div>
-              <a :href="pedido.guia_url" target="_blank" class="mt-4 w-full flex items-center justify-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-[14px] font-medium py-2.5 rounded-lg transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                Imprimir PDF
-              </a>
+              <h2 class="text-[15px] font-bold text-gray-800 dark:text-white/90">Crear Envío · Envia.com</h2>
             </div>
-            
-            <!-- Caso 2: No tiene guía -->
-            <div v-else class="flex flex-col gap-4">
-              <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-4 font-medium">Aún no se ha generado guía para este pedido.</p>
-              
-              <button @click="cotizarEnvio" :disabled="cotizandoEnvio || rates.length > 0" class="w-full flex items-center justify-center gap-2 bg-[#111827] hover:bg-[#1f2937] text-white text-[14px] font-medium py-2.5 rounded-lg transition-colors disabled:opacity-70">
-                <svg v-if="cotizandoEnvio" class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <div v-else class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
-                  </svg>
-                  <span>Cotizar Opciones de Envío</span>
-                </div>
-              </button>
+            <span v-if="pedido.tracking_number" class="inline-flex items-center gap-1.5 text-xs font-semibold text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-500/10 px-2.5 py-1 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Guía generada
+            </span>
+          </div>
 
-              <div v-if="rates.length > 0" class="mt-4 flex flex-col gap-3">
-                <p class="text-[12px] font-semibold text-gray-500 uppercase tracking-wider">Opciones Disponibles</p>
-                <div class="flex flex-col gap-2 max-h-60 overflow-y-auto custom-scrollbar">
-                  <label v-for="(rate, idx) in rates" :key="idx" class="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors" :class="selectedRate?.carrier === rate.carrier && selectedRate?.service === rate.service ? 'border-[#111827] bg-gray-50 dark:bg-gray-800' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'">
-                    <input type="radio" name="rate" :value="rate" v-model="selectedRate" class="mt-1 text-[#111827] focus:ring-[#111827]" />
-                    <div class="flex-1 min-w-0">
-                      <div class="flex justify-between items-center">
-                        <span class="font-semibold text-gray-900 dark:text-white capitalize text-[13px]">{{ rate.carrierDescription || rate.carrier }}</span>
-                        <span class="font-bold text-[#111827] dark:text-white text-[14px]">${{ rate.totalPrice.toLocaleString('es-MX') }}</span>
-                      </div>
-                      <p class="text-[12px] text-gray-500 truncate mt-0.5">{{ rate.serviceDescription || rate.service }}</p>
-                      <p class="text-[11px] text-gray-400 mt-1 font-medium">Llega en: {{ rate.deliveryEstimate }}</p>
+          <!-- Guía ya generada -->
+          <div v-if="pedido.tracking_number" class="p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/30">
+              <div class="flex-1">
+                <p class="text-xs font-medium text-success-600 dark:text-success-400 uppercase tracking-wider mb-1">Número de guía</p>
+                <p class="text-xl font-bold font-mono text-gray-900 dark:text-white">{{ pedido.tracking_number }}</p>
+              </div>
+              <div class="flex items-center">
+                <a :href="pedido.guia_url" target="_blank"
+                  class="flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-white px-4 py-2.5 text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Imprimir PDF
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sin guía: portal completo -->
+          <div v-else class="divide-y divide-gray-100 dark:divide-gray-800">
+
+            <!-- ── Sección 1: Origen / Destino / Caja ── -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 dark:divide-gray-800">
+
+              <!-- Origen -->            
+              <div class="p-5 space-y-1">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg">🇲🇽</span>
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Origen</p>
+                  </div>
+                </div>
+                <!-- Selector de bodega -->
+                <div class="space-y-2">
+                  <label v-for="b in BODEGAS" :key="b.id"
+                    class="flex items-start gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-all"
+                    :class="selectedBodega.id === b.id
+                      ? 'border-[#00B4AA] bg-[#00B4AA]/5 dark:bg-[#00B4AA]/10'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
+                    <div class="mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors"
+                      :class="selectedBodega.id === b.id ? 'border-[#00B4AA]' : 'border-gray-300 dark:border-gray-600'"
+                      @click="selectedBodega = b">
+                      <div v-if="selectedBodega.id === b.id" class="w-2 h-2 rounded-full bg-[#00B4AA]"></div>
+                    </div>
+                    <div @click="selectedBodega = b" class="flex-1 min-w-0">
+                      <p class="text-xs font-semibold text-gray-800 dark:text-white/90">{{ b.alias }}</p>
+                      <p class="text-[11px] text-gray-400 leading-relaxed mt-0.5">{{ b.street }} {{ b.number }}, {{ b.district }}<br>{{ b.city }}, {{ b.state }} {{ b.postalCode }}</p>
                     </div>
                   </label>
                 </div>
+              </div>
 
-                <button @click="generarGuia" :disabled="!selectedRate || generandoGuia" class="mt-2 w-full flex items-center justify-center gap-2 rounded-lg bg-[#111827] px-4 py-2.5 text-[14px] font-medium text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  <svg v-if="generandoGuia" class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  <span v-else>Generar Guía Oficial</span>
-                </button>
+              <!-- Destino -->
+              <div class="p-5 space-y-1">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="text-lg">🇲🇽</span>
+                  <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Destino</p>
+                </div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ pedido.cliente }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{{ pedido.domicilio }}</p>
+              </div>
+
+              <!-- Caja / Paquete (editable) -->
+              <div class="p-5">
+                <div class="flex items-center gap-2 mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                  <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Caja / Paquete</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label class="text-gray-400 mb-0.5 block">Peso (kg)</label>
+                    <input v-model.number="pkgPeso" type="number" step="0.1" min="0.1"
+                      class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-sm text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                  </div>
+                  <div>
+                    <label class="text-gray-400 mb-0.5 block">Largo (cm)</label>
+                    <input v-model.number="pkgDims.length" type="number" min="1"
+                      class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-sm text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                  </div>
+                  <div>
+                    <label class="text-gray-400 mb-0.5 block">Ancho (cm)</label>
+                    <input v-model.number="pkgDims.width" type="number" min="1"
+                      class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-sm text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                  </div>
+                  <div>
+                    <label class="text-gray-400 mb-0.5 block">Alto (cm)</label>
+                    <input v-model.number="pkgDims.height" type="number" min="1"
+                      class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-sm text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                  </div>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-2">{{ pkgDims.length }}×{{ pkgDims.width }}×{{ pkgDims.height }} cm · {{ pkgPeso }} kg</p>
               </div>
             </div>
+
+            <!-- ── Sección 2: Botón cotizar ── -->
+            <div class="px-6 py-4 bg-gray-50/60 dark:bg-white/[0.01]">
+              <button @click="cotizarEnvio" :disabled="cotizandoEnvio"
+                class="flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors"
+                :class="cotizandoEnvio ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-[#00B4AA] hover:bg-[#009990] text-white'">
+                <svg v-if="cotizandoEnvio" class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                {{ cotizandoEnvio ? 'Cotizando...' : (rates.length > 0 ? 'Recotizar' : 'Cotizar opciones de envío') }}
+              </button>
+            </div>
+
+            <!-- ── Sección 3: Resultados de tarifas ── -->
+            <div v-if="rates.length > 0" class="p-6 space-y-3">
+              <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{{ rates.length }} opciones disponibles</p>
+
+              <div class="space-y-2 max-h-[480px] overflow-y-auto custom-scrollbar pr-1">
+                <div v-for="(rate, idx) in rates" :key="idx"
+                  class="flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all"
+                  :class="selectedRate === rate
+                    ? 'border-[#00B4AA] bg-[#00B4AA]/5 dark:bg-[#00B4AA]/10 shadow-sm'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'"
+                  @click="selectedRate = rate">
+
+                  <!-- Radio visual -->
+                  <div class="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+                    :class="selectedRate === rate ? 'border-[#00B4AA]' : 'border-gray-300 dark:border-gray-600'">
+                    <div v-if="selectedRate === rate" class="w-2.5 h-2.5 rounded-full bg-[#00B4AA]"></div>
+                  </div>
+
+                  <!-- Carrier icon/badge -->
+                  <div class="flex-shrink-0 w-12 h-10 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center overflow-hidden shadow-xs">
+                    <img v-if="carrierLogo(rate)" :src="carrierLogo(rate)" :alt="rate.carrier"
+                      class="w-10 h-8 object-contain"
+                      @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='block'" />
+                    <span :style="carrierLogo(rate) ? 'display:none' : ''" class="text-[10px] font-bold text-gray-600 dark:text-gray-300 uppercase text-center px-1 leading-tight">{{ (rate.carrier || '').substring(0, 6) }}</span>
+                  </div>
+
+                  <!-- Info -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-sm font-semibold text-gray-900 dark:text-white capitalize">{{ rate.carrierDescription || rate.carrier }}</span>
+                      <!-- Badges -->
+                      <span v-if="rate.additionalCharges?.fuel" class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/15 text-orange-600 dark:text-orange-400">
+                        Combustible ${{ rate.additionalCharges.fuel }}
+                      </span>
+                      <span v-if="rate.additionalCharges?.extended" class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-purple-100 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400">
+                        Zona extendida ${{ rate.additionalCharges.extended }}
+                      </span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ rate.serviceDescription || rate.service }}</p>
+                    <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      {{ rate.deliveryEstimate || 'Estimado no disponible' }}
+                    </p>
+                  </div>
+
+                  <!-- Precio + Generar -->
+                  <div class="flex-shrink-0 flex flex-col items-end gap-2">
+                    <span class="text-base font-bold text-gray-900 dark:text-white">${{ Number(rate.totalPrice).toLocaleString('es-MX', { minimumFractionDigits: 2 }) }}</span>
+                    <span class="text-[10px] text-gray-400">Con IVA</span>
+                    <button @click.stop="selectedRate = rate; generarGuia()"
+                      :disabled="generandoGuia"
+                      class="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                      :class="generandoGuia && selectedRate === rate
+                        ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 cursor-not-allowed'
+                        : 'bg-[#00B4AA] hover:bg-[#009990] text-white'">
+                      <svg v-if="generandoGuia && selectedRate === rate" class="animate-spin w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                      <span v-else>Generar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -284,6 +395,7 @@
     </div>
   </AdminLayout>
 
+
   <!-- Toast de confirmación -->
   <Teleport to="body">
     <transition name="toast-slide">
@@ -311,6 +423,76 @@ const cotizandoEnvio = ref(false);
 const generandoGuia = ref(false);
 const rates = ref([]);
 const selectedRate = ref(null);
+
+// Bodegas de origen
+const BODEGAS = [
+  {
+    id: 1,
+    alias: 'CDMX — San Lucas',
+    nombre: 'Juan Pablo Castillo Cortes',
+    company: 'Amigo Merch',
+    email: 'amigomerchmx@gmail.com',
+    phone: '5529556508',
+    street: 'Callejón San Miguel',
+    number: '50',
+    district: 'San Lucas',
+    city: 'Ciudad de México',
+    state: 'CX',
+    country: 'MX',
+    postalCode: '04030',
+    reference: ''
+  },
+  {
+    id: 2,
+    alias: 'Guadalajara — Americana',
+    nombre: 'Paula Franco',
+    company: 'Amigo Merch',
+    email: 'amigomerchmx@gmail.com',
+    phone: '3310762528',
+    street: 'Calle Guadalupe Zuno',
+    number: '1840-2',
+    district: 'Americana',
+    city: 'Guadalajara',
+    state: 'JA',
+    country: 'MX',
+    postalCode: '44160',
+    reference: 'Dept 2'
+  }
+];
+
+const selectedBodega = ref(BODEGAS[0]);
+
+// Package dimensions (editable before quoting)
+const pkgPeso = ref(1);
+const pkgDims = ref({ length: 30, width: 20, height: 10 });
+
+// Carrier domain map for Google Favicon fallback
+const CARRIER_DOMAINS = {
+  fedex: 'fedex.com',
+  dhl: 'dhl.com',
+  estafeta: 'estafeta.com',
+  redpack: 'redpack.com.mx',
+  ups: 'ups.com',
+  ampm: 'ampm.mx',
+  ivoy: 'ivoy.mx',
+  scm: 'scmlogistica.mx',
+  paquetexpress: 'paquetexpress.com.mx',
+  '99minutos': '99minutos.com',
+  tresguerras: 'tresguerras.com.mx',
+  sendex: 'sendex.mx',
+};
+
+const carrierLogo = (rate) => {
+  // 1. Use logo URL directly from Envia API response
+  if (rate.carrierImage || rate.imageUrl || rate.logo || rate.image_url) {
+    return rate.carrierImage || rate.imageUrl || rate.logo || rate.image_url;
+  }
+  // 2. Fallback: Google Favicons (reliable, free)
+  const key = (rate.carrier || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const domain = CARRIER_DOMAINS[key];
+  if (domain) return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  return null;
+};
 
 // Estados que disparan correo al cliente (debe coincidir con EMAIL_TRIGGERS en el server)
 const EMAIL_STATES = new Set(['En proceso', 'Completado', 'Cancelado', 'Fallido']);
@@ -401,7 +583,12 @@ const cotizarEnvio = async () => {
   try {
     const res = await fetch(`/api/pedidos/${pedido.value.id}/cotizar-envio`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        peso: pkgPeso.value,
+        dims: pkgDims.value,
+        origen: selectedBodega.value
+      })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error al cotizar');
