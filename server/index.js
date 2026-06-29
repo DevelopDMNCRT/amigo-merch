@@ -824,6 +824,7 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
     const payload = await getEnviaPayload(rows[0]);
     const enviaApiUrl = process.env.ENVIA_API_URL || 'https://api-test.envia.com';
     const enviaApiKey = process.env.ENVIA_API_KEY;
+    console.log(`[Envia] Usando entorno: ${enviaApiUrl}`);
     const enviaQueriesUrl = enviaApiUrl.includes('api-test') ? 'https://queries-test.envia.com' : 'https://queries.envia.com';
 
     // Override package weight/dims if custom values sent from frontend
@@ -945,14 +946,82 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
     const guiaUrl = data.data[0].label;
 
     const result = await pool.query(
-      'UPDATE pedidos SET tracking_number = $1, guia_url = $2 WHERE id = $3 RETURNING *',
-      [trackingNumber, guiaUrl, id]
+      'UPDATE pedidos SET tracking_number = $1, guia_url = $2, carrier = $3 WHERE id = $4 RETURNING *',
+      [trackingNumber, guiaUrl, carrier, id]
     );
 
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to generate label' });
+  }
+});
+
+app.post('/api/pedidos/:id/cancelar-guia', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);
+    if (!rows.length) return res.status(404).json({ error: 'Pedido no encontrado' });
+    
+    const pedido = rows[0];
+    if (!pedido.tracking_number) return res.status(400).json({ error: 'Este pedido no tiene guía activa para cancelar' });
+
+    // Determinar carrier (si es guía vieja, viene en el body manual)
+    const activeCarrier = pedido.carrier || req.body.carrier;
+    if (!activeCarrier) {
+      return res.status(400).json({ error: 'Falta la paquetería (carrier) para poder cancelar esta guía antigua.' });
+    }
+
+    // Cancelar en Envia.com
+    const response = await fetch(`${process.env.ENVIA_API_URL}/ship/cancel/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.ENVIA_API_KEY}` },
+      body: JSON.stringify({ carrier: activeCarrier, tracking_number: pedido.tracking_number })
+    });
+    const cancelData = await response.json();
+    
+    // Si la respuesta no indica éxito, retornar error (Envia puede rechazar si ya va en camino)
+    if (!response.ok) {
+      return res.status(400).json({ error: 'Error al cancelar en Envia.com', details: cancelData });
+    }
+
+    // Agregar al historial de canceladas
+    const canceledGuide = {
+      tracking_number: pedido.tracking_number,
+      guia_url: pedido.guia_url,
+      carrier: activeCarrier,
+      fecha_cancelacion: new Date().toISOString()
+    };
+    
+    const guiasCanceladas = pedido.guias_canceladas || [];
+    guiasCanceladas.push(canceledGuide);
+
+    // Actualizar pedido en BD
+    const result = await pool.query(
+      'UPDATE pedidos SET tracking_number = NULL, guia_url = NULL, carrier = NULL, guias_canceladas = $1 WHERE id = $2 RETURNING *',
+      [JSON.stringify(guiasCanceladas), id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to cancel label' });
+  }
+});
+
+// GET Envia.com Wallet Balance
+app.get('/api/envia/saldo', async (req, res) => {
+  try {
+    const response = await fetch('https://queries.envia.com/user-information?encoded=false', {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${process.env.ENVIA_API_KEY}` }
+    });
+    if (!response.ok) throw new Error('Error de conexión con Envia');
+    const data = await response.json();
+    res.json({ balance: data.company_balance || 0, currency: data.company_currency || 'MXN' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch Envia balance' });
   }
 });
 
@@ -1898,28 +1967,40 @@ app.get('/api/reportes/stock-pdf', async (req, res) => {
 
 app.get('/api/reportes/inventario', async (req, res) => {
   try {
-    const productsRes = await pool.query('SELECT id, nombre, es_variable, stock FROM products WHERE deleted_at IS NULL ORDER BY nombre');
+    const productsRes = await pool.query('SELECT id, nombre, es_variable, stock, tienda FROM products WHERE deleted_at IS NULL ORDER BY nombre');
     const varsRes = await pool.query('SELECT product_id, valor, color, stock FROM product_variations');
     
     let inventario = [];
     let totalPiezas = 0;
     
     for (const prod of productsRes.rows) {
+      const p = {
+        id: prod.id,
+        producto: prod.nombre,
+        tienda: prod.tienda || 'General',
+        total_unidades: 0,
+        variaciones: []
+      };
+
       if (prod.es_variable) {
         const prodVars = varsRes.rows.filter(v => v.product_id === prod.id);
         if (prodVars.length > 0) {
           prodVars.forEach(v => {
             const varName = v.color ? `${v.valor} / ${v.color}` : v.valor;
-            inventario.push({ producto: prod.nombre, variacion: varName, unidades: v.stock || 0 });
-            totalPiezas += (v.stock || 0);
+            const u = v.stock || 0;
+            p.variaciones.push({ nombre: varName, unidades: u });
+            p.total_unidades += u;
+            totalPiezas += u;
           });
-        } else {
-          inventario.push({ producto: prod.nombre, variacion: 'N/A', unidades: 0 });
         }
       } else {
-        inventario.push({ producto: prod.nombre, variacion: 'N/A', unidades: prod.stock || 0 });
-        totalPiezas += (prod.stock || 0);
+        const u = prod.stock || 0;
+        p.variaciones.push({ nombre: 'N/A', unidades: u });
+        p.total_unidades += u;
+        totalPiezas += u;
       }
+      
+      inventario.push(p);
     }
     
     res.json({ totalPiezas, inventario });

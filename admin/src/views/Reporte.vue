@@ -109,53 +109,6 @@
           </div>
         </div>
 
-        <!-- Inventario Disponible Table -->
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] overflow-hidden mt-6">
-          <div class="px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 class="text-base font-semibold text-gray-800 dark:text-white/90">Inventario Disponible</h2>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-              <input 
-                type="text" 
-                v-model="buscarInventario"
-                placeholder="Buscar producto..." 
-                class="rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent py-2 px-3 text-sm font-medium text-gray-700 dark:text-gray-300 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/10 min-w-[200px]" 
-              />
-              <a 
-                href="/api/reportes/stock-pdf" 
-                target="_blank"
-                class="flex items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M10 12v6"/><path d="M10 12l2 2"/><path d="M10 12l-2 2"/></svg>
-                PDF
-              </a>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
-              <thead class="bg-gray-50/50 dark:bg-gray-800/50 text-xs uppercase text-gray-700 dark:text-gray-300">
-                <tr>
-                  <th class="px-6 py-4 font-semibold">PRODUCTO</th>
-                  <th class="px-6 py-4 font-semibold">VARIACIÓN (TALLA/COLOR)</th>
-                  <th class="px-6 py-4 font-semibold text-right">UNIDADES</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                <tr v-for="(item, index) in inventarioFiltrado" :key="index" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                  <td class="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">{{ item.producto }}</td>
-                  <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ item.variacion }}</td>
-                  <td class="px-6 py-4 text-right font-bold text-blue-600 dark:text-blue-400">{{ item.unidades }}</td>
-                </tr>
-                <tr v-if="inventarioFiltrado.length === 0">
-                  <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                    No se encontraron productos en el inventario.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
       </template>
 
     </div>
@@ -175,10 +128,6 @@ const selectedMes = ref('todos');
 const rawRows = ref([]);
 const porMesData = ref({});
 
-const loadingInventario = ref(true);
-const totalPiezas = ref(0);
-const inventario = ref([]);
-const buscarInventario = ref('');
 
 const mesesNombres = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -207,19 +156,6 @@ const fetchData = async () => {
   finally { loading.value = false; }
 };
 
-// --- Fetch inventario ---
-const fetchInventario = async () => {
-  loadingInventario.value = true;
-  try {
-    const res = await fetch('/api/reportes/inventario');
-    if (res.ok) {
-      const data = await res.json();
-      totalPiezas.value = data.totalPiezas;
-      inventario.value = data.inventario;
-    }
-  } catch (e) { console.error('Error fetching inventario:', e); }
-  finally { loadingInventario.value = false; }
-};
 
 // --- Filtrado de tabla por mes seleccionado ---
 const tableDataFiltrada = computed(() => {
@@ -231,15 +167,6 @@ const grandTotal = computed(() =>
   tableDataFiltrada.value.reduce((acc, curr) => acc + curr.total, 0)
 );
 
-// --- Filtrado Inventario ---
-const inventarioFiltrado = computed(() => {
-  if (!buscarInventario.value) return inventario.value;
-  const lowerSearch = buscarInventario.value.toLowerCase();
-  return inventario.value.filter(i => 
-    i.producto.toLowerCase().includes(lowerSearch) || 
-    i.variacion.toLowerCase().includes(lowerSearch)
-  );
-});
 
 // --- Datos para gráficas (solo meses con ventas) ---
 const mesesConDatos = computed(() =>
@@ -305,6 +232,5 @@ const barOptions = computed(() => ({
 onMounted(async () => {
   await fetchTiendas();
   await fetchData();
-  await fetchInventario();
 });
 </script>

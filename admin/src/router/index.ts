@@ -79,6 +79,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/inventario',
+      name: 'Inventario',
+      component: () => import('../views/Inventario.vue'),
+      meta: {
+        title: 'Inventario',
+      },
+    },
+    {
       path: '/envio',
       name: 'Envio',
       component: () => import('../views/Envio.vue'),

@@ -12,11 +12,11 @@ async function findJSONDescriptions() {
     const products = res.rows;
     let found = [];
     for (const p of products) {
-      if (JSON.stringify(p).includes('string')) {
-        found.push(p);
+      if (p.descripcion && (p.descripcion.includes('{') || p.descripcion.includes('[') || p.descripcion.includes('}'))) {
+        found.push({ id: p.id, nombre: p.nombre, desc: p.descripcion });
       }
     }
-    console.log(`Found ${found.length} products with 'string' in their JSON representation.`);
+    console.log(`Found ${found.length} products with JSON-like syntax in description.`);
     if (found.length > 0) {
       console.log(JSON.stringify(found[0], null, 2));
     }

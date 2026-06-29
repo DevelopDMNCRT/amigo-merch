@@ -162,13 +162,22 @@
           </div>
 
           <!-- Guía ya generada -->
-          <div v-if="pedido.tracking_number" class="p-6 space-y-4">
+          <div v-if="pedido.tracking_number" class="p-6 space-y-4 border-b border-gray-100 dark:border-gray-800">
             <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/30">
               <div class="flex-1">
                 <p class="text-xs font-medium text-success-600 dark:text-success-400 uppercase tracking-wider mb-1">Número de guía</p>
                 <p class="text-xl font-bold font-mono text-gray-900 dark:text-white">{{ pedido.tracking_number }}</p>
               </div>
-              <div class="flex items-center">
+              <div class="flex items-center gap-3">
+                <button 
+                  @click="cancelarGuia"
+                  :disabled="cancelandoGuia"
+                  class="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-semibold text-error-600 dark:text-error-400 border border-error-200 dark:border-error-500/30 hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors disabled:opacity-50"
+                >
+                  <svg v-if="cancelandoGuia" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  {{ cancelandoGuia ? 'Cancelando...' : 'Cancelar Guía' }}
+                </button>
                 <a :href="pedido.guia_url" target="_blank"
                   class="flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-white px-4 py-2.5 text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -383,8 +392,28 @@
               </span>
             </div>
           </div>
-        </div>
 
+          <!-- Historial de guías canceladas -->
+          <div v-if="pedido.guias_canceladas && pedido.guias_canceladas.length > 0" class="border-t border-gray-100 dark:border-gray-800 p-6 bg-gray-50/50 dark:bg-gray-800/30">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+              Historial de Cancelaciones
+            </h3>
+            <div class="space-y-3">
+              <div v-for="(guia, index) in pedido.guias_canceladas" :key="index" class="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3">
+                  <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs font-medium text-gray-600 dark:text-gray-300 uppercase">{{ guia.carrier || 'N/A' }}</span>
+                  <div>
+                    <p class="text-sm font-bold text-gray-900 dark:text-white font-mono">{{ guia.tracking_number }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Cancelada el: {{ new Date(guia.fecha_cancelacion).toLocaleString() }}</p>
+                  </div>
+                </div>
+                <a :href="guia.guia_url" target="_blank" class="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 hover:underline">Ver etiqueta original</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -398,6 +427,27 @@
 
   <!-- Toast de confirmación -->
   <Teleport to="body">
+    <!-- Prompt Carrier Modal para guías viejas -->
+    <div v-if="showCarrierPrompt" class="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" @click="showCarrierPrompt = false"></div>
+      <div class="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Falta Paquetería</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          Esta guía es antigua y no tiene registrada la paquetería en el sistema. Escribe el nombre de la paquetería (ej. fedex, estafeta, redpack) para poder cancelarla en Envia.
+        </p>
+        <input 
+          v-model="manualCarrier" 
+          type="text" 
+          placeholder="fedex" 
+          class="w-full mb-5 rounded-lg border border-gray-200 p-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+        />
+        <div class="flex gap-3 justify-end">
+          <button @click="showCarrierPrompt = false" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">Atrás</button>
+          <button @click="confirmCancelarGuia" class="px-4 py-2 rounded-lg text-sm font-medium bg-error-600 text-white hover:bg-error-700">Intentar Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <transition name="toast-slide">
       <div v-if="toast.show" class="fixed bottom-6 right-6 z-[9999] flex items-center gap-3 rounded-xl px-5 py-3.5 shadow-xl text-sm font-medium"
         :class="toast.type === 'success' ? 'bg-success-500 text-white' : 'bg-error-500 text-white'"
@@ -421,6 +471,9 @@ const loading = ref(true);
 // Envia.com states
 const cotizandoEnvio = ref(false);
 const generandoGuia = ref(false);
+const cancelandoGuia = ref(false);
+const showCarrierPrompt = ref(false);
+const manualCarrier = ref('');
 const rates = ref([]);
 const selectedRate = ref(null);
 
@@ -637,6 +690,8 @@ const generarGuia = async () => {
     
     pedido.value.tracking_number = data.tracking_number;
     pedido.value.guia_url = data.guia_url;
+    // carrier is also saved now, but we don't strictly need to update the ref here unless we show it.
+    if(data.carrier) pedido.value.carrier = data.carrier;
     
     showToast('success', '¡Guía generada exitosamente!');
   } catch (err) {
@@ -644,6 +699,63 @@ const generarGuia = async () => {
     showToast('error', err.message);
   } finally {
     generandoGuia.value = false;
+  }
+};
+
+const cancelarGuia = async () => {
+  if (!pedido.value.carrier) {
+    // Es una guía antigua sin carrier guardado, pedimos al usuario
+    showCarrierPrompt.value = true;
+    return;
+  }
+  
+  if (!confirm('¿Estás seguro de que deseas cancelar esta guía? Esta acción anulará la etiqueta en Envia.com y reembolsará el saldo.')) return;
+  
+  await ejecutarCancelacion(pedido.value.carrier);
+};
+
+const confirmCancelarGuia = async () => {
+  if (!manualCarrier.value.trim()) {
+    showToast('error', 'Debes escribir el nombre de la paquetería.');
+    return;
+  }
+  showCarrierPrompt.value = false;
+  await ejecutarCancelacion(manualCarrier.value.trim().toLowerCase());
+};
+
+const ejecutarCancelacion = async (carrierStr) => {
+  cancelandoGuia.value = true;
+  try {
+    const res = await fetch(`/api/pedidos/${pedido.value.id}/cancelar-guia`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ carrier: carrierStr })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) {
+      let errorMsg = data.error || 'Error al cancelar la guía';
+      if (data.details && data.details.error && data.details.error.message) {
+        errorMsg = data.details.error.message;
+      }
+      throw new Error(errorMsg);
+    }
+    
+    // Update local state
+    pedido.value.tracking_number = null;
+    pedido.value.guia_url = null;
+    pedido.value.carrier = null;
+    pedido.value.guias_canceladas = data.guias_canceladas || [];
+    rates.value = []; // Limpiar tarifas para volver a cotizar
+    selectedRate.value = null;
+    manualCarrier.value = '';
+    
+    showToast('success', 'Guía cancelada exitosamente.');
+  } catch (err) {
+    console.error(err);
+    showToast('error', err.message);
+  } finally {
+    cancelandoGuia.value = false;
   }
 };
 

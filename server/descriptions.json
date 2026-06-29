@@ -1,0 +1,1517 @@
+[
+  {
+    "id": 2,
+    "nombre": "Sudadera Neon",
+    "descripcion": "Descripción para Sudadera Neon"
+  },
+  {
+    "id": 187,
+    "nombre": "Cd Piratas",
+    "descripcion": null
+  },
+  {
+    "id": 5,
+    "nombre": "Playera Edición Limitada",
+    "descripcion": "Descripción para Playera Edición Limitada"
+  },
+  {
+    "id": 6,
+    "nombre": "Gorra Minimalista",
+    "descripcion": "Descripción para Gorra Minimalista"
+  },
+  {
+    "id": 7,
+    "nombre": "Calcetines Edición Limitada",
+    "descripcion": "Descripción para Calcetines Edición Limitada"
+  },
+  {
+    "id": 8,
+    "nombre": "Pin Minimalista",
+    "descripcion": "Descripción para Pin Minimalista"
+  },
+  {
+    "id": 9,
+    "nombre": "Llavero Clásica",
+    "descripcion": "Descripción para Llavero Clásica"
+  },
+  {
+    "id": 10,
+    "nombre": "Gorra Básica",
+    "descripcion": "Descripción para Gorra Básica"
+  },
+  {
+    "id": 11,
+    "nombre": "Gorra Premium",
+    "descripcion": "Descripción para Gorra Premium"
+  },
+  {
+    "id": 12,
+    "nombre": "Sudadera Premium",
+    "descripcion": "Descripción para Sudadera Premium"
+  },
+  {
+    "id": 13,
+    "nombre": "Gorra Retro",
+    "descripcion": "Descripción para Gorra Retro"
+  },
+  {
+    "id": 14,
+    "nombre": "Sticker Neon",
+    "descripcion": "Descripción para Sticker Neon"
+  },
+  {
+    "id": 15,
+    "nombre": "Sticker Retro",
+    "descripcion": "Descripción para Sticker Retro"
+  },
+  {
+    "id": 16,
+    "nombre": "Póster Retro",
+    "descripcion": "Descripción para Póster Retro"
+  },
+  {
+    "id": 17,
+    "nombre": "Póster Básica",
+    "descripcion": "Descripción para Póster Básica"
+  },
+  {
+    "id": 18,
+    "nombre": "Llavero Vintage",
+    "descripcion": "Descripción para Llavero Vintage"
+  },
+  {
+    "id": 19,
+    "nombre": "Pin Básica",
+    "descripcion": "Descripción para Pin Básica"
+  },
+  {
+    "id": 20,
+    "nombre": "Póster Clásica",
+    "descripcion": "Descripción para Póster Clásica"
+  },
+  {
+    "id": 21,
+    "nombre": "Gorra Minimalista",
+    "descripcion": "Descripción para Gorra Minimalista"
+  },
+  {
+    "id": 22,
+    "nombre": "Playera Básica",
+    "descripcion": "Descripción para Playera Básica"
+  },
+  {
+    "id": 23,
+    "nombre": "Póster Clásica",
+    "descripcion": "Descripción para Póster Clásica"
+  },
+  {
+    "id": 24,
+    "nombre": "Mochila Minimalista",
+    "descripcion": "Descripción para Mochila Minimalista"
+  },
+  {
+    "id": 25,
+    "nombre": "Playera Tour 2024",
+    "descripcion": "Descripción para Playera Tour 2024"
+  },
+  {
+    "id": 26,
+    "nombre": "Pin Básica",
+    "descripcion": "Descripción para Pin Básica"
+  },
+  {
+    "id": 27,
+    "nombre": "Sudadera Tour 2024",
+    "descripcion": "Descripción para Sudadera Tour 2024"
+  },
+  {
+    "id": 28,
+    "nombre": "Playera Neon",
+    "descripcion": "Descripción para Playera Neon"
+  },
+  {
+    "id": 29,
+    "nombre": "Llavero Retro",
+    "descripcion": "Descripción para Llavero Retro"
+  },
+  {
+    "id": 30,
+    "nombre": "Póster Clásica",
+    "descripcion": "Descripción para Póster Clásica"
+  },
+  {
+    "id": 1,
+    "nombre": "Póster Clásica",
+    "descripcion": "Descripción para Póster Clásica"
+  },
+  {
+    "id": 32,
+    "nombre": "Prueba 100",
+    "descripcion": null
+  },
+  {
+    "id": 31,
+    "nombre": "prueba 1",
+    "descripcion": null
+  },
+  {
+    "id": 3,
+    "nombre": "Póster Oficial",
+    "descripcion": "Descripción para Póster Oficial"
+  },
+  {
+    "id": 4,
+    "nombre": "Pin Clásica",
+    "descripcion": "Descripción para Pin Clásica"
+  },
+  {
+    "id": 34,
+    "nombre": "Palmar Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 33,
+    "nombre": "Somos Instantes Long Sleeve",
+    "descripcion": null
+  },
+  {
+    "id": 154,
+    "nombre": "Bucket Hat",
+    "descripcion": null
+  },
+  {
+    "id": 35,
+    "nombre": "Palmar Rosa",
+    "descripcion": null
+  },
+  {
+    "id": 155,
+    "nombre": "Gorra Renacimiento",
+    "descripcion": null
+  },
+  {
+    "id": 156,
+    "nombre": "Gorra Obra de Arte",
+    "descripcion": null
+  },
+  {
+    "id": 157,
+    "nombre": "Long Sleeve",
+    "descripcion": null
+  },
+  {
+    "id": 36,
+    "nombre": "Shorts",
+    "descripcion": null
+  },
+  {
+    "id": 37,
+    "nombre": "Vinil Buen Pez",
+    "descripcion": null
+  },
+  {
+    "id": 38,
+    "nombre": "Mochila Negra",
+    "descripcion": null
+  },
+  {
+    "id": 188,
+    "nombre": "Hoodie Kanji",
+    "descripcion": null
+  },
+  {
+    "id": 158,
+    "nombre": "Renacimiento Tie Café",
+    "descripcion": null
+  },
+  {
+    "id": 159,
+    "nombre": "Renacimiento Tie Azul",
+    "descripcion": null
+  },
+  {
+    "id": 160,
+    "nombre": "Renacimiento Tour Verde",
+    "descripcion": null
+  },
+  {
+    "id": 164,
+    "nombre": "Ansiedad Cover Hoodie",
+    "descripcion": null
+  },
+  {
+    "id": 163,
+    "nombre": "Ansiedad Letras Hoodie",
+    "descripcion": null
+  },
+  {
+    "id": 166,
+    "nombre": "Ansiedad Cover Blanca",
+    "descripcion": null
+  },
+  {
+    "id": 162,
+    "nombre": "Ansiedad Letras",
+    "descripcion": null
+  },
+  {
+    "id": 165,
+    "nombre": "Ansiedad Cover Negra",
+    "descripcion": null
+  },
+  {
+    "id": 169,
+    "nombre": "Alguien que me quiere mucho",
+    "descripcion": null
+  },
+  {
+    "id": 170,
+    "nombre": "Volcán Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 171,
+    "nombre": "Tie Dye Volcán Morada",
+    "descripcion": null
+  },
+  {
+    "id": 172,
+    "nombre": "Bienvenidos a la Isla",
+    "descripcion": null
+  },
+  {
+    "id": 173,
+    "nombre": "Cd Canciones para el Volcán",
+    "descripcion": "1) Nunca Más\r\n\\n2) Volver\r\n\\n3) Nadie Nos Ve\r\n\\n4) Se Veía Venir\r\n\\n5) Nadar\r\n\\n6) Sobre El Mar\r\n\\n7) Oye Amor\r\n\\n8) Alguien Cómo Tú\r\n\\n9) El Suéter\r\n\\n10) Repetir\r\n\\n11) Un Minuto De Tu Voz\r\n\\n12) No Te Conocía\r\n\\n13) Bolero Estelar"
+  },
+  {
+    "id": 175,
+    "nombre": "Cd Miocarditis",
+    "descripcion": "1. Pestañas\r\n\\n2. Matorral Azul\r\n\\n3. Peligrosa\r\n\\n4. Atraparte\r\n\\n5. El Rezo\r\n\\n6. ¿A Dónde Vas?\r\n\\n7. Soles Al Mar\r\n\\n8. Déjame Pasar\r\n\\n9. Las Últimas Horas"
+  },
+  {
+    "id": 176,
+    "nombre": "Taza",
+    "descripcion": null
+  },
+  {
+    "id": 177,
+    "nombre": "Playera Lupita",
+    "descripcion": null
+  },
+  {
+    "id": 178,
+    "nombre": "Playera Damián",
+    "descripcion": null
+  },
+  {
+    "id": 182,
+    "nombre": "Piratas",
+    "descripcion": null
+  },
+  {
+    "id": 180,
+    "nombre": "Palmeras Crewneck",
+    "descripcion": null
+  },
+  {
+    "id": 179,
+    "nombre": "Palmeras",
+    "descripcion": null
+  },
+  {
+    "id": 183,
+    "nombre": "Rumbaseñal",
+    "descripcion": null
+  },
+  {
+    "id": 184,
+    "nombre": "Sudadera Torpe",
+    "descripcion": null
+  },
+  {
+    "id": 185,
+    "nombre": "Taza Ginebra",
+    "descripcion": null
+  },
+  {
+    "id": 189,
+    "nombre": "Hoodie Summer Nights",
+    "descripcion": null
+  },
+  {
+    "id": 190,
+    "nombre": "Playera Gato",
+    "descripcion": null
+  },
+  {
+    "id": 191,
+    "nombre": "Playera Tour",
+    "descripcion": null
+  },
+  {
+    "id": 197,
+    "nombre": "Amémonos Logo Blanca",
+    "descripcion": "Una playera confirma tu energía y te programa para gozar de la vida.\r\\n\r\\n- Unisex\r\\n- 100% algodón\r\\n- Tela color blanco\r\\n- Serigrafía frente y espalda color negro\r\\n- Cuello redondo\r\\n- Etiqueta “Buen día” en microbordado"
+  },
+  {
+    "id": 198,
+    "nombre": "Amémonos Logo Negra",
+    "descripcion": "Una playera confirma tu energía y te programa para gozar de la vida.\r\\n\r\\n- Unisex\r\\n- 100% algodón\r\\n- Tela color negro\r\\n- Serigrafía frente y espalda color blanco\r\\n- Cuello redondo\r\\n- Etiqueta “Buen día” en microbordado"
+  },
+  {
+    "id": 199,
+    "nombre": "Amémonos Beige",
+    "descripcion": "Una playera confirma tu energía y te programa para gozar de la vida.\r\\n\r\\n- Unisex\r\\n- 100% algodón\r\\n- Tela color beige claro\r\\n- Serigrafía frente color rojo, azul y púrpura\r\\n- Cuello redondo\r\\n- Etiqueta “Buen día” en microbordado"
+  },
+  {
+    "id": 200,
+    "nombre": "Calcomanía Amémonos Negra",
+    "descripcion": "'- Impresión UV\r\\n- Acabado en barniz resistente al agua\r\\n- Color blanco y color negro"
+  },
+  {
+    "id": 201,
+    "nombre": "Calcomanía Amémonos Blanca",
+    "descripcion": "'- Impresión UV\r\\n- Acabado en barniz resistente al agua\r\\n- Color blanco y color negro"
+  },
+  {
+    "id": 202,
+    "nombre": "Producto Prueba",
+    "descripcion": null
+  },
+  {
+    "id": 203,
+    "nombre": "Amémonos Bomber Blanca",
+    "descripcion": "Corte Oversize"
+  },
+  {
+    "id": 204,
+    "nombre": "Amémonos Bomber Negra",
+    "descripcion": "Corte Oversiza"
+  },
+  {
+    "id": 207,
+    "nombre": "Cd Medianoche",
+    "descripcion": "<strong>Este producto es una preventa.</strong>\r\\n\r\\n<strong>Los envíos se realizarán a partir del 20 de Septiembre de 2023.</strong>\r\\n\r\\n1. El Frío\r\\n2. Dando y Dando\r\\n3. Hasta Que Se Acabe la Fiesta\r\\n4. Esperando\r\\n5. Otra Dimensión\r\\n6. Medianoche (Interludio)\r\\n7. Niña de Mis Ojos\r\\n8. Calendario\r\\n9. Un Ratito\r\\n10. El Faro\r\\n11. El Final Que Nunca Fue"
+  },
+  {
+    "id": 208,
+    "nombre": "Bundle Querernos",
+    "descripcion": "Bundle : Incluye 2 playeras de la misma talla color beige y menta.\r\\n\r\\n– Unisex\r\\n– 100% algodón\r\\n– Serigrafía al frente\r\\n– Cuello redondo\r\\n\r\\nNota: Agregar solo 1, se enviará el paquete completo."
+  },
+  {
+    "id": 195,
+    "nombre": "Playera",
+    "descripcion": null
+  },
+  {
+    "id": 205,
+    "nombre": "Sudadera Volcán Roja",
+    "descripcion": "Sudadera 50/50 (alg peinado/polyester)\r\n\\nImpresión en serigrafía\r\n\\n\r\n\\nTacto suave\r\n\\n\r\n\\n&nbsp;"
+  },
+  {
+    "id": 206,
+    "nombre": "Playera Medianoche",
+    "descripcion": null
+  },
+  {
+    "id": 192,
+    "nombre": "Playera MALA",
+    "descripcion": null
+  },
+  {
+    "id": 193,
+    "nombre": "Cd Violencia",
+    "descripcion": null
+  },
+  {
+    "id": 209,
+    "nombre": "Sudadera Amémonos",
+    "descripcion": "Suéter de alto gramaje 100% algodón.\r\\n\r\\nTela muy suave y cálida, lo mejor para este invierno.\r\\n\r\\n- Unisex\r\\n- Color naranja con serigrafía frente y espalda color blanco"
+  },
+  {
+    "id": 210,
+    "nombre": "Buckethat Verde",
+    "descripcion": null
+  },
+  {
+    "id": 211,
+    "nombre": "Vinil El Renacimiento",
+    "descripcion": null
+  },
+  {
+    "id": 212,
+    "nombre": "Sudadera Crewneck 'Los Rumberos'",
+    "descripcion": null
+  },
+  {
+    "id": 213,
+    "nombre": "Playera ''Llover''",
+    "descripcion": null
+  },
+  {
+    "id": 214,
+    "nombre": "Sudadera 'Hola Buenas Noches'",
+    "descripcion": null
+  },
+  {
+    "id": 215,
+    "nombre": "Sudadera 'Buenas Noches'",
+    "descripcion": null
+  },
+  {
+    "id": 39,
+    "nombre": "Poster Auditorio Nacional",
+    "descripcion": "Póster conmemorativo del Sold Out de Caloncho en el Auditorio Nacional\r\\nLimitado a 100 piezas\r\\nFirmado por Caloncho\r\\n\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 40,
+    "nombre": "Sudadera Tofu",
+    "descripcion": "Sudadera de algodón color blanco con aplicación en serigrafía"
+  },
+  {
+    "id": 218,
+    "nombre": "Bundle CD + MalasAmistades",
+    "descripcion": null
+  },
+  {
+    "id": 219,
+    "nombre": "Bundle CD + Logo",
+    "descripcion": null
+  },
+  {
+    "id": 220,
+    "nombre": "Bundle Vinil + Gorra Blanca",
+    "descripcion": null
+  },
+  {
+    "id": 221,
+    "nombre": "Bundle Vinil  + Gorra Negra",
+    "descripcion": null
+  },
+  {
+    "id": 222,
+    "nombre": "Bundle Vinil (Firmado) + Fire Tee (SOLD OUT)",
+    "descripcion": "Vinilo DAMALEONA Firmado en stock limitado\r\\nPlayera DAMALEONA Tour (Oversize Fit)"
+  },
+  {
+    "id": 223,
+    "nombre": "DAMALEONA K0STK0 TSHIRT (WHITE/BLANCA)",
+    "descripcion": "Impresa en Serigrafía sobre playera <strong>Shaka Wear</strong> Reverse Oversize Fit Unitalla (XL) / Screen printed on a premium Shaka Wear Reverse Oversized Fit — heavyweight, structured, and built to last."
+  },
+  {
+    "id": 224,
+    "nombre": "Vinilo DAMALEONA SOLD OUT",
+    "descripcion": "Vinil de 155 gr\r\\nOrange/yellow swirl\r\\n\r\\nCopias firmadas en stock limitado\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 225,
+    "nombre": "CD Tornaluna",
+    "descripcion": null
+  },
+  {
+    "id": 226,
+    "nombre": "Fire Tee SOLD OUT",
+    "descripcion": "Playera Oversize Unitalla (L)\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 227,
+    "nombre": "Malas Amistades Long Sleeve SOLD OUT",
+    "descripcion": "Playera de manga larga\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 228,
+    "nombre": "Logo Long Sleeve SOLD OUT",
+    "descripcion": "Playera manga larga\r\\n100% algodón\r\\nImpresión en serigrafía tinta blanca"
+  },
+  {
+    "id": 229,
+    "nombre": "Gorra DAMALEONA (Negra)",
+    "descripcion": null
+  },
+  {
+    "id": 230,
+    "nombre": "Gorra DAMALEONA (Blanca) SOLD OUT",
+    "descripcion": null
+  },
+  {
+    "id": 41,
+    "nombre": "Tofu",
+    "descripcion": "Fit Oversize\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 42,
+    "nombre": "Ánimo",
+    "descripcion": null
+  },
+  {
+    "id": 233,
+    "nombre": "DAMALEONA Cigarette Tee",
+    "descripcion": "Preventa: los artículos se enviarán a partir del 13 de Mayo\r\\n\r\\nImpresa en serigrafía sobre playera Shaka Wear Reverse Oversize Unitalla (XL)"
+  },
+  {
+    "id": 234,
+    "nombre": "DAMALEONA Blue Fire Tee",
+    "descripcion": "Preventa: los artículos se enviarán a partir del 13 de Mayo\r\\n\r\\nImpresa en serigrafía sobre playera Shaka Wear Reverse Oversize Unitalla (XL)\r\\n\r\\nDARK GREY / GRIS OSCURO"
+  },
+  {
+    "id": 235,
+    "nombre": "Playera Bosque",
+    "descripcion": "Playera 100% algodón\r\\nFit unisex\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 236,
+    "nombre": "Playera Pausa",
+    "descripcion": "Playera 100% algodón\r\\nFit unisex\r\\nImpresión en serigrafía\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 237,
+    "nombre": "Playera Mar",
+    "descripcion": "Playera 100% algodón\r\\nFit unisex\r\\nImpresión en serigrafía\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 238,
+    "nombre": "Playera Nacimos Rotos",
+    "descripcion": "Playera 100% algodón\r\\nFit unisex\r\\nImpresión en serigrafía\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 241,
+    "nombre": "Librodisco - 'La historia completa'",
+    "descripcion": "Nota: Si adquieres este producto junto a otro en preventa, serán enviados juntos.\r\\n\r\\nLibrodisco 'La historia está completa'\r\\nIncluye CD + escritos, fragmentos e historias por Andrés Obregón\r\\n\r\\nTracklist:\r\\n1. Mirarte Más\r\\n2. Sin Maquillar\r\\n3. ¿A dónde vas?\r\\n4. Sabes\r\\n5. Ni Tequila\r\\n6. Tal Vez Me Leas\r\\n7. Pausa\r\\n8. Sólo Sé\r\\n9. La Historia Tan Bonita\r\\n10. Días Buenos Días Malos\r\\n11. Paulina\r\\n12. Adiós, Buen Viaje\r\\n13. Otra Puerta\r\\n14. Alguien Más\r\\n15. La Última Canción\r\\n16. Algo Bonito"
+  },
+  {
+    "id": 43,
+    "nombre": "Poster Pachuca",
+    "descripcion": "Poster limitado impreso en serigrafía\r\\n30 x 35 cm\r\\n\r\\nFirmado por Caloncho"
+  },
+  {
+    "id": 44,
+    "nombre": "Bundle Posters",
+    "descripcion": "Bundle de posters impresos en serigrafía\r\\nFirmados por Caloncho"
+  },
+  {
+    "id": 244,
+    "nombre": "Malas Amistades Sticker",
+    "descripcion": "Malas Amistades Holographic Sticker\r\\n\r\\nTamaño: 7.9cm x 7.9cm"
+  },
+  {
+    "id": 245,
+    "nombre": "Me Va A Costar (Negra)",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 247,
+    "nombre": "Me Va A Costar (Gris)",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 239,
+    "nombre": "Totebag Lisboa",
+    "descripcion": "Bolsa de manta con impresión en serigrafía"
+  },
+  {
+    "id": 248,
+    "nombre": "Me Va A Costar (Roja)",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 249,
+    "nombre": "Me Va A Costar (Beige)",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 250,
+    "nombre": "Me Va A Costar (Suéter Rojo)",
+    "descripcion": "Suéter unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 251,
+    "nombre": "Playera Carrito",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 252,
+    "nombre": "Playera Te Quiero Tanto Tinta",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 253,
+    "nombre": "Playera Te Quiero Tanto Beige",
+    "descripcion": "Camisa unisex\r\\n\r\\n100% algodón\r\\n\r\\nEstampado frontal personalizado\r\\n\r\\nLavar a máquina con agua fría, secar en secadora a baja temperatura, no planchar.\r\\n\r\\n<em>La fotografía es ilustrativa el color final del producto puede variar</em>"
+  },
+  {
+    "id": 255,
+    "nombre": "Gorra Carrito",
+    "descripcion": "Gorra dad desestructurada\r\\n\r\\nCorrea ajustable\r\\n\r\\nBordado delantero y trasero"
+  },
+  {
+    "id": 256,
+    "nombre": "Tour Sudadera",
+    "descripcion": "Cuello redondo unisex adulto\r\\n\r\\n100% algodón\r\\n\r\\nGráfico en serigrafía en la parte delantera y trasera\r\\n\r\\nLavar a máquina con agua fría"
+  },
+  {
+    "id": 257,
+    "nombre": "Hoodie Nacimos Rotos",
+    "descripcion": "Sudadera 50% algodón 50% poliéster\r\\nFit unisex\r\\nImpresión en serigrafía\r\\n\r\\nEste artículo comenzará a enviarse a partir del 20 de Agosto 2024"
+  },
+  {
+    "id": 45,
+    "nombre": "Frisbee Morado",
+    "descripcion": null
+  },
+  {
+    "id": 46,
+    "nombre": "Frisbee Azul",
+    "descripcion": null
+  },
+  {
+    "id": 47,
+    "nombre": "Nalgene Tofu",
+    "descripcion": null
+  },
+  {
+    "id": 261,
+    "nombre": "Vinil Tesoros De La Rumba (Firmado)",
+    "descripcion": "Este artículo es una preventa, disponible para envío a partir del 01 de Octubre."
+  },
+  {
+    "id": 262,
+    "nombre": "Vinil Tesoros De La Rumba",
+    "descripcion": "Este artículo es una preventa, disponible para envío a partir del 01 de Octubre"
+  },
+  {
+    "id": 263,
+    "nombre": "Playera Chivo Expiatorio",
+    "descripcion": null
+  },
+  {
+    "id": 265,
+    "nombre": "Playera Cara de Nada",
+    "descripcion": null
+  },
+  {
+    "id": 266,
+    "nombre": "Playera Perro de Alcibíades",
+    "descripcion": null
+  },
+  {
+    "id": 267,
+    "nombre": "Llavero Perro de Alcibíades",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 09 de Diciembre"
+  },
+  {
+    "id": 268,
+    "nombre": "Sudadera Negra Logo",
+    "descripcion": null
+  },
+  {
+    "id": 269,
+    "nombre": "Sudadera Rosa Logo",
+    "descripcion": null
+  },
+  {
+    "id": 270,
+    "nombre": "Sudadera Tinta Logo SOLD OUT",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 30 de Marzo"
+  },
+  {
+    "id": 271,
+    "nombre": "Beanie \"Cris\" Rojo",
+    "descripcion": null
+  },
+  {
+    "id": 272,
+    "nombre": "Playera Hasta Morir",
+    "descripcion": "<span style=\"color: #333333;\"><strong>\"Te perseguí por trinidad, mezclando ron con maruchan\"</strong></span>\r\\n\r\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 278,
+    "nombre": "Gorra 'Amor Libre' (Preventa)",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 15 de Enero\r\\n\r\\nEnvío a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 279,
+    "nombre": "Sudadera Noche Sensorial Blanca (Preventa)",
+    "descripcion": "<span style=\"color: #333333;\"><strong>“Y tus besos me confirman, que la vida es una sola”</strong></span>\r\\n\r\\n&nbsp;\r\\n\r\\nSudadera color blanco con aplicación en bordado\r\\n\r\\n<strong>Artículo en Preventa.</strong>\r\\n\r\\nLos productos empezarán a enviarse a partir del 15 de Enero\r\\n\r\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 280,
+    "nombre": "Sudadera Noche Sensorial Gris (Preventa)",
+    "descripcion": "<span style=\"color: #333333;\"><strong>“Que nos miren, que lo nuestro no se toca”</strong></span>\r\\n\r\\n&nbsp;\r\\n\r\\nSudadera color gris jaspe con aplicación en bordado\r\\n\r\\n<strong>Artículo en Preventa.</strong>\r\\n\r\\nLos productos empezarán a enviarse a partir del 15 de Enero\r\\n\r\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 277,
+    "nombre": "Set de Pines",
+    "descripcion": null
+  },
+  {
+    "id": 273,
+    "nombre": "Playera No Te Alejes Más De Mí",
+    "descripcion": "<strong>\"Es que cuando me acerco, tú te alejas más de mí\"</strong>\r\n\\n\r\n\\n&nbsp;\r\n\\n\r\n\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 274,
+    "nombre": "Playera Un Día En Paris",
+    "descripcion": "<strong>“Con vino en la mano, te pido la mano”</strong>\r\n\\n\r\n\\n&nbsp;\r\n\\n\r\n\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 276,
+    "nombre": "Playera Reina Leona",
+    "descripcion": "<strong>\"Reina Leona, Vampira Pelo Rosa\"</strong>\r\n\\n\r\n\\n&nbsp;\r\n\\n\r\n\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 275,
+    "nombre": "Sudadera Fuimos Amor",
+    "descripcion": "<span style=\"color: #333333;\"><strong>\"Fuimos amor, fuimos amor\"</strong></span>\r\n\\n\r\n\\nEstampado en <em>serigrafía</em>\r\n\\n\r\n\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti.\r\n\\n\r\n\\nSi estás comprando un artículo en preventa tú orden completa será enviada el día del lanzamiento de ese producto."
+  },
+  {
+    "id": 283,
+    "nombre": "Sudadera Fuimos Amor 'Bordada' (Preventa)",
+    "descripcion": "<strong>“Fuimos amor, fuimos amor”</strong>\r\\n\r\\nSudadera colornegro con aplicación en bordado\r\\n\r\\n<strong>Artículo en Preventa.</strong>\r\\n\r\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti.\r\\n\r\\nSi estás comprando un artículo en preventa tú orden completa será enviada el día del lanzamiento de ese producto."
+  },
+  {
+    "id": 284,
+    "nombre": "Vinil Firmado + Pin metálico",
+    "descripcion": "Bundle de Vinil firmado + pin\r\\n\r\\n(elige entre las opciones el pin que deseas, se enviará junto con el vinil :) )"
+  },
+  {
+    "id": 285,
+    "nombre": "Gorra Roja “Rumbito”",
+    "descripcion": null
+  },
+  {
+    "id": 286,
+    "nombre": "Gorra Azul “Rumbito”",
+    "descripcion": null
+  },
+  {
+    "id": 287,
+    "nombre": "Sudadera Beige “Tú Escríbeme”",
+    "descripcion": null
+  },
+  {
+    "id": 288,
+    "nombre": "Playera Verde “Si Se Trata De Ella”",
+    "descripcion": null
+  },
+  {
+    "id": 290,
+    "nombre": "Cd Canciones Para Llorar Bailando",
+    "descripcion": null
+  },
+  {
+    "id": 291,
+    "nombre": "Playera 'Quien Soy'",
+    "descripcion": null
+  },
+  {
+    "id": 292,
+    "nombre": "Poster Firmado",
+    "descripcion": "Poster impreso en serigrafía en papel couche de 300gms\r\\n\r\\nEdición limitada a 100 copias"
+  },
+  {
+    "id": 48,
+    "nombre": "Vinil Tofu",
+    "descripcion": null
+  },
+  {
+    "id": 294,
+    "nombre": "Lámina Once – Vinilo",
+    "descripcion": null
+  },
+  {
+    "id": 295,
+    "nombre": "Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 296,
+    "nombre": "Amofez",
+    "descripcion": null
+  },
+  {
+    "id": 300,
+    "nombre": "Luz de Bengala 12\"",
+    "descripcion": null
+  },
+  {
+    "id": 301,
+    "nombre": "Playera Forever Alone",
+    "descripcion": null
+  },
+  {
+    "id": 302,
+    "nombre": "Playera Tour México 2025",
+    "descripcion": null
+  },
+  {
+    "id": 303,
+    "nombre": "Playera Caballo",
+    "descripcion": "Playera corte Oversize"
+  },
+  {
+    "id": 304,
+    "nombre": "Sudadera",
+    "descripcion": null
+  },
+  {
+    "id": 153,
+    "nombre": "Totebag",
+    "descripcion": null
+  },
+  {
+    "id": 306,
+    "nombre": "Poster Tour México 2025",
+    "descripcion": "Poster de 40 x 6o cm impreso en serigrafía en papel couche de 300gms"
+  },
+  {
+    "id": 307,
+    "nombre": "Sticker Pack",
+    "descripcion": "Paquete de 5 stickers individuales"
+  },
+  {
+    "id": 308,
+    "nombre": "Playera Tarde Para Despedirnos",
+    "descripcion": "<p>Playera corte Oversize</p>"
+  },
+  {
+    "id": 309,
+    "nombre": "Preventa - Pérdidas Variables LP 12\"",
+    "descripcion": "Artículo en Preventa\r\\n\r\\nNombre de variación en las imágenes"
+  },
+  {
+    "id": 297,
+    "nombre": "Ringer",
+    "descripcion": null
+  },
+  {
+    "id": 310,
+    "nombre": "\"Cube\" 6 way split LP 12",
+    "descripcion": null
+  },
+  {
+    "id": 311,
+    "nombre": "Luz Devora LP 2 X 12\"",
+    "descripcion": null
+  },
+  {
+    "id": 312,
+    "nombre": "Tie-Dye Bandana \"G\"",
+    "descripcion": "●Evite envolverlo con fuerza alrededor del cuello u otras partes del cuerpo.\r\\n●Debido a la naturaleza del tinte, las prendas de color oscuro pueden transferir el color a otras prendas, por lo que se recomienda lavarlas por separado.\r\\n●Use detergente no fluorescente para prendas de color claro.\r\\n●No use lejía, detergentes con lejía ni cloro, ya que puede causar decoloración o desteñido.\r\\n●No secar en secadora.\r\\n●No planchar sobre los estampados.\r\\n●Tenga en cuenta que este producto está hecho a mano con teñido anudado, por lo que el tamaño, la textura y otras características pueden variar ligeramente de una pieza a otra. Además, el diseño del teñido anudado puede verse a través de los estampados.\r\\n●Tenga en cuenta que el color puede desteñirse o transferirse debido a la fricción (especialmente cuando está mojado) o al uso en condiciones de humedad causadas por la lluvia o el sudor.\r\\n●No lo guarde bajo la luz solar directa, altas temperaturas y humedad, o cerca del fuego, ya que esto puede causar decoloración o decoloración.\r\\n\r\\n[Tamaño] Aprox. 530 mm (ancho) x 530 mm (alto)\r\\n[Peso] Aprox. 39 g\r\\n[Materiales] 100 % algodón\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 313,
+    "nombre": "Tie-Dye Cropped Hoodie",
+    "descripcion": "Las prendas de color oscuro pueden causar migración de color a otras prendas debido a la naturaleza de los tintes, así que lávelas individualmente. Para evitar que el estampado se agriete o se despegue, dé la vuelta a la prenda y lávela por separado.\r\\nUtilice un detergente no fluorescente para prendas de color claro. Evite usar lejía con cloro, ya que puede causar decoloración y desteñido. Después del lavado, dé forma y cuelgue la prenda para secarla inmediatamente. Evite secarla en secadora.\r\\nEvite planchar las partes impresas.\r\\nEste producto está hecho a mano con teñido tie-dye, por lo que el tamaño, la textura y otras características pueden variar ligeramente de una prenda a otra. Además, el diseño tie-dye puede verse a través de la parte impresa. Por favor, comprenda de antemano. El producto puede tener una apariencia irregular en la superficie impresa debido a la naturaleza del material y la compatibilidad del método de impresión, pero no hay problema de calidad.\r\\nTenga en cuenta que la decoloración y la migración de color pueden ocurrir debido al uso o la fricción (especialmente la fricción en estado húmedo) en condiciones de humedad causadas por la lluvia o el sudor. Evite almacenarlo en lugares expuestos a la luz solar directa, altas temperaturas y humedad, y cerca del fuego, ya que esto puede causar decoloración y decoloración. Evite utilizar el producto para fines distintos a los previstos.\r\\n\r\\n[Talla]\r\\nS: aprox. 680 mm (largo) x 490 mm (ancho de hombros) x 500 mm (ancho) x 210 mm (largo de manga)\r\\nM: aprox. 720 mm x 510 mm x 530 mm x 220 mm\r\\nL: aprox. 760 mm x 530 mm x 560 mm x 230 mm\r\\n[Peso] S: aprox. 252 g M: aprox. 276 g L: aprox. 308 g\r\\n[Material] 100 % algodón\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 314,
+    "nombre": "XG Official Light Stick w XG Trading Card Set of 7",
+    "descripcion": "Light Stick oficial de XG. Su diseño evoca una nave espacial e incluye un botón tipo gatillo. En el modo de actuación normal, la luz puede cambiar entre los siete colores de los miembros y el cambio de color automático. Al registrar tu asiento a través de la aplicación \"XG OFFICIAL LIGHT STICK\", podrás disfrutar del espectáculo de luces y la sensación de unidad con el escenario mediante el control inalámbrico. La cabina, que se puede abrir y cerrar, incluye piezas XG por defecto para disfrutar al instante. La caja, meticulosamente diseñada para parecerse a una pistola espacial de juguete, incluye un juego de \"XG Trading Cards\" con los siete miembros del grupo.\r\\n\r\\n[Especificaciones]\r\\nFunción de control inalámbrico (Bluetooth) Color de la luz: 7 colores (blanco → amarillo → azul → morado → naranja → rojo → verde → cambio de color automático)\r\\n[Tamaño] Unidad principal: aprox. 108,5 mm (largo) x 83,5 mm (ancho) x 168 mm (alto) Tarjeta: aprox. 55 mm (ancho) x 85 mm (largo)\r\\n[Peso] Aprox. 365 g\r\\n[Material] Cuerpo: PC, ABS, SILICONA / Tarjeta: Papel\r\\n[Batería] 3 pilas alcalinas AAA (se venden por separado)\r\\n[Tiempo de funcionamiento] 5-6 horas (varía según las condiciones de uso)\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 315,
+    "nombre": "LIGHT STICK Custom Strap / HINATA",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 316,
+    "nombre": "Travel Packing Bag (3PCS)",
+    "descripcion": "El set consta de tres tamaños de bolsas de viaje (S/M/L) que se pueden usar para diferentes viajes y expediciones alrededor del mundo. Todas las tallas tienen asas para facilitar su transporte y se pueden sacar directamente del estuche.\r\\nEvite las altas temperaturas, la humedad, la luz solar directa y el fuego. Úselo y guárdelo fuera del alcance de los niños. No frote la superficie con objetos afilados o duros ni coloque una carga excesiva sobre ella, ya que esto puede causar deformaciones, daños, descamación, etc. Tenga en cuenta que el tejido de este producto puede desteñirse o perder color si se moja o se frota. Si se adhiere suciedad, elimínela con un paño o similar. No utilice lavadoras ni planchas. Al guardarlo, seque bien la humedad y la suciedad, evite la luz solar directa, las altas temperaturas y la humedad, séquelo bien en un lugar bien ventilado y guárdelo. Debido a la naturaleza de este producto, la suciedad y el desgaste pueden cambiar inevitablemente de textura debido al uso frecuente y al paso del tiempo. Tenga esto en cuenta de antemano. No utilice el producto en contacto directo con productos de cuero o vinilo, ya que podría deteriorarlo, decolorarlo o que se pegue. No utilice el producto para fines distintos a los previstos.\r\\n\r\\n[Dimensiones]\r\\nS: aprox. 220 mm (ancho) x 170 mm (alto) x 60 mm (profundidad)\r\\nM: aprox. 250 mm (ancho) x 180 mm (alto) x 95 mm (profundidad)\r\\nL: aprox. 395 mm (ancho) x 282 mm (alto) x 110 mm (profundidad)\r\\n[Peso] S: aprox. 90 g M: aprox. 110 g L: aprox. 150 g\r\\n[Material] TPU, aleación de zinc\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 317,
+    "nombre": "XG Original Tamagochi - Produced By MAYA",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 318,
+    "nombre": "Playera Adorno Gris",
+    "descripcion": null
+  },
+  {
+    "id": 319,
+    "nombre": "Playera Puertas",
+    "descripcion": null
+  },
+  {
+    "id": 320,
+    "nombre": "Playera Esplin Lila",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 30 de Julio\r\\n\r\\nPlayera 100% algodón\r\\nImpresión en serigrafía\r\\nFit unisex relajado\r\\n\r\\n*la imagen es ilustrativa, el tono de la tela puede presentar variaciones"
+  },
+  {
+    "id": 321,
+    "nombre": "Playera Esplin",
+    "descripcion": null
+  },
+  {
+    "id": 322,
+    "nombre": "Playera Dibujos Nico (Preventa)",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 1ero de Noviembre"
+  },
+  {
+    "id": 323,
+    "nombre": "Sudadera Negra Logo Cabra",
+    "descripcion": null
+  },
+  {
+    "id": 324,
+    "nombre": "Sudadera Puertas (PREVENTA)",
+    "descripcion": "Artículo en Preventa.\r\\n\r\\nLos productos empezarán a enviarse a partir del 1ero de Noviembre"
+  },
+  {
+    "id": 49,
+    "nombre": "Playera Viva el Tofu!",
+    "descripcion": null
+  },
+  {
+    "id": 50,
+    "nombre": "Crop Top",
+    "descripcion": null
+  },
+  {
+    "id": 327,
+    "nombre": "Playera Barra Libre",
+    "descripcion": null
+  },
+  {
+    "id": 328,
+    "nombre": "Playera Ganaron Los Malos",
+    "descripcion": null
+  },
+  {
+    "id": 359,
+    "nombre": "Gorra 'MQBD' Rosa (Preventa)",
+    "descripcion": "'¡Mira qué bonito día!'\r\\n\r\\nGorra de gabardina terminado deslavado rosa\r\\nUnitalla/Ajustable\r\\nDiseño bordado frente y posterior"
+  },
+  {
+    "id": 51,
+    "nombre": "Sudadera Fruta Edición Especial '10 años'",
+    "descripcion": "Sudadera Edición Especial de la Colección de 10 años del álbum FRUTA\r\\n50% algodón 50% poliéster"
+  },
+  {
+    "id": 329,
+    "nombre": "Tie-Dye Socks",
+    "descripcion": "Calcetines largos de media lana (juego de dos pares del mismo color) con el logotipo de XG en punto jacquard. Los mensajes \"LEFT\" y \"RIGHT\" en los puños del calcetín izquierdo y derecho, respectivamente, crean un toque ingenioso.\r\\nLos productos de color oscuro pueden causar migración de color a otras prendas debido a la naturaleza de los tintes, por lo que se recomienda lavarlos individualmente. Para evitar que el estampado se agriete o se despegue, dé la vuelta al producto y lávelo por separado. Utilice un detergente no fluorescente para productos de color claro. Evite el uso de lejía con cloro, ya que puede causar decoloración y desteñido. Después del lavado, dé forma y cuelgue para secar inmediatamente. Evite el secado en secadora. Evite planchar las partes impresas. Este producto está hecho a mano con teñido tie-dye, por lo que el tamaño, la textura y otras características pueden variar ligeramente de una prenda a otra. Además, el diseño tie-dye puede verse a través de la parte impresa. Por favor, comprenda de antemano. El producto puede tener una apariencia irregular en la superficie impresa debido a la naturaleza del material y la compatibilidad del método de impresión, pero no hay problema de calidad. Tenga en cuenta que la decoloración y la migración de color pueden ocurrir debido al uso o la fricción (especialmente la fricción en estado húmedo) en condiciones de humedad causadas por la lluvia o el sudor. Evite almacenar en lugares expuestos a la luz solar directa, altas temperaturas y altas temperaturas.\r\\n\r\\n[Tamaño] Aprox. 21-25 cm\r\\n[Peso] Aprox. 118 g\r\\n[Materiales] 65 % algodón, 35 % poliuretano\r\\n[País de origen] China\r\\n\r\\n[Tamaño] Aprox. 25-29cm\r\\n[Peso] Aprox. 120 g\r\\n[Materiales] 65 % algodón, 35 % poliuretano\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 330,
+    "nombre": "Beach Towel",
+    "descripcion": "Fabricada en Imabari, Japón, esta toalla de playa de alta calidad luce el llamativo logotipo jumbo XG. Su tejido jacquard altamente absorbente proporciona un tacto suave. Es perfecta para la playa y la piscina en verano, y también puede usarse como manta en conciertos y eventos deportivos, así como en interiores durante los fríos meses de invierno. Puedes usarla todo el año, independientemente de la estación.\r\\n\r\\nDebido a la delicadeza del material, existe el riesgo de que se desprendan pelusas. Coloque la toalla en una bolsa de lavado y lávela por separado. Dado que las prendas de color oscuro pueden desteñir a otras prendas debido a la naturaleza del tinte, lávelas por separado.\r\\n<div class=\"page\" title=\"Page 4\">\r\\n<div class=\"section\">\r\\n<div class=\"layoutArea\">\r\\n<div class=\"column\">\r\\n\r\\n●Use detergente no fluorescente para prendas de color claro.\r\\n●No utilice lejía, detergentes con lejía ni cloro, ya que pueden causar decoloración o desteñido.\r\\n●Evite la inmersión prolongada en agua.\r\\n●No la seque en secadora.\r\\n●Después del lavado, dé forma a la toalla inmediatamente y séquela de forma natural a la sombra.\r\\n●No la guarde bajo la luz solar directa, a altas temperaturas y humedad, ni cerca del fuego, ya que esto puede causar decoloración o desteñido.  ●Tenga en cuenta que, debido a la naturaleza de este producto, los cambios en la textura debido a las manchas y el desgaste son inevitables a medida que el producto se usa con mayor frecuencia y a lo largo del tiempo.\r\\n\r\\n</div>\r\\n[Tamaño] Aprox. 1500 mm (ancho) x 800 mm (alto)\r\\n[Peso] Aprox. 528 g\r\\n[Material] 100 % algodón\r\\n[Origen] Japón\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>\r\\n</div>\r\\n</div>"
+  },
+  {
+    "id": 331,
+    "nombre": "XG Original Tamagochi – Produced By COCONA",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 332,
+    "nombre": "XG Original Tamagochi – Produced By JURIA",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 333,
+    "nombre": "XG Original Tamagochi – Produced By HARVEY",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 369,
+    "nombre": "Playera 'Estuve Ahí' Preventa",
+    "descripcion": "Adquiere este producto y retíralo en los shows de Acru por México.\r\\n¡Cantidades limitadas!\r\\n\r\\nPlayera 100% algodón peso completo"
+  },
+  {
+    "id": 398,
+    "nombre": "Gorra Café",
+    "descripcion": null
+  },
+  {
+    "id": 334,
+    "nombre": "XG Original Tamagochi – Produced By HINATA",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 335,
+    "nombre": "XG Original Tamagochi – Produced By CHISA",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 336,
+    "nombre": "XG Original Tamagochi – Produced By JURIN",
+    "descripcion": "¡La colaboración entre XG y Original Tamagotchi ha llegado a buen término, con siete miembros de XG produciendo el diseño del propio Original Tamagotchi!\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 43 mm (ancho) x 54 mm (largo) x 18 mm (grosor)\r\\n[Peso] aprox. 25 g\r\\n[Material] ABS, PC, SI\r\\n[País de origen] China\r\\n\r\\nEl programa es el mismo que el de la primera generación de la serie Tamagotchi original. La batería no está incluida. Se requiere una pila de botón de litio CR2032 (se vende por separado).\r\\n<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n</div>"
+  },
+  {
+    "id": 337,
+    "nombre": "Stuff Sack Mini Pochette",
+    "descripcion": "Compacta pero con una excelente capacidad de almacenamiento, esta mini cartera estilo bolsa presenta una superficie repelente al agua, impermeabilización en el reverso y cierres herméticos en los bolsillos izquierdo y derecho para proteger tus objetos de valor de la humedad. Cada bolsillo tiene diferentes usos, y la correa para el hombro está equipada con un mosquetón y una cadena de margaritas, lo que permite unir bolsas y otros artículos. La correa para el hombro se puede colocar en la parte superior, inferior, izquierda o derecha según el estilo, y se puede personalizar libremente, adaptándose a una amplia variedad de situaciones.\r\\nEvite las altas temperaturas, la humedad, la luz solar directa y el fuego, y manténgalo fuera del alcance de los niños. No utilice el producto con objetos que excedan su capacidad ni con objetos excesivamente pesados, ya que esto podría causar deformaciones o daños. Las piezas metálicas pueden rayarse, deformarse o dañarse con el uso frecuente o el paso del tiempo. Tenga esto en cuenta de antemano. Este producto utiliza tejido impermeable y repelente al agua, pero no es completamente impermeable. Tenga en cuenta que el agua puede entrar por las costuras y los cierres. El efecto repelente al agua disminuye gradualmente con el uso frecuente. No fuerce el producto, ya que podría dañarlo. Tenga en cuenta que los tejidos de este producto pueden desteñirse o perder color debido a la humedad o la fricción. Si se adhiere suciedad al producto, elimínela con un paño o similar. No utilice lavadoras ni planchas. Al guardarlo, seque bien la humedad y la suciedad, evite la luz solar directa, las altas temperaturas y la humedad, y séquelo bien en un lugar bien ventilado.\r\\n\r\\n[Tamaño]\r\\nCuerpo principal: aprox. 130 mm (ancho) x 280 mm (alto) x 115 mm (refuerzo) Correa para el hombro: aprox. mínimo 760 mm - máximo 1200 mm x ancho 20 mm\r\\n[Peso] aprox. 120 g. [Material] 100 % poliéster (Superficie: Tratamiento repelente al agua / Reverso: Tratamiento impermeable de laminado de TPU).\r\\n[País de origen] China.\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 338,
+    "nombre": "LIGHT STICK Custom Strap / JURIN",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 399,
+    "nombre": "Sticker Pack Esplin",
+    "descripcion": null
+  },
+  {
+    "id": 400,
+    "nombre": "Playera Encontraremos",
+    "descripcion": "Corte Oversize"
+  },
+  {
+    "id": 339,
+    "nombre": "LIGHT STICK Custom Strap / CHISA",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 340,
+    "nombre": "LIGHT STICK Custom Strap / HARVEY",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 341,
+    "nombre": "LIGHT STICK Custom Strap / JURIA",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 342,
+    "nombre": "LIGHT STICK Custom Strap / MAYA",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 370,
+    "nombre": "Playera Tour (Preventa)",
+    "descripcion": "Adquiere este producto y retíralo en los shows de Acru por México.\r\\n¡Cantidades limitadas!\r\\n\r\\nPlayera 100% algodón peso completo"
+  },
+  {
+    "id": 401,
+    "nombre": "Playera Foto",
+    "descripcion": "Corte Oversize"
+  },
+  {
+    "id": 343,
+    "nombre": "LIGHT STICK Custom Strap / COCONA",
+    "descripcion": "Evite altas temperaturas, humedad, luz solar directa y fuego. No utilice ni almacene en lugares con altas temperaturas, humedad, luz solar directa, fuego o fuera del alcance de los niños. No balancee ni tire del producto ni lo someta a golpes fuertes, ya que esto podría deformarlo o dañarlo y causar lesiones inesperadas. Una fuerza excesiva puede causar daños, por lo que debe manipularse con cuidado.\r\\n\r\\n●El uso en condiciones de humedad debido a la lluvia, el sudor o la fricción (especialmente cuando el producto está húmedo) puede causar que los colores se destiñan o migren.\r\\n●Debido a la naturaleza del material, las correas pueden deteriorarse, decolorarse, volverse pegajosas o agrietarse con el tiempo o con el uso frecuente. Tenga esto en cuenta de antemano. Tenga en cuenta que el contacto prolongado con otros objetos puede provocar que se peguen o migren de color.\r\\n●Este producto puede desprender pelusa debido a la naturaleza del material. Tenga esto en cuenta de antemano.\r\\nDebido a la naturaleza del producto, los cambios de textura debidos a la suciedad y el desgaste son inevitables con el uso frecuente y prolongado. Tenga esto en cuenta de antemano. El tamaño, la textura y otras características de este producto pueden variar ligeramente de una pieza a otra, pero esto no afecta la calidad del producto. Tenga esto en cuenta de antemano.\r\\nTenga en cuenta que los cambios de temperatura y humedad, así como el entorno de uso del producto, pueden provocar la formación de moho. Evite la inmersión prolongada en agua. Este producto no es lavable. No utilice el producto para fines distintos de aquellos para los que está destinado.\r\\n\r\\n[Tamaño] Aprox. 400 mm (largo) x 80 mm (ancho)\r\\n[Peso] Aprox. 45 g\r\\n[Material] Poliéster 100%, acrílico 100%, aleación de zinc, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 344,
+    "nombre": "XG X SHORAKUEN Compact Mirror",
+    "descripcion": "Un espejo compacto de diseño místico con una luna llena y dos lobos simétricos. Este intrincado diseño, que parece encarnar la estética de XG, está meticulosamente calculado hasta el último detalle. El azul marino y la purpurina evocan la imagen de un cielo estrellado y el universo. El espejo, que querrás llevar contigo a todas partes, también puede usarse como espejo de pie girando la tapa. Realzará tu expresión con belleza.\r\\n\r\\nEspecificaciones\r\\nEspejo de aumento idéntico\r\\n[Tamaño] Aproximadamente 85 mm (ancho) x 94 mm (alto) x 10 mm (profundidad) (cerrado)  Tamaño Aproximadamente 85 mm (ancho) x 175 mm (alto) x 5 mm (profundidad) (abierto)\r\\n[Peso] Aproximadamente 60 g\r\\n[Material] ABS, vidrio\r\\n[Origen] China.\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 345,
+    "nombre": "Passport Cover",
+    "descripcion": "Esta funda para pasaporte protege tu preciado pasaporte de daños y suciedad durante tus viajes por el mundo. Es sencilla y fácil de usar, con un tamaño compacto que permite un acceso rápido a tu pasaporte y tarjetas. En el lado izquierdo, hay un bolsillo para tarjetas coleccionables y un bolsillo abierto para tu pasaporte o billetes. En el lado derecho, hay cuatro bolsillos para tarjetas y un bolsillo libre. El pasaporte se puede guardar tanto en el lado izquierdo como en el derecho. La parte frontal presenta un logotipo del tour impreso en relieve y el interior tiene una etiqueta para el nombre. El diseño, unificado en negro, le da un aspecto elegante y sofisticado.\r\\n\r\\n●Use o almacene lejos de altas temperaturas y humedad, luz solar directa y fuego, y fuera del alcance de los niños.\r\\n●No frote la superficie del producto con objetos afilados o duros, ni lo someta a una tensión excesiva, ya que esto puede causar deformación, daños o descamación.\r\\n●Tenga en cuenta que las telas utilizadas en este producto pueden desteñirse o experimentar migración de color debido a la humedad o el roce.\r\\n●Si la suciedad se adhiere al producto, utilice un paño o similar para eliminarla. No utilice lavadora ni plancha.\r\\n●Antes de almacenar, limpie bien la humedad o la suciedad y séquelo bien en un lugar bien ventilado, lejos de la luz solar directa, altas temperaturas y alta humedad.\r\\n●Tenga en cuenta que debido a la naturaleza de este producto, los cambios en la textura de las manchas y el desgaste son inevitables a medida que el producto se usa con mayor frecuencia y con el tiempo.\r\\n\r\\n[Tamaño]\r\\nAprox. 105 mm de ancho x 141 mm de largo (cerrado) Aprox. 210 mm de ancho x 141 mm de largo (abierto)\r\\n[Peso] Aprox. 92 g\r\\n[Material] Poliéster 100%, PVC, papel\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 346,
+    "nombre": "Travel Vacuum Pack (2PCS)",
+    "descripcion": "Bolsas de compresión de viaje, duraderas y elegantes, hechas de tela Oxford, tres veces más gruesa que las bolsas de compresión estándar, han sido encargadas especialmente por XG para POST GENERAL.\r\\n\r\\nEvite usarlas o guardarlas en lugares expuestos a la luz solar directa, altas temperaturas y humedad, o cerca del fuego.\r\\nTenga en cuenta que podrían romperse con objetos afilados.\r\\nNo aplique una presión fuerte ni impactos fuertes, ya que esto podría causar deformaciones o daños. Evite lavarlas, secarlas en secadora o plancharlas. Si le preocupa que se deshilachen, córtelas con tijeras.\r\\nDebido a la naturaleza del material, pueden aparecer rayones y arrugas en la superficie, pero no hay problemas de calidad. Tenga esto en cuenta de antemano.\r\\nNo utilice el producto para ningún otro propósito.\r\\n❶ Abra la bolsa.\r\\n❷ Cierre la bolsa firmemente con el deslizador.\r\\n❸ Gire la válvula de escape a la posición ABRIR y ábrala.\r\\n❹ Expulse el aire y comprímalo redondeando la unidad principal.\r\\n\r\\n[Tamaño]\r\\nM: aprox. 300 mm (ancho) x 380 mm (alto)\r\\nL: aprox. 400 mm (ancho) x 480 mm (largo)\r\\n[Peso]\r\\nM: aprox. 35 g\r\\nL: aprox. 60 g\r\\n[Material]\r\\n60 % poliéster, 40 % polietileno\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 371,
+    "nombre": "Vinilo Latinaje",
+    "descripcion": "El álbum LATINAJE ahora disponible en formato vinilo. Una pieza única para quienes disfrutan la música en su forma más pura. Incluye 14 canciones que recorren distintos sonidos y emociones, con la calidez y profundidad propias del vinilo.\r\\nPerfecto para escuchar en tu tocadiscos o sumar a tu colección.\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 347,
+    "nombre": "Sliding Credit Card Case",
+    "descripcion": "XG encargó especialmente a POST GENERAL un tarjetero que se adapta al estilo de vida minimalista de la era sin efectivo. Tiene capacidad para hasta cinco tarjetas de crédito y la función antirrobo protege la información de la tarjeta del acceso no autorizado desde el exterior.\r\\n\r\\n[Tamaño]\r\\nAprox. 63 mm (ancho) x 95 mm (largo) x 9 mm (grosor)\r\\n[Tamaños compatibles] Tarjeta de crédito (hasta 5 tarjetas)\r\\n[Peso] Aprox. 43 g\r\\n[Material] Aluminio, resina AMS\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 348,
+    "nombre": "Credit Card Keychain",
+    "descripcion": "El llavero con motivo de tarjeta de crédito muestra un chip holográfico realista en pintura negra mate, con un acabado lujoso y meticuloso en cada detalle.\r\\n\r\\n[Tamaño]\r\\nAprox. 160 mm (ancho) x 54 mm (largo).\r\\n[Peso] Aprox. 50 g.\r\\n[Material] Latón, hierro, aleación de zinc.\r\\n[Origen] China.\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 349,
+    "nombre": "Sticker Set",
+    "descripcion": "Los 9 sets de stickers se basan en gráficos de la mercancía de la gira \"The first HOWL\", incluyendo diseños de los miembros, extraterrestres y el logotipo de XG, y están disponibles en colores fluorescentes, aurora boreal, holográficos y transparentes. Las stickers se pueden usar no solo para pegar, sino también para insertarlas en smartphones, combinarlas como un collage o organizarlas como quieras.\r\\n\r\\nEspecificaciones: 9 tipos en total.\r\\n\r\\n[Tamaño]\r\\nGrande: aprox. 90 mm (ancho) x 55 mm (largo) (tamaño máximo)\r\\nPequeño: aprox. 60 mm (ancho) x 20 mm (largo) (tamaño mínimo)\r\\n[Peso] aprox. 10 g.\r\\n[Material] Papel\r\\n[País de origen] Japón\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>\r\\n\r\\n&nbsp;"
+  },
+  {
+    "id": 350,
+    "nombre": "Shopper (L)",
+    "descripcion": "El diseño es simple, pero la textura del aluminio le da impacto y puedes elegir entre tres tamaños (S/M/L) para adaptarse a tu compra de productos.\r\\n\r\\n[Tamaño] Aprox. 450 mm (ancho) x 520 mm (largo) x 100 mm (refuerzo)\r\\n[Peso] Aprox. 56,5 g\r\\n[Material] Cuerpo: polietileno 61,5 % + polipropileno 38,5 %. Correa: polipropileno 100 %. Dove: aluminio 100 %.\r\\n[Origen] China.\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas.Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 351,
+    "nombre": "Sports Towel \"The First HOWL\"",
+    "descripcion": "Coloque el producto en una red de limpieza y lávelo por separado. Los productos de color oscuro pueden causar migración de color en otras prendas debido a la naturaleza de los tintes, así que lávelos por separado. Para productos de color claro, use un detergente no fluorescente. Evite usar lejía, detergentes a base de lejía o lejía con cloro, ya que puede causar decoloración o desteñido. Evite la inmersión prolongada en agua. Evite el secado en secadora. Después del lavado, moldee la prenda inmediatamente y cuélguela a la sombra para que se seque de forma natural. Evite almacenarla bajo la luz solar directa, en lugares cálidos y húmedos y cerca del fuego, ya que esto puede causar decoloración y desteñido. Debido a la naturaleza de este producto, los cambios de textura causados ​​por la suciedad y el desgaste son inevitables con la frecuencia de uso y el paso del tiempo. Tenga esto en cuenta de antemano. El hilo del pelo puede desprenderse fácilmente con las uñas, anillos y otros objetos alrededor del cuerpo, así que manipúlelo con cuidado.\r\\n\r\\n[Tamaño] Aprox. 1100 mm (ancho) x 400 mm (largo)\r\\n[Peso] Aprox. 211 g\r\\n[Materiales] 100 % algodón\r\\n[País de origen] Japón\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 352,
+    "nombre": "Throwket",
+    "descripcion": "Esta manta, muy apreciada y práctica presenta un diseño inspirado en los gráficos de la gira \"The First HOWL\". Puede usarse como un acogedor mueble para el sofá o la mesita de noche, y también como alfombra para transformar tu habitación en un ambiente XG. Hecha de un material versátil, se puede usar durante todo el año y en cualquier situación: ya sea en el césped para un picnic, como manta para deportes o actividades al aire libre, o incluso para cubrirte cuando refresca. También incluye una práctica bolsa de transporte para transportarla fácilmente.\r\\n\r\\n●Guarde y utilice el producto en un lugar alejado de altas temperaturas, humedad, luz solar directa, fuego y fuera del alcance de los niños.\r\\n●Evite el uso de lejía, detergentes blanqueadores o lejía a base de cloro, ya que puede causar decoloración o decoloración.\r\\n●Evite remojarlo en agua durante mucho tiempo.\r\\n●Si se ensucia, lávelo a mano con agua  tibia y cuelgue para secar.\r\\n\r\\n[Tamaño] 900 mm (ancho) x 1500 mm (alto)\r\\n[Peso] 710 g\r\\n[Material] Poliéster 80%, Algodón 20%\r\\n[Origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 353,
+    "nombre": "Tie-Dye Bandana \"X\"",
+    "descripcion": "●Evite envolverlo con fuerza alrededor del cuello u otras partes del cuerpo.\r\\n●Debido a la naturaleza del tinte, las prendas de color oscuro pueden transferir el color a otras prendas, por lo que se recomienda lavarlas por separado.\r\\n●Use detergente no fluorescente para prendas de color claro.\r\\n●No use lejía, detergentes con lejía ni cloro, ya que puede causar decoloración o desteñido.\r\\n●No secar en secadora.\r\\n●No planchar sobre los estampados.\r\\n●Tenga en cuenta que este producto está hecho a mano con teñido anudado, por lo que el tamaño, la textura y otras características pueden variar ligeramente de una pieza a otra. Además, el diseño del teñido anudado puede verse a través de los estampados.\r\\n●Tenga en cuenta que el color puede desteñirse o transferirse debido a la fricción (especialmente cuando está mojado) o al uso en condiciones de humedad causadas por la lluvia o el sudor.\r\\n●No lo guarde bajo la luz solar directa, altas temperaturas y humedad, o cerca del fuego, ya que esto puede causar decoloración o decoloración.\r\\n\r\\n[Tamaño] Aprox. 530 mm (ancho) x 530 mm (alto)\r\\n[Peso] Aprox. 39 g\r\\n[Materiales] 100 % algodón\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 354,
+    "nombre": "Blister Charm Acrylic Stand（Random 7 Designs）",
+    "descripcion": "Presentamos la nueva Colección de Charms Blister, ¡que incluye bases acrílicas en miniatura! Al sustituir la cadena de bolas por una base acrílica, también puedes usarla como charm. Puedes disfrutarla de diversas maneras: guardándola en el blíster, extrayendo el contenido, mostrándola como base acrílica o usándola.\r\\n\r\\n[Especificaciones] Aleatorio, 7 tipos en total\r\\n[Tamaño] Aprox. 65 mm de ancho x 97 mm de largo x 20 mm de grosor\r\\n[Peso] Aprox. 18 g\r\\n[Materiales] Acrílico, PP, papel, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 355,
+    "nombre": "Layered Magazine Acrylic Charm（Random 8 Designs）",
+    "descripcion": "Los dijes acrílicos son versiones en miniatura de los fotolibros de revistas e incluyen cadenas de bolas en los colores de los socios. La portada tiene un diseño tridimensional con impresión en capas. Disponible en 8 modelos.\r\\n\r\\n[Especificaciones] Aleatorio (8 tipos en total)\r\\n[Tamaño] Aprox. 35 mm de ancho x 55 mm de largo x 5 mm de grosor\r\\n[Peso] 14 g\r\\n[Materiales] Acrílico, PP, hierro\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 356,
+    "nombre": "Tie-Dye Crew Neck Tee",
+    "descripcion": "Durante el proceso de producción, pueden presentarse diferencias individuales de tamaño y forma. El patrón y el color de la imagen del producto difieren entre sí debido a las características del teñido.\r\\n\r\\nLas prendas de color oscuro pueden causar migración de color a otras prendas debido a la naturaleza de los tintes, así que lávelas individualmente. Para evitar que el estampado se agriete o se despegue, dé la vuelta a la prenda y lávela por separado.\r\\nUtilice un detergente no fluorescente para prendas de color claro. Evite usar lejía con cloro, ya que puede causar decoloración y desteñido. Después del lavado, dé forma y cuelgue la prenda para secarla inmediatamente. Evite secarla en secadora.\r\\nEvite planchar las partes impresas.\r\\nEste producto está hecho a mano con teñido tie-dye, por lo que el tamaño, la textura y otras características pueden variar ligeramente de una prenda a otra. Además, el diseño tie-dye puede verse a través de la parte impresa. Por favor, comprenda de antemano. El producto puede tener una apariencia irregular en la superficie impresa debido a la naturaleza del material y la compatibilidad del método de impresión, pero no hay problema de calidad.\r\\nTenga en cuenta que la decoloración y la migración de color pueden ocurrir debido al uso o la fricción (especialmente la fricción en estado húmedo) en condiciones de humedad causadas por la lluvia o el sudor. Evite almacenarlo en lugares expuestos a la luz solar directa, altas temperaturas y humedad, y cerca del fuego, ya que esto puede causar decoloración y decoloración. Evite utilizar el producto para fines distintos a los previstos.\r\\n\r\\n[Talla]\r\\nXS: aprox. 500 mm (largo) x 350 mm (ancho de hombros) x 370 mm (ancho) x 160 mm (largo de manga)\r\\nM: aprox. 680 mm (largo) x 490 mm (ancho de hombros) x 500 mm (ancho) x 210 mm (largo de manga)\r\\nL: aprox. 720 mm (largo) x 510 mm (ancho de hombros) x 530 mm (ancho) x 220 mm (largo de manga)\r\\nXL: aprox. 760 mm (largo) x 530 mm (ancho de hombros) x 560 mm (ancho) x 230 mm (largo de manga)\r\\n[Peso]\r\\nTalla XS: aprox. 136 g\r\\nTalla M: aprox. 252 g\r\\nTalla L: aprox. 276 g\r\\nTalla XL: aprox. 308 g\r\\n[Material] 96 % algodón, 4 % poliuretano\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 357,
+    "nombre": "Gorra 'MQBD' Azul (Preventa)",
+    "descripcion": "'¡Mira qué bonito día!'\r\\n\r\\nGorra de gabardina con acabado deslavado azul\r\\nUnitalla/ajustable\r\\nDiseño bordado frente y reverso"
+  },
+  {
+    "id": 358,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts / COCONA (w/COCONA Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 360,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts / MAYA (w/MAYA Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 361,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts /JURIA (w/JURIA Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 362,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts /HARVEY (w/HARVEY Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 363,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts /HINATA (w/HINATA Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 364,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts /CHISA (w/CHISA Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 365,
+    "nombre": "XG OFFICIAL LIGHT STICK Ver.1 Custom Parts /JURIN (w/JURIN Trading Card)",
+    "descripcion": "El estuche blíster recuerda a la cabina de una nave espacial, e incluye piezas moldeadas con los nombres de los miembros, que se pueden combinar con el “XG OFFICIAL LIGHT STICK Ver.1” para la personalización de los miembros.\r\\n\r\\n[Tamaño]Aprox. 47 mm (largo) x 21 mm (ancho) x 28 mm (alto)\r\\n[Peso] Aprox. 35 g\r\\n[Material] PC\r\\n[País de origen] China\r\\n\r\\n<em>Este producto puede presentar rayones, dobleces, rasguños o manchas durante el transporte. Sin embargo, el embalaje está diseñado para evitar rayones y manchas. Como este no es el producto, no aceptamos devoluciones ni cambios por daños que no afecten al producto en sí.</em>\r\\n\r\\n<em>Gracias de antemano por su compresión.</em>"
+  },
+  {
+    "id": 366,
+    "nombre": "Otro Día Más",
+    "descripcion": "&nbsp;\r\\n\r\\nPlayera corte oversize 100% algodón 200 gsm\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 367,
+    "nombre": "Otro Día Más (Preventa) (Copy)",
+    "descripcion": "Envíos a partir del 20 de septiembre\r\\n\r\\nPlayera corte oversize 100% algodón 200 gsm\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 368,
+    "nombre": "Hoodie Acru (Preventa)",
+    "descripcion": "Adquiere este producto y retÍralo en los shows de Acru por México.\r\\n¡Cantidades limitadas!\r\\n\r\\nSudadera con capucha y bolsa frontal\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 52,
+    "nombre": "Playera Fruta Edición Especial ’10 años’",
+    "descripcion": "Playera color beige, edición especial de la colección de 10 años del álbum FRUTA\r\\nCorte Oversize (revisar tabla de medidas)\r\\n\r\\n100% algodón"
+  },
+  {
+    "id": 53,
+    "nombre": "Playera Mango Taco Edición Especial ’10 años’",
+    "descripcion": "Playera color negro, edición especial de la colección de 10 años del álbum FRUTA\r\\nCorte Oversize (revisar tabla de medidas)\r\\n\r\\n100% algodón"
+  },
+  {
+    "id": 54,
+    "nombre": "Calcetines Fruta Edición Especial ’10 años’",
+    "descripcion": "Calcetines tejidos color amarillo unitalla."
+  },
+  {
+    "id": 376,
+    "nombre": "Malas Amistades Tee",
+    "descripcion": "Playera Oversize\r\\nImpresión en serigrafía"
+  },
+  {
+    "id": 377,
+    "nombre": "Vinilo Tornaluna",
+    "descripcion": null
+  },
+  {
+    "id": 378,
+    "nombre": "Libro para Expresar",
+    "descripcion": null
+  },
+  {
+    "id": 55,
+    "nombre": "Vinil Fruta Edición Especial ’10 años’",
+    "descripcion": "Tracklist:\r\\n\r\\nPALMAR\r\\nCHUPETAZOS\r\\nLA CHORA\r\\nJULIA\r\\nPASA EL TIEMPO\r\\nLOS ANIMALES\r\\nEL DERROCHE\r\\nAUTOCARNAVALIZACIÓN\r\\nCHANATES\r\\nMANGO TACO\r\\nPALMAR FT. MON LAFERTE\r\\nPALMAR (PORTUGUÉS)\r\\nPALMAR (JUAN PABLO VEGA)"
+  },
+  {
+    "id": 56,
+    "nombre": "Nalgene Amaneci Pa Disfrutar Rojo/Amarillo",
+    "descripcion": null
+  },
+  {
+    "id": 57,
+    "nombre": "Nalgene Amaneci Pa Disfrutar Rosa/Morado",
+    "descripcion": null
+  },
+  {
+    "id": 58,
+    "nombre": "Nalgene Amaneci Pa Disfrutar Azul",
+    "descripcion": null
+  },
+  {
+    "id": 383,
+    "nombre": "Playera Club Amigos Negra",
+    "descripcion": null
+  },
+  {
+    "id": 384,
+    "nombre": "Playera Club Amigos Blanca",
+    "descripcion": null
+  },
+  {
+    "id": 168,
+    "nombre": "Gorra",
+    "descripcion": null
+  },
+  {
+    "id": 386,
+    "nombre": "Totebag Negra",
+    "descripcion": null
+  },
+  {
+    "id": 387,
+    "nombre": "Tote Hueso",
+    "descripcion": null
+  },
+  {
+    "id": 264,
+    "nombre": "Playera Logo",
+    "descripcion": null
+  },
+  {
+    "id": 390,
+    "nombre": "Puertas Vinilo",
+    "descripcion": "VENTA EXCLUSIVA\r\\n\r\\nVINILO 12″ ROJO, INSERTO CON LETRAS Y FUNDA INTERIOR IMPRESA\r\\n\r\\nTracklist:\r\\n\r\\nPUERTAS\r\\nESPLÍN\r\\nGANARON LOS MALOS\r\\nEN EL CUARTO DE NICO\r\\nEL ASTRÓNOMO QUE NO PODÍA VER EL CIELO\r\\nEL PERRO DE ALCIBÍADES\r\\nCARA DE NADA\r\\nCAMELLO PATAGÓNICO"
+  },
+  {
+    "id": 391,
+    "nombre": "Playera Cara de Nada (Acid Wash)",
+    "descripcion": null
+  },
+  {
+    "id": 392,
+    "nombre": "Playera Logo Cabra (Café)",
+    "descripcion": null
+  },
+  {
+    "id": 393,
+    "nombre": "Playera Logo 2025",
+    "descripcion": null
+  },
+  {
+    "id": 394,
+    "nombre": "Playera Jaula",
+    "descripcion": null
+  },
+  {
+    "id": 395,
+    "nombre": "Playera Adorno Rosa",
+    "descripcion": null
+  },
+  {
+    "id": 396,
+    "nombre": "Playera Esplin Morada",
+    "descripcion": null
+  },
+  {
+    "id": 397,
+    "nombre": "Sudadera Puertas",
+    "descripcion": null
+  },
+  {
+    "id": 403,
+    "nombre": "Playera Garami 'Preventa'",
+    "descripcion": "<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\nAdquiere este producto y asegura tu pase para el Meet &amp; Greet el día 18 de Febrero\r\\n¡Cantidades limitadas!\r\\n\r\\n</div>\r\\nPlayera 100% algodón\r\\n\r\\n‘No incluye envío, producto exclusivo para retirar en M&amp;G’"
+  },
+  {
+    "id": 404,
+    "nombre": "Playera Bergen 'Preventa'",
+    "descripcion": "<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\nAdquiere este producto y asegura tu pase para el Meet &amp; Greet el día 18 de Febrero\r\\n¡Cantidades limitadas!\r\\n\r\\n</div>\r\\nPlayera 100% algodón\r\\n\r\\n‘No incluye envío, producto exclusivo para retirar en M&amp;G’"
+  },
+  {
+    "id": 405,
+    "nombre": "Playera Flores 'Preventa'",
+    "descripcion": "<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\nAdquiere este producto y asegura tu pase para el Meet &amp; Greet el día 18 de Febrero\r\\n¡Cantidades limitadas!\r\\n\r\\n</div>\r\\nPlayera 100% algodón\r\\n\r\\n‘No incluye envío, producto exclusivo para retirar en M&amp;G’"
+  },
+  {
+    "id": 406,
+    "nombre": "Poster 'Preventa'",
+    "descripcion": "<div class=\"woocommerce-product-details__short-description\">\r\\n\r\\nAdquiere este producto y asegura tu pase para el Meet &amp; Greet el día 18 de Febrero\r\\n\r\\n</div>\r\\n¡Cantidades limitadas!\r\\n\r\\n‘No incluye envío, producto exclusivo para retirar en M&amp;G’"
+  },
+  {
+    "id": 407,
+    "nombre": "Sudadera 'Preventa'",
+    "descripcion": "Adquiere este producto y retíralo en el Meet &amp; Greet el día 18 de Febrero\r\\n¡Cantidades limitadas!\r\\n\r\\nSudadera 100% algodón con logo bordado"
+  },
+  {
+    "id": 408,
+    "nombre": "Totebag 'Preventa'",
+    "descripcion": "Adquiere este producto y asegura tu pase para el Meet &amp; Greet el día 18 de Febrero\r\\n¡Cantidades limitadas!\r\\n\r\\n‘No incluye envío, producto exclusivo para retirar en M&amp;G’"
+  },
+  {
+    "id": 59,
+    "nombre": "Wacha Checa Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 60,
+    "nombre": "Super Deli",
+    "descripcion": null
+  },
+  {
+    "id": 61,
+    "nombre": "Gorra Super Deli Azul",
+    "descripcion": null
+  },
+  {
+    "id": 62,
+    "nombre": "Gorra VEET Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 63,
+    "nombre": "Sudadera Super Deli",
+    "descripcion": null
+  },
+  {
+    "id": 414,
+    "nombre": "DAMALEONA K0STK0 TSHIRT (BLACK/NEGRA)",
+    "descripcion": "Impresa en Serigrafía sobre playera <strong>Shaka Wear</strong> Reverse Oversize Fit Unitalla (XL) / Screen printed on a premium Shaka Wear Reverse Oversized Fit — heavyweight, structured, and built to last."
+  },
+  {
+    "id": 64,
+    "nombre": "Gorra VEET Azul",
+    "descripcion": null
+  },
+  {
+    "id": 65,
+    "nombre": "Gorra VEET Verde",
+    "descripcion": null
+  },
+  {
+    "id": 66,
+    "nombre": "Gorra 1986 Roja",
+    "descripcion": null
+  },
+  {
+    "id": 67,
+    "nombre": "Ringer VEET",
+    "descripcion": null
+  },
+  {
+    "id": 68,
+    "nombre": "Totebag Roja",
+    "descripcion": null
+  },
+  {
+    "id": 69,
+    "nombre": "Totebag Azul",
+    "descripcion": null
+  },
+  {
+    "id": 70,
+    "nombre": "Totebag Amarilla",
+    "descripcion": null
+  },
+  {
+    "id": 71,
+    "nombre": "Totebag Verde",
+    "descripcion": null
+  },
+  {
+    "id": 423,
+    "nombre": "Playera Addict",
+    "descripcion": null
+  },
+  {
+    "id": 424,
+    "nombre": "Playera Pasaporte",
+    "descripcion": null
+  },
+  {
+    "id": 425,
+    "nombre": "Playera Dolce Vita",
+    "descripcion": null
+  },
+  {
+    "id": 389,
+    "nombre": "Hoodie",
+    "descripcion": null
+  },
+  {
+    "id": 427,
+    "nombre": "CD 'Todo Pasa' Firmado (Preventa)",
+    "descripcion": "'Todo Pasa' el más reciente álbum de Andrés Obregón en su versión física.\r\\nCD edición especial, incluye póster doble cara.\r\\n\r\\nEnvíos a partir del 1ero de Julio.\r\\n\r\\n1- LAS ESCONDIDAS\r\\n2- CONTRATIEMPO FT. SUSANA CALA\r\\n3- ALGORITMO FT. ANDRÉS KOI\r\\n4- MIRA QUE BONITO DÍA\r\\n5- MI ZAPATO\r\\n6- CLARAMENTE\r\\n7- LUGAR SEGURO\r\\n8- TODO SE VA\r\\n9- EL HOMBRE QUE ESCALÓ MURALLAS\r\\n10- PAY DE LIMÓN\r\\n11- TODO PASA"
+  },
+  {
+    "id": 429,
+    "nombre": "Producto Prueba 1",
+    "descripcion": "Descripción"
+  },
+  {
+    "id": 430,
+    "nombre": "Compra de Prueba 1",
+    "descripcion": "Descripción"
+  },
+  {
+    "id": 161,
+    "nombre": "Renacimiento Tour Azul",
+    "descripcion": null
+  },
+  {
+    "id": 194,
+    "nombre": "Cd",
+    "descripcion": null
+  },
+  {
+    "id": 282,
+    "nombre": "Sudadera 'Reina Leona' Negra",
+    "descripcion": "<span style=\"color: #333333;\"><strong>\"Reina Leona, Vampira Pelo Rosa\"</strong></span>\r\n\\n\r\n\\nEnvio a México y a todo el mundo (el precio varía de acuerdo a las tasas de importación de cada país). Si no ves tu país en la lista de opciones, escríbenos directamente y lo activaremos para ti."
+  },
+  {
+    "id": 167,
+    "nombre": "Playera perros",
+    "descripcion": null
+  },
+  {
+    "id": 174,
+    "nombre": "Cd Los Náufragos",
+    "descripcion": "1) Aquí\r\n\\n2) En Las Olas\r\n\\n3) No Te Culpo\r\n\\n4) Juego de Amor\r\n\\n5) Guárdalo\r\n\\n6) Lejos\r\n\\n7) Hace Tiempo\r\n\\n8) El Remedio\r\n\\n9) Tardes En el Parque\r\n\\n10) El Amor No Existe\r\n\\n11) Querernos\r\n\\n12) La Isla Centeno\r\n\\n13) Los Naúfragos"
+  },
+  {
+    "id": 181,
+    "nombre": "Pinta Mi Cuba",
+    "descripcion": null
+  },
+  {
+    "id": 186,
+    "nombre": "Taza Recuerdo de Nuestra Boda",
+    "descripcion": null
+  },
+  {
+    "id": 240,
+    "nombre": "Playera Lisboa",
+    "descripcion": "Playera 100% algodón\r\n\\nFit unisex\r\n\\nImpresión en serigrafía"
+  }
+]

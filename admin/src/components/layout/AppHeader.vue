@@ -95,6 +95,12 @@
             </button>
           </div>
 
+          <!-- Saldo Envia -->
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800" title="Saldo en Envia.com">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+            <span class="text-xs font-bold">{{ loadingSaldo ? '...' : (saldo === null ? 'Error' : `$${saldo} ${currency}`) }}</span>
+          </div>
+
           <ThemeToggler />
           <NotificationMenu />
         </div>
@@ -141,6 +147,7 @@ const mantenimiento = ref(false)
 const savingMantenimiento = ref(false)
 
 onMounted(async () => {
+  fetchSaldo()
   try {
     const res = await fetch('/api/settings/mantenimiento')
     const data = await res.json()
@@ -149,6 +156,26 @@ onMounted(async () => {
     console.error('Error fetching mantenimiento:', e)
   }
 })
+
+const saldo = ref<string | null>(null)
+const currency = ref('MXN')
+const loadingSaldo = ref(false)
+
+const fetchSaldo = async () => {
+  loadingSaldo.value = true
+  try {
+    const res = await fetch('/api/envia/saldo')
+    if (res.ok) {
+      const data = await res.json()
+      saldo.value = parseFloat(data.balance).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      currency.value = data.currency
+    }
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loadingSaldo.value = false
+  }
+}
 
 const toggleMantenimiento = async () => {
   if (savingMantenimiento.value) return

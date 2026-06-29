@@ -276,6 +276,11 @@ const menuGroups = [
         path: "/reporte",
       },
       {
+        icon: BoxIcon, // Using BoxIcon for now, you might want to choose a different one
+        name: "Inventario",
+        path: "/inventario",
+      },
+      {
         icon: BoxIcon, // You can change the icon later
         name: "Envío",
         path: "/envio",
