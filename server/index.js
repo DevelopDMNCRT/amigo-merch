@@ -93,6 +93,7 @@ async function sendStatusEmail(pedido, estado) {
   try {
     await mailer.sendMail({
       from: `"Amigo Merch" <${process.env.SMTP_USER}>`,
+      replyTo: 'amigomerchmx@gmail.com',
       to:   pedido.correo,
       subject,
       html,
@@ -875,14 +876,15 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
     console.log(`[Envia] Usando entorno: ${enviaApiUrl}`);
     const enviaQueriesUrl = enviaApiUrl.includes('api-test') ? 'https://queries-test.envia.com' : 'https://queries.envia.com';
 
-    // Override package weight/dims if custom values sent from frontend
-    if (req.body.peso || req.body.dims) {
-      const { peso, dims } = req.body;
+    // Override package weight/dims/type if custom values sent from frontend
+    if (req.body.peso || req.body.dims || req.body.type) {
+      const { peso, dims, type } = req.body;
       if (payload.packages && payload.packages.length > 0) {
         if (peso)         payload.packages[0].weight = parseFloat(peso) || payload.packages[0].weight;
         if (dims?.length) payload.packages[0].dimensions.length = parseInt(dims.length) || payload.packages[0].dimensions.length;
         if (dims?.width)  payload.packages[0].dimensions.width  = parseInt(dims.width)  || payload.packages[0].dimensions.width;
         if (dims?.height) payload.packages[0].dimensions.height = parseInt(dims.height) || payload.packages[0].dimensions.height;
+        if (type)         payload.packages[0].type = type;
       }
     }
 
@@ -978,6 +980,37 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
 
     const payload = await getEnviaPayload(rows[0]);
     payload.shipment = { carrier, service, type: 1 };
+
+    // Override package weight/dims/type if custom values sent from frontend
+    if (req.body.peso || req.body.dims || req.body.type) {
+      const { peso, dims, type } = req.body;
+      if (payload.packages && payload.packages.length > 0) {
+        if (peso)         payload.packages[0].weight = parseFloat(peso) || payload.packages[0].weight;
+        if (dims?.length) payload.packages[0].dimensions.length = parseInt(dims.length) || payload.packages[0].dimensions.length;
+        if (dims?.width)  payload.packages[0].dimensions.width  = parseInt(dims.width)  || payload.packages[0].dimensions.width;
+        if (dims?.height) payload.packages[0].dimensions.height = parseInt(dims.height) || payload.packages[0].dimensions.height;
+        if (type)         payload.packages[0].type = type;
+      }
+    }
+
+    // Override origin if a specific bodega was selected from the frontend
+    if (req.body.origen) {
+      const o = req.body.origen;
+      payload.origin = {
+        name:       o.nombre   || payload.origin.name,
+        company:    o.company  || payload.origin.company,
+        email:      o.email    || payload.origin.email,
+        phone:      o.phone    || payload.origin.phone,
+        street:     o.street   || payload.origin.street,
+        number:     o.number   || payload.origin.number,
+        district:   o.district || payload.origin.district,
+        city:       o.city     || payload.origin.city,
+        state:      o.state    || payload.origin.state,
+        country:    o.country  || 'MX',
+        postalCode: o.postalCode || payload.origin.postalCode,
+        reference:  o.reference || ''
+      };
+    }
 
     const response = await fetch(`${process.env.ENVIA_API_URL}/ship/generate/`, {
       method: 'POST',
@@ -1206,6 +1239,7 @@ app.post('/api/boletines/:id/enviar', async (req, res) => {
         suscriptores.map(s =>
           mailer.sendMail({
             from:    `"Amigo Merch" <${process.env.SMTP_USER}>`,
+            replyTo: 'amigomerchmx@gmail.com',
             to:      s.correo,
             subject: boletin.asunto,
             html: `

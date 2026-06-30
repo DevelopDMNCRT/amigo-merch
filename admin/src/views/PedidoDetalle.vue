@@ -27,11 +27,15 @@
 
           <div class="px-6 py-6 space-y-6">
 
-            <!-- Fila 1: # Orden, Cliente, Fecha, Total -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+            <!-- Fila 1: # Orden, Rastreo, Cliente, Fecha, Total -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-5">
               <div>
                 <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase mb-1">Orden</p>
                 <p class="font-mono font-bold text-brand-600 dark:text-brand-400 text-sm">#{{ pedido.orden }}</p>
+              </div>
+              <div>
+                <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase mb-1">Cód. Rastreo</p>
+                <p class="font-mono text-gray-600 dark:text-gray-400 text-sm">{{ pedido.codigo_rastreo }}</p>
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase mb-1">Cliente</p>
@@ -237,6 +241,29 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
                   <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Caja / Paquete</p>
                 </div>
+
+                <div class="mb-4">
+                  <label class="text-gray-400 mb-1.5 block text-xs">Tipo de Envío</label>
+                  <div class="flex items-center gap-2">
+                    <button
+                      @click="pkgType = 'envelope'"
+                      class="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+                      :class="pkgType === 'envelope' ? 'border-[#00B4AA] bg-[#00B4AA]/10 text-[#00B4AA]' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                      Sobre
+                    </button>
+                    <button
+                      @click="pkgType = 'box'"
+                      class="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+                      :class="pkgType === 'box' ? 'border-[#00B4AA] bg-[#00B4AA]/10 text-[#00B4AA]' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                      Caja
+                    </button>
+                  </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <label class="text-gray-400 mb-0.5 block">Peso (kg)</label>
@@ -518,6 +545,7 @@ const selectedBodega = ref(BODEGAS[0]);
 // Package dimensions (editable before quoting)
 const pkgPeso = ref(1);
 const pkgDims = ref({ length: 30, width: 20, height: 10 });
+const pkgType = ref('box');
 
 // Carrier domain map for Google Favicon fallback
 const CARRIER_DOMAINS = {
@@ -574,7 +602,8 @@ const fetchPedido = async () => {
 
     pedido.value = {
       id: data.id,
-      orden: data.orden,
+      orden: String(data.id).padStart(5, '0'),
+      codigo_rastreo: data.orden,
       cliente: data.nombre,
       fecha: fechaFormateada,
       ciudad: data.ciudad,
@@ -640,7 +669,8 @@ const cotizarEnvio = async () => {
       body: JSON.stringify({
         peso: pkgPeso.value,
         dims: pkgDims.value,
-        origen: selectedBodega.value
+        origen: selectedBodega.value,
+        type: pkgType.value
       })
     });
     const data = await res.json();
@@ -666,7 +696,11 @@ const generarGuia = async () => {
   try {
     const payload = {
       carrier: selectedRate.value.carrier,
-      service: selectedRate.value.service
+      service: selectedRate.value.service,
+      peso: pkgPeso.value,
+      dims: pkgDims.value,
+      origen: selectedBodega.value,
+      type: pkgType.value
     };
     const res = await fetch(`/api/pedidos/${pedido.value.id}/generar-guia`, {
       method: 'POST',
