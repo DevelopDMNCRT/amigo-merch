@@ -301,6 +301,31 @@
                   <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Caja / Paquete</p>
                 </div>
 
+                <!-- Selector de plantilla -->
+                <div v-if="packagePresets.length > 0" class="mb-4 relative">
+                  <label class="text-gray-400 mb-1.5 block text-xs">Plantilla guardada</label>
+                  <div class="relative">
+                    <input
+                      v-model="presetSearch"
+                      @focus="showPresetDropdown = true"
+                      @blur="setTimeout(() => showPresetDropdown = false, 150)"
+                      :placeholder="selectedPresetName || 'Buscar plantilla...'" 
+                      class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent pl-2 pr-7 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none"
+                    />
+                    <svg class="absolute right-2 top-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                  </div>
+                  <div v-if="showPresetDropdown" class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg max-h-48 overflow-y-auto">
+                    <div
+                      v-for="p in filteredPresets" :key="p.id"
+                      @mousedown.prevent="applyPreset(p)"
+                      class="flex items-center justify-between px-3 py-2 text-xs cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5">
+                      <span class="font-medium text-gray-800 dark:text-white/90">{{ p.nombre }}</span>
+                      <span class="text-gray-400 font-mono">{{ p.largo }}×{{ p.ancho }}×{{ p.alto }} cm, {{ p.peso }}kg</span>
+                    </div>
+                    <div v-if="filteredPresets.length === 0" class="px-3 py-2 text-xs text-gray-400">Sin resultados</div>
+                  </div>
+                </div>
+
                 <div class="mb-4">
                   <label class="text-gray-400 mb-1.5 block text-xs">Tipo de Envío</label>
                   <div class="flex items-center gap-2">
@@ -571,6 +596,30 @@ const destEdit = ref({
   correo: '', referencia: ''
 });
 
+// Plantillas de paquete
+const packagePresets = ref([]);
+const presetSearch = ref('');
+const showPresetDropdown = ref(false);
+const selectedPresetName = ref('');
+const filteredPresets = computed(() => {
+  const q = presetSearch.value.toLowerCase();
+  return packagePresets.value.filter(p => p.nombre.toLowerCase().includes(q));
+});
+const applyPreset = (p) => {
+  pkgType.value   = p.tipo;
+  pkgPeso.value   = parseFloat(p.peso);
+  pkgDims.value   = { length: p.largo, width: p.ancho, height: p.alto };
+  selectedPresetName.value = p.nombre;
+  presetSearch.value = '';
+  showPresetDropdown.value = false;
+};
+const fetchPackagePresets = async () => {
+  try {
+    const res = await fetch('/api/package-presets');
+    if (res.ok) packagePresets.value = await res.json();
+  } catch (e) { console.error('Error fetching presets:', e); }
+};
+
 // Bodegas de origen
 const BODEGAS = [
   {
@@ -712,6 +761,7 @@ const fetchPedido = async () => {
 
 onMounted(() => {
   fetchPedido();
+  fetchPackagePresets();
 });
 
 const guardarEstado = async () => {

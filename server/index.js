@@ -2195,4 +2195,82 @@ app.listen(port, () => {
 
 module.exports = app;
 
+// --- Package Presets ---
+const initPackagePresetsTable = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS package_presets (
+        id SERIAL PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        tipo TEXT NOT NULL DEFAULT 'box',
+        peso NUMERIC(6,2) NOT NULL,
+        largo INT NOT NULL,
+        ancho INT NOT NULL,
+        alto INT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    console.log('Package presets table initialized');
+  } catch (err) {
+    console.error('Error initializing package_presets table:', err);
+  }
+};
+initPackagePresetsTable();
 
+// GET all package presets
+app.get('/api/package-presets', async (_req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM package_presets ORDER BY nombre ASC');
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch package presets' });
+  }
+});
+
+// POST create package preset
+app.post('/api/package-presets', async (req, res) => {
+  try {
+    const { nombre, tipo, peso, largo, ancho, alto } = req.body;
+    if (!nombre || !peso || !largo || !ancho || !alto) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
+    const { rows } = await pool.query(
+      'INSERT INTO package_presets (nombre, tipo, peso, largo, ancho, alto) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [nombre, tipo || 'box', parseFloat(peso), parseInt(largo), parseInt(ancho), parseInt(alto)]
+    );
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create package preset' });
+  }
+});
+
+// PUT update package preset
+app.put('/api/package-presets/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, tipo, peso, largo, ancho, alto } = req.body;
+    const { rows } = await pool.query(
+      'UPDATE package_presets SET nombre=$1, tipo=$2, peso=$3, largo=$4, ancho=$5, alto=$6 WHERE id=$7 RETURNING *',
+      [nombre, tipo || 'box', parseFloat(peso), parseInt(largo), parseInt(ancho), parseInt(alto), id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Preset no encontrado' });
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update package preset' });
+  }
+});
+
+// DELETE package preset
+app.delete('/api/package-presets/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query('DELETE FROM package_presets WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete package preset' });
+  }
+});

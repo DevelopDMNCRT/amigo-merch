@@ -153,6 +153,119 @@
         </div>
       </div>
 
+      <!-- Sección Plantillas de Paquete -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white/90">Plantillas de Paquete</h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Guarda tus cajas frecuentes para seleccionarlas rápidamente al generar guías.</p>
+          </div>
+          <button @click="abrirModalPreset" class="bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-brand-600 transition-colors">
+            <span>+</span> Nueva Plantilla
+          </button>
+        </div>
+
+        <div v-if="presets.length === 0" class="rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-10 text-center">
+          <svg class="mx-auto mb-3 text-gray-300 dark:text-gray-600" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <p class="text-sm text-gray-500 dark:text-gray-400">No hay plantillas. Crea tu primera plantilla para agilizar la generación de guías.</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div v-for="preset in presets" :key="preset.id"
+            class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-4 flex flex-col gap-3">
+            <!-- Icono + Nombre -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center" :class="preset.tipo === 'envelope' ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-amber-50 dark:bg-amber-500/10'">
+                  <!-- Caja -->
+                  <svg v-if="preset.tipo === 'box'" class="text-amber-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  <!-- Sobre -->
+                  <svg v-else class="text-blue-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-gray-800 dark:text-white/90 leading-tight">{{ preset.nombre }}</p>
+              </div>
+              <div class="flex items-center gap-1">
+                <button @click="editarPreset(preset)" class="p-1.5 text-gray-400 hover:text-brand-500 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-white/5" title="Editar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </button>
+                <button @click="eliminarPreset(preset.id)" class="p-1.5 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-white/5" title="Eliminar">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+            <!-- Dimensiones -->
+            <div class="text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-white/[0.03] rounded-lg px-3 py-2 font-mono">
+              {{ preset.largo }}×{{ preset.ancho }}×{{ preset.alto }} cm · {{ preset.peso }} kg
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Nueva / Editar Plantilla -->
+      <div v-if="mostrarModalPreset" class="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 p-4">
+        <div class="w-full max-w-[420px] rounded-2xl bg-white p-7 shadow-xl dark:bg-gray-900">
+          <h3 class="mb-5 text-[18px] font-bold text-[#111827] dark:text-white">{{ nuevoPreset.id ? 'Editar' : 'Nueva' }} Plantilla de Paquete</h3>
+
+          <div class="space-y-4">
+            <!-- Nombre -->
+            <div>
+              <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Nombre</label>
+              <input v-model="nuevoPreset.nombre" type="text" placeholder="Ej: Ropa, Poster, Vasos..."
+                class="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-800 focus:border-brand-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+            </div>
+
+            <!-- Tipo -->
+            <div>
+              <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Tipo</label>
+              <div class="flex gap-2">
+                <button @click="nuevoPreset.tipo = 'box'"
+                  class="flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors"
+                  :class="nuevoPreset.tipo === 'box' ? 'border-brand-400 bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400' : 'border-gray-200 text-gray-600 dark:border-gray-700 dark:text-gray-400'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Caja
+                </button>
+                <button @click="nuevoPreset.tipo = 'envelope'"
+                  class="flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors"
+                  :class="nuevoPreset.tipo === 'envelope' ? 'border-brand-400 bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400' : 'border-gray-200 text-gray-600 dark:border-gray-700 dark:text-gray-400'">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Sobre
+                </button>
+              </div>
+            </div>
+
+            <!-- Dimensiones + Peso -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Peso (kg)</label>
+                <input v-model.number="nuevoPreset.peso" type="number" step="0.1" min="0.1" placeholder="1.0"
+                  class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 focus:border-brand-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Largo (cm)</label>
+                <input v-model.number="nuevoPreset.largo" type="number" min="1" placeholder="30"
+                  class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 focus:border-brand-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Ancho (cm)</label>
+                <input v-model.number="nuevoPreset.ancho" type="number" min="1" placeholder="20"
+                  class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 focus:border-brand-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+              </div>
+              <div>
+                <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Alto (cm)</label>
+                <input v-model.number="nuevoPreset.alto" type="number" min="1" placeholder="10"
+                  class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 focus:border-brand-400 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-7 flex justify-end gap-3">
+            <button @click="mostrarModalPreset = false" class="rounded-xl px-5 py-2.5 text-[14px] font-semibold text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800">Cancelar</button>
+            <button @click="guardarPreset" :disabled="savingPreset" class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-brand-600 disabled:opacity-70 transition-colors">
+              <svg v-if="savingPreset" class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </AdminLayout>
 </template>
@@ -308,8 +421,66 @@ const eliminarRegla = async (id) => {
   } catch (e) { console.error('Error deleting regla:', e); }
 };
 
-onMounted(() => {
+// --- Package Presets ---
+const presets = ref([]);
+const mostrarModalPreset = ref(false);
+const savingPreset = ref(false);
+const nuevoPreset = ref({ nombre: '', tipo: 'box', peso: 1, largo: 30, ancho: 20, alto: 10 });
 
+const fetchPresets = async () => {
+  try {
+    const res = await fetch('/api/package-presets');
+    if (res.ok) presets.value = await res.json();
+  } catch (e) { console.error('Error fetching presets:', e); }
+};
+
+const abrirModalPreset = () => {
+  nuevoPreset.value = { nombre: '', tipo: 'box', peso: 1, largo: 30, ancho: 20, alto: 10 };
+  mostrarModalPreset.value = true;
+};
+
+const editarPreset = (preset) => {
+  nuevoPreset.value = { ...preset };
+  mostrarModalPreset.value = true;
+};
+
+const guardarPreset = async () => {
+  const { nombre, tipo, peso, largo, ancho, alto } = nuevoPreset.value;
+  if (!nombre || !peso || !largo || !ancho || !alto) return;
+  savingPreset.value = true;
+  try {
+    const isEdit = !!nuevoPreset.value.id;
+    const url = isEdit ? `/api/package-presets/${nuevoPreset.value.id}` : '/api/package-presets';
+    const res = await fetch(url, {
+      method: isEdit ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, tipo, peso, largo, ancho, alto })
+    });
+    if (res.ok) {
+      const saved = await res.json();
+      if (isEdit) {
+        const idx = presets.value.findIndex(p => p.id === saved.id);
+        if (idx !== -1) presets.value[idx] = saved;
+      } else {
+        presets.value.push(saved);
+        presets.value.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      }
+      mostrarModalPreset.value = false;
+    }
+  } catch (e) { console.error('Error saving preset:', e); }
+  finally { savingPreset.value = false; }
+};
+
+const eliminarPreset = async (id) => {
+  if (!confirm('¿Eliminar esta plantilla?')) return;
+  try {
+    const res = await fetch(`/api/package-presets/${id}`, { method: 'DELETE' });
+    if (res.ok) presets.value = presets.value.filter(p => p.id !== id);
+  } catch (e) { console.error('Error deleting preset:', e); }
+};
+
+onMounted(() => {
   fetchReglas();
+  fetchPresets();
 });
 </script>
