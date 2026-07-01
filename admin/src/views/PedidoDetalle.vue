@@ -318,9 +318,9 @@
                     <div
                       v-for="p in filteredPresets" :key="p.id"
                       @mousedown.prevent="applyPreset(p)"
-                      class="flex items-center justify-between px-3 py-2 text-xs cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5">
-                      <span class="font-medium text-gray-800 dark:text-white/90">{{ p.nombre }}</span>
-                      <span class="text-gray-400 font-mono">{{ p.largo }}×{{ p.ancho }}×{{ p.alto }} cm, {{ p.peso }}kg</span>
+                      class="flex flex-col gap-0.5 px-3 py-2 text-xs cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5">
+                      <span class="font-medium text-gray-800 dark:text-white/90 truncate">{{ p.nombre }}</span>
+                      <span class="text-gray-400 font-mono text-[11px]">{{ p.largo }}×{{ p.ancho }}×{{ p.alto }} cm, {{ p.peso }}kg</span>
                     </div>
                     <div v-if="filteredPresets.length === 0" class="px-3 py-2 text-xs text-gray-400">Sin resultados</div>
                   </div>
