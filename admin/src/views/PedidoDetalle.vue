@@ -677,8 +677,19 @@ const cotizarEnvio = async () => {
     if (!res.ok) throw new Error(data.error || 'Error al cotizar');
     
     if (data.rates && data.rates.length > 0) {
-      rates.value = data.rates.sort((a, b) => a.totalPrice - b.totalPrice);
-      showToast('success', `${rates.value.length} opciones encontradas.`);
+      // Filtrar servicios "Ocurre" como origen (ej: "X Ocurre - Domicilio")
+      // Estos requieren originBranchCode ya que implica llevar el paquete a una sucursal.
+      // Solo dejamos servicios donde la recolección es a domicilio (desde tu bodega).
+      const filtered = data.rates.filter(r => {
+        const name = (r.serviceDescription || r.service || '').toLowerCase();
+        // Excluir si el nombre empieza con "ocurre" o contiene "ocurre -" (origen ocurre)
+        // Permitir los que dicen "domicilio - ocurre" (domicilio=origen, ocurre=destino: válido)
+        if (/^ocurre\b/.test(name)) return false;            // "Ocurre - X": origen ocurre ❌
+        if (/\bocurre\s*-\s*domicilio\b/.test(name)) return false; // "X Ocurre - Domicilio" ❌
+        return true;
+      });
+      rates.value = filtered.sort((a, b) => a.totalPrice - b.totalPrice);
+      showToast('success', `${filtered.length} opciones encontradas.`);
     } else {
       showToast('error', 'No se encontraron tarifas para este código postal.');
     }
