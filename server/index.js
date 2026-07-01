@@ -907,6 +907,25 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
       };
     }
 
+    // Override destination if edited from the frontend
+    if (req.body.destino) {
+      const d = req.body.destino;
+      payload.destination = {
+        name:       d.nombre     || payload.destination.name,
+        company:    payload.destination.company,
+        email:      d.correo     || payload.destination.email,
+        phone:      d.telefono   || payload.destination.phone,
+        street:     d.calle      || payload.destination.street,
+        number:     d.num_ext    || payload.destination.number,
+        district:   d.colonia    || payload.destination.district,
+        city:       d.ciudad     || payload.destination.city,
+        state:      d.estado     || payload.destination.state,
+        country:    'MX',
+        postalCode: d.cp         || payload.destination.postalCode,
+        reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
+      };
+    }
+
     // Step 1: Dynamically fetch all active carriers for this account
     let carrierList = [];
     try {
@@ -1009,6 +1028,25 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         country:    o.country  || 'MX',
         postalCode: o.postalCode || payload.origin.postalCode,
         reference:  o.reference || ''
+      };
+    }
+
+    // Override destination if edited from the frontend
+    if (req.body.destino) {
+      const d = req.body.destino;
+      payload.destination = {
+        name:       d.nombre     || payload.destination.name,
+        company:    payload.destination.company,
+        email:      d.correo     || payload.destination.email,
+        phone:      d.telefono   || payload.destination.phone,
+        street:     d.calle      || payload.destination.street,
+        number:     d.num_ext    || payload.destination.number,
+        district:   d.colonia    || payload.destination.district,
+        city:       d.ciudad     || payload.destination.city,
+        state:      d.estado     || payload.destination.state,
+        country:    'MX',
+        postalCode: d.cp         || payload.destination.postalCode,
+        reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
       };
     }
 

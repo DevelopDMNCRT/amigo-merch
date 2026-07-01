@@ -226,13 +226,72 @@
               </div>
 
               <!-- Destino -->
-              <div class="p-5 space-y-1">
-                <div class="flex items-center gap-2 mb-3">
-                  <span class="text-lg">🇲🇽</span>
-                  <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Destino</p>
+              <div class="p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-lg">🇲🇽</span>
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Destino</p>
+                  </div>
+                  <button @click="editandoDestino = !editandoDestino"
+                    class="flex items-center gap-1 text-xs px-2 py-1 rounded-lg transition-colors"
+                    :class="editandoDestino ? 'bg-[#00B4AA]/10 text-[#00B4AA]' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    {{ editandoDestino ? 'Listo' : 'Editar' }}
+                  </button>
                 </div>
-                <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ pedido.cliente }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{{ pedido.domicilio }}</p>
+
+                <!-- Vista compacta -->
+                <template v-if="!editandoDestino">
+                  <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ destEdit.nombre }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">
+                    {{ destEdit.calle }} {{ destEdit.num_ext }}, {{ destEdit.colonia }}<br>
+                    {{ destEdit.ciudad }}, C.P. {{ destEdit.cp }}
+                  </p>
+                  <p v-if="destEdit.telefono" class="text-xs text-gray-400 mt-1">📞 {{ destEdit.telefono }}</p>
+                  <p v-if="destEdit.referencia" class="text-xs text-[#00B4AA] mt-1 italic">Ref: {{ destEdit.referencia }}</p>
+                </template>
+
+                <!-- Modo edición -->
+                <template v-else>
+                  <div class="space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                      <div class="col-span-2">
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Nombre completo</label>
+                        <input v-model="destEdit.nombre" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Teléfono</label>
+                        <input v-model="destEdit.telefono" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">C.P.</label>
+                        <input v-model="destEdit.cp" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div class="col-span-2">
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Calle</label>
+                        <input v-model="destEdit.calle" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">No. Ext</label>
+                        <input v-model="destEdit.num_ext" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Colonia</label>
+                        <input v-model="destEdit.colonia" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div class="col-span-2">
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Ciudad</label>
+                        <input v-model="destEdit.ciudad" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div class="col-span-2">
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Referencia <span class="text-gray-300">(aparece en la guía)</span></label>
+                        <textarea v-model="destEdit.referencia" rows="2"
+                          placeholder="Ej: Tel 5529556508 — Tocar el portón azul"
+                          class="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 py-1.5 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none resize-none leading-relaxed"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </template>
               </div>
 
               <!-- Caja / Paquete (editable) -->
@@ -504,6 +563,14 @@ const manualCarrier = ref('');
 const rates = ref([]);
 const selectedRate = ref(null);
 
+// Datos de destino editables
+const editandoDestino = ref(false);
+const destEdit = ref({
+  nombre: '', telefono: '', calle: '', num_ext: '',
+  colonia: '', ciudad: '', estado: '', cp: '',
+  correo: '', referencia: ''
+});
+
 // Bodegas de origen
 const BODEGAS = [
   {
@@ -616,7 +683,23 @@ const fetchPedido = async () => {
       envio: parseFloat(data.envio),
       total: parseFloat(data.total),
       tracking_number: data.tracking_number,
-      guia_url: data.guia_url
+      guia_url: data.guia_url,
+      // Campos de dirección individuales
+      calle: data.calle, num_ext: data.num_ext, colonia: data.colonia,
+      cp: data.cp, estado_env: data.estado_env, pais: data.pais
+    };
+    // Inicializar campos editables de destino
+    destEdit.value = {
+      nombre:     data.nombre     || '',
+      telefono:   data.telefono   || '',
+      calle:      data.calle      || '',
+      num_ext:    data.num_ext    || '',
+      colonia:    data.colonia    || '',
+      ciudad:     data.ciudad     || '',
+      estado:     data.estado_env || '',
+      cp:         data.cp         || '',
+      correo:     data.correo     || '',
+      referencia: data.notas      || ''
     };
     // Inicializar el estado pendiente con el valor guardado en BD
     estadoPendiente.value = data.estado;
@@ -670,7 +753,8 @@ const cotizarEnvio = async () => {
         peso: pkgPeso.value,
         dims: pkgDims.value,
         origen: selectedBodega.value,
-        type: pkgType.value
+        type: pkgType.value,
+        destino: destEdit.value
       })
     });
     const data = await res.json();
@@ -711,7 +795,8 @@ const generarGuia = async () => {
       peso: pkgPeso.value,
       dims: pkgDims.value,
       origen: selectedBodega.value,
-      type: pkgType.value
+      type: pkgType.value,
+      destino: destEdit.value
     };
     const res = await fetch(`/api/pedidos/${pedido.value.id}/generar-guia`, {
       method: 'POST',
