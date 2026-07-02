@@ -49,7 +49,7 @@ const EMAIL_TRIGGERS = {
       </div>
     `
   }),
-  'Completado': (p) => ({
+  'Guía Generada': (p) => ({
     subject: `¡Tu pedido #${p.orden} va en camino! — Amigo Merch`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
@@ -843,7 +843,7 @@ app.post('/api/pedidos', async (req, res) => {
 });
 
 async function manejarDescuentoStock(pedidoId, nuevoEstado) {
-  const ESTADOS_DESCUENTO = ['Nuevo', 'En proceso', 'Completado'];
+  const ESTADOS_DESCUENTO = ['Nuevo', 'En proceso', 'Guía Generada'];
   if (!ESTADOS_DESCUENTO.includes(nuevoEstado)) return;
 
   try {
@@ -892,12 +892,12 @@ app.put('/api/pedidos/:id/estado', async (req, res) => {
     const { id } = req.params;
     const { estado, paqueteria, num_rastreo } = req.body;
 
-    const VALID = ['Pendiente de pago', 'Nuevo', 'En proceso', 'Completado', 'Fallido', 'Cancelado'];
+    const VALID = ['Pendiente de pago', 'Nuevo', 'En proceso', 'Guía Generada', 'Fallido', 'Cancelado'];
     if (!VALID.includes(estado)) return res.status(400).json({ error: 'Estado inválido' });
 
-    // Si es Completado, guardar también paquetería y número de rastreo
+    // Si es Guía Generada, guardar también paquetería y número de rastreo
     let result;
-    if (estado === 'Completado' && (paqueteria || num_rastreo)) {
+    if (estado === 'Guía Generada' && (paqueteria || num_rastreo)) {
       result = await pool.query(
         'UPDATE pedidos SET estado = $1, paqueteria = $2, num_rastreo = $3 WHERE id = $4 RETURNING *',
         [estado, paqueteria || null, num_rastreo || null, id]
@@ -1273,7 +1273,7 @@ app.post('/api/webhooks/envia', async (req, res) => {
         
         let nuevoEstado = null;
         if (status.includes('deliver') || status.includes('entregad')) {
-          nuevoEstado = 'Completado';
+          nuevoEstado = 'Guía Generada';
         } else if (status.includes('exception') || status.includes('return') || status.includes('cancel') || status.includes('devolución')) {
           nuevoEstado = 'Fallido';
         }

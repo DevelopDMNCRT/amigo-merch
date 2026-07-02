@@ -69,7 +69,7 @@
                       <option value="Pendiente de pago">Pendiente de pago</option>
                       <option value="Nuevo">Nuevo</option>
                       <option value="En proceso">En proceso</option>
-                      <option value="Completado">Completado</option>
+                      <option value="Guía Generada">Guía Generada</option>
                       <option value="Fallido">Fallido</option>
                       <option value="Cancelado">Cancelado</option>
                     </select>
@@ -78,8 +78,8 @@
                     </span>
                   </div>
 
-                  <!-- Campos extra para Completado: paquetería y rastreo -->
-                  <div v-if="estadoPendiente === 'Completado'" class="flex flex-col gap-1.5 rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20 p-2.5">
+                  <!-- Campos extra para Guía Generada: paquetería y rastreo -->
+                  <div v-if="estadoPendiente === 'Guía Generada'" class="flex flex-col gap-1.5 rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20 p-2.5">
                     <p class="text-[10px] font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Datos de envío (opcional)</p>
                     <input
                       v-model="envPaqueteria"
@@ -748,14 +748,14 @@ const carrierLogo = (rate) => {
   return null;
 };
 
-// Estados que disparan correo al cliente (debe coincidir con EMAIL_TRIGGERS en el server)
-const EMAIL_STATES = new Set(['En proceso', 'Completado', 'Cancelado', 'Fallido']);
+// Define qué estados disparan envío de correo al cliente (para el badge visual)
+const EMAIL_STATES = new Set(['En proceso', 'Guía Generada', 'Cancelado', 'Fallido']);
 
 // Estado local pendiente de guardar
 const estadoPendiente = ref('');
 const savingEstado    = ref(false);
 const toast = ref({ show: false, type: 'success', msg: '' });
-// Campos extras para estado Completado
+// Campos extras para estado Guía Generada
 const envPaqueteria = ref('');
 const envNumRastreo = ref('');
 
@@ -833,7 +833,7 @@ const guardarEstado = async () => {
   savingEstado.value = true;
   try {
     const body: Record<string, string> = { estado: estadoPendiente.value };
-    if (estadoPendiente.value === 'Completado') {
+    if (estadoPendiente.value === 'Guía Generada') {
       if (envPaqueteria.value) body.paqueteria = envPaqueteria.value;
       if (envNumRastreo.value) body.num_rastreo = envNumRastreo.value;
     }
@@ -1015,7 +1015,7 @@ const estadoTextClase = (estado) => {
     'Pendiente de pago': 'text-purple-600 dark:text-purple-400',
     'Nuevo':      'text-blue-light-600 dark:text-blue-light-400',
     'En proceso': 'text-warning-600 dark:text-warning-400',
-    'Completado': 'text-success-600 dark:text-success-500',
+    'Guía Generada': 'text-success-600 dark:text-success-500',
     'Fallido':    'text-error-600 dark:text-error-500',
     'Cancelado':  'text-gray-500 dark:text-gray-400',
   };
