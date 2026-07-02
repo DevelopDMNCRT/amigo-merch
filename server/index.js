@@ -31,56 +31,151 @@ const mailer = nodemailer.createTransport({
 // Estados que disparan correo al cliente y la plantilla correspondiente
 const EMAIL_TRIGGERS = {
   'En proceso': (p) => ({
-    subject: `¡Gracias por tu compra! Tu pedido #${p.orden} está en proceso — Amigo Merch`,
+    subject: `¡Estamos procesando tu pedido #${p.orden}! — Amigo Merch`,
     html: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-        <h2 style="color:#237650">¡Tu pedido está en preparación! 📦</h2>
+      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
+        <div style="text-align:center;margin-bottom:24px">
+          <h1 style="color:#237650;font-size:24px;margin:0">¡Estamos procesando tu pedido! ⚙️</h1>
+        </div>
         <p>Hola <strong>${p.nombre}</strong>,</p>
-        <p>Tu pedido <strong>#${p.orden}</strong> ya está siendo preparado por nuestro equipo. Pronto lo enviaremos a tu domicilio.</p>
-        <p style="color:#666">Puedes rastrear tu pedido en <a href="https://amigo-merch.vercel.app/rastreo" style="color:#237650">amigo-merch.vercel.app/rastreo</a> usando el número <strong>#${p.orden}</strong>.</p>
-        <p>¡Gracias por tu compra!</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
+        <p>Hemos confirmado tu pago y <strong>ya estamos preparando tu pedido #${p.orden}</strong> con todo el cariño para que llegue perfecto a tus manos.</p>
+        <p>Te avisaremos en cuanto lo enviemos. Puedes consultar el estado de tu pedido en cualquier momento aquí:</p>
+        <div style="text-align:center;margin:24px 0">
+          <a href="https://amigo-merch.vercel.app/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
+        </div>
+        <p style="color:#666;font-size:13px">Número de pedido: <strong>#${p.orden}</strong></p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
+        <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
       </div>
     `
   }),
   'Completado': (p) => ({
-    subject: `Tu pedido #${p.orden} fue entregado — Amigo Merch`,
+    subject: `¡Tu pedido #${p.orden} va en camino! — Amigo Merch`,
     html: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-        <h2 style="color:#237650">¡Tu pedido fue entregado! ✅</h2>
+      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
+        <div style="text-align:center;margin-bottom:24px">
+          <h1 style="color:#237650;font-size:24px;margin:0">¡Tu pedido va en camino! 🚚</h1>
+        </div>
         <p>Hola <strong>${p.nombre}</strong>,</p>
-        <p>Tu pedido <strong>#${p.orden}</strong> ha sido marcado como entregado. Esperamos que estés disfrutando tu merch.</p>
-        <p>Si tienes algún problema con tu pedido, contáctanos en <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
-        <p>¡Gracias por confiar en Amigo Merch! 🎉</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
+        <p>¡Buenas noticias! Tu pedido <strong>#${p.orden}</strong> ha sido enviado y está en camino a tu domicilio.</p>
+        ${p.paqueteria ? `
+        <div style="background:#f5f9f7;border-left:4px solid #237650;padding:16px;border-radius:4px;margin:20px 0">
+          <p style="margin:0 0 6px 0;font-weight:bold;color:#237650">Información de envío</p>
+          <p style="margin:0;font-size:14px">📦 Paquetería: <strong>${p.paqueteria}</strong></p>
+          ${p.num_rastreo ? `<p style="margin:4px 0 0 0;font-size:14px">🔍 Número de rastreo: <strong>${p.num_rastreo}</strong></p>` : ''}
+        </div>` : ''}
+        <p>Si tienes alguna duda sobre tu envío, no dudes en contactarnos:</p>
+        <div style="text-align:center;margin:24px 0">
+          <a href="https://amigo-merch.vercel.app/contacto" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Contactar a soporte</a>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
+        <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
       </div>
     `
   }),
   'Cancelado': (p) => ({
-    subject: `Tu pedido #${p.orden} fue cancelado — Amigo Merch`,
+    subject: `Tu pedido #${p.orden} ha sido cancelado — Amigo Merch`,
     html: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-        <h2 style="color:#c62828">Pedido cancelado</h2>
+      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
+        <div style="text-align:center;margin-bottom:24px">
+          <h1 style="color:#c62828;font-size:24px;margin:0">Pedido cancelado</h1>
+        </div>
         <p>Hola <strong>${p.nombre}</strong>,</p>
         <p>Lamentamos informarte que tu pedido <strong>#${p.orden}</strong> ha sido cancelado.</p>
-        <p>Si tienes preguntas o crees que esto es un error, contáctanos en <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
+        <p>Si crees que esto es un error o necesitas ayuda, nuestro equipo está listo para atenderte. Puedes contactarnos directamente desde nuestra página:</p>
+        <div style="text-align:center;margin:24px 0">
+          <a href="https://amigo-merch.vercel.app/contacto" style="background:#c62828;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Ir a la sección de contacto</a>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
+        <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
       </div>
     `
   }),
   'Fallido': (p) => ({
-    subject: `Problema con tu pedido #${p.orden} — Amigo Merch`,
+    subject: `Tuvimos un problema con tu pedido #${p.orden} — Amigo Merch`,
     html: `
-      <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
-        <h2 style="color:#c62828">Problema con tu pedido</h2>
+      <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
+        <div style="text-align:center;margin-bottom:24px">
+          <h1 style="color:#c62828;font-size:24px;margin:0">Hubo un problema con tu pago 😔</h1>
+        </div>
         <p>Hola <strong>${p.nombre}</strong>,</p>
-        <p>Tuvimos un problema al procesar tu pedido <strong>#${p.orden}</strong>. El pago no pudo ser completado.</p>
-        <p>Te invitamos a intentar nuevamente o contáctanos para ayudarte: <a href="mailto:amigomerchmx@gmail.com" style="color:#237650">amigomerchmx@gmail.com</a>.</p>
-        <p style="color:#aaa;font-size:12px">Amigo Merch — amigomerchmx@gmail.com</p>
+        <p>Lamentamos informarte que no pudimos procesar el pago de tu pedido <strong>#${p.orden}</strong>.</p>
+        <p>Esto puede ocurrir por distintas razones: fondos insuficientes, datos incorrectos o una restricción de tu banco. ¡Pero no te preocupes, puedes intentarlo nuevamente!</p>
+        <div style="text-align:center;margin:24px 0">
+          <a href="https://amigo-merch.vercel.app" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Intentar de nuevo</a>
+        </div>
+        <p style="color:#666;font-size:13px">Si el problema persiste, contáctanos y con gusto te ayudamos.</p>
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
+        <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
       </div>
     `
   }),
 };
+
+// Correo de confirmación al crear el pedido
+async function sendOrderConfirmationEmail(pedido) {
+  if (!process.env.SMTP_USER) {
+    console.log(`[EMAIL SKIPPED] No SMTP_USER configured. Would send order confirmation to ${pedido.correo}`);
+    return;
+  }
+  const items = typeof pedido.items === 'string' ? JSON.parse(pedido.items) : (pedido.items || []);
+  const itemsHtml = items.map(i =>
+    `<tr>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333">${i.nombre || i.name || 'Producto'}${i.variante ? ` <span style="color:#888">(${i.variante})</span>` : ''}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;text-align:center">${i.cantidad || 1}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#333;text-align:right">$${parseFloat(i.precio || 0).toFixed(2)}</td>
+    </tr>`
+  ).join('');
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:560px;margin:0 auto;padding:24px">
+      <div style="text-align:center;margin-bottom:24px">
+        <h1 style="color:#237650;font-size:26px;margin:0">¡Gracias por tu pedido! 🎉</h1>
+      </div>
+      <p>Hola <strong>${pedido.nombre}</strong>,</p>
+      <p>Hemos recibido tu pedido correctamente. En breve recibirás una confirmación de pago y comenzaremos a prepararlo.</p>
+
+      <div style="background:#f5f9f7;border-radius:8px;padding:20px;margin:20px 0">
+        <p style="margin:0 0 12px 0;font-weight:bold;color:#237650">Resumen de tu pedido <span style="color:#333">#${pedido.orden}</span></p>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;font-size:12px;color:#888;padding-bottom:8px;border-bottom:2px solid #eee">Producto</th>
+              <th style="text-align:center;font-size:12px;color:#888;padding-bottom:8px;border-bottom:2px solid #eee">Cant.</th>
+              <th style="text-align:right;font-size:12px;color:#888;padding-bottom:8px;border-bottom:2px solid #eee">Precio</th>
+            </tr>
+          </thead>
+          <tbody>${itemsHtml}</tbody>
+        </table>
+        <div style="margin-top:12px;text-align:right">
+          <p style="margin:4px 0;font-size:13px;color:#666">Envío: <strong>$${parseFloat(pedido.envio || 0).toFixed(2)}</strong></p>
+          <p style="margin:4px 0;font-size:16px;font-weight:bold;color:#237650">Total: $${parseFloat(pedido.total || 0).toFixed(2)}</p>
+        </div>
+      </div>
+
+      <p style="color:#666;font-size:13px">📍 Dirección de entrega: <strong>${pedido.domicilio || [pedido.calle, pedido.num_ext, pedido.colonia, pedido.ciudad].filter(Boolean).join(', ')}</strong></p>
+
+      <p>Puedes rastrear el estado de tu pedido en cualquier momento:</p>
+      <div style="text-align:center;margin:24px 0">
+        <a href="https://amigo-merch.vercel.app/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
+      </div>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
+      <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
+    </div>
+  `;
+  try {
+    await mailer.sendMail({
+      from: `"Amigo Merch" <${process.env.SMTP_USER}>`,
+      replyTo: 'amigomerchmx@gmail.com',
+      to: pedido.correo,
+      subject: `¡Gracias por tu pedido #${pedido.orden}! — Amigo Merch`,
+      html,
+    });
+    console.log(`[EMAIL SENT] Confirmación de pedido → ${pedido.correo}`);
+  } catch (err) {
+    console.error(`[EMAIL ERROR] Could not send order confirmation:`, err.message);
+  }
+}
 
 async function sendStatusEmail(pedido, estado) {
   const trigger = EMAIL_TRIGGERS[estado];
@@ -742,7 +837,12 @@ app.post('/api/pedidos', async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
       [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, envio, total, 'Pendiente de pago']
     );
-    res.status(201).json(result.rows[0]);
+    const pedidoCreado = result.rows[0];
+
+    // Enviar correo de confirmación al cliente en background
+    sendOrderConfirmationEmail(pedidoCreado).catch(console.error);
+
+    res.status(201).json(pedidoCreado);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create pedido', details: err.message });
@@ -797,15 +897,24 @@ async function manejarDescuentoStock(pedidoId, nuevoEstado) {
 app.put('/api/pedidos/:id/estado', async (req, res) => {
   try {
     const { id } = req.params;
-    const { estado } = req.body;
+    const { estado, paqueteria, num_rastreo } = req.body;
 
     const VALID = ['Pendiente de pago', 'Nuevo', 'En proceso', 'Completado', 'Fallido', 'Cancelado'];
     if (!VALID.includes(estado)) return res.status(400).json({ error: 'Estado inválido' });
 
-    const result = await pool.query(
-      'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
-      [estado, id]
-    );
+    // Si es Completado, guardar también paquetería y número de rastreo
+    let result;
+    if (estado === 'Completado' && (paqueteria || num_rastreo)) {
+      result = await pool.query(
+        'UPDATE pedidos SET estado = $1, paqueteria = $2, num_rastreo = $3 WHERE id = $4 RETURNING *',
+        [estado, paqueteria || null, num_rastreo || null, id]
+      );
+    } else {
+      result = await pool.query(
+        'UPDATE pedidos SET estado = $1 WHERE id = $2 RETURNING *',
+        [estado, id]
+      );
+    }
     if (result.rows.length === 0) return res.status(404).json({ error: 'Pedido no encontrado' });
 
     const pedido = result.rows[0];

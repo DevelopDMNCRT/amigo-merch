@@ -78,6 +78,23 @@
                     </span>
                   </div>
 
+                  <!-- Campos extra para Completado: paquetería y rastreo -->
+                  <div v-if="estadoPendiente === 'Completado'" class="flex flex-col gap-1.5 rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20 p-2.5">
+                    <p class="text-[10px] font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Datos de envío (opcional)</p>
+                    <input
+                      v-model="envPaqueteria"
+                      type="text"
+                      placeholder="Paquetería (ej. DHL, FedEx, Estafeta)"
+                      class="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-xs text-gray-800 dark:text-white/90 focus:border-brand-300 focus:outline-none"
+                    />
+                    <input
+                      v-model="envNumRastreo"
+                      type="text"
+                      placeholder="Número de rastreo"
+                      class="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-2.5 py-1.5 text-xs text-gray-800 dark:text-white/90 focus:border-brand-300 focus:outline-none"
+                    />
+                  </div>
+
                   <!-- Email indicator -->
                   <div v-if="estadoTriggerEmail" class="flex items-center gap-1.5 rounded-md bg-blue-light-50 dark:bg-blue-light-500/10 px-2.5 py-1.5">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-light-500 flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -738,6 +755,9 @@ const EMAIL_STATES = new Set(['En proceso', 'Completado', 'Cancelado', 'Fallido'
 const estadoPendiente = ref('');
 const savingEstado    = ref(false);
 const toast = ref({ show: false, type: 'success', msg: '' });
+// Campos extras para estado Completado
+const envPaqueteria = ref('');
+const envNumRastreo = ref('');
 
 function showToast(type, msg) {
   toast.value = { show: true, type, msg };
@@ -812,10 +832,15 @@ const guardarEstado = async () => {
   if (estadoPendiente.value === pedido.value.estado) return;
   savingEstado.value = true;
   try {
+    const body: Record<string, string> = { estado: estadoPendiente.value };
+    if (estadoPendiente.value === 'Completado') {
+      if (envPaqueteria.value) body.paqueteria = envPaqueteria.value;
+      if (envNumRastreo.value) body.num_rastreo = envNumRastreo.value;
+    }
     const res = await fetch(`/api/pedidos/${pedido.value.id}/estado`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ estado: estadoPendiente.value })
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error('Error al actualizar el estado');
     const data = await res.json();
