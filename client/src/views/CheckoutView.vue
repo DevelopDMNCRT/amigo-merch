@@ -73,6 +73,13 @@
 
             <div class="form-row">
               <div class="form-group">
+                <label>Delegación / Municipio (Opcional)</label>
+                <input type="text" placeholder="Ej. Benito Juárez" v-model="form.delegacion" class="form-input">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
                 <label>{{ t('checkout.colonia') }} *</label>
                 <input type="text" required placeholder="Roma Norte" v-model="form.colonia" class="form-input">
               </div>
@@ -233,6 +240,7 @@ const form = reactive({
   numExt: '',
   numInt: '',
   colonia: '',
+  delegacion: '',
   cp: '',
   notas: ''
 })
@@ -447,6 +455,9 @@ const createOrderAndPay = async (formData) => {
 
     const payload = {
       ...form,
+      num_ext: form.numExt,
+      num_int: form.numInt,
+      delegacion: form.delegacion,
       estado_env: form.estado,
       domicilio,
       items,

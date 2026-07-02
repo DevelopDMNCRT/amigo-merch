@@ -276,12 +276,38 @@
                         <input v-model="destEdit.num_ext" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
                       </div>
                       <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">No. Int (Opcional)</label>
+                        <input v-model="destEdit.num_int" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div class="col-span-2">
                         <label class="text-[11px] text-gray-400 mb-0.5 block">Colonia</label>
                         <input v-model="destEdit.colonia" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
                       </div>
-                      <div class="col-span-2">
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">País</label>
+                        <select v-model="destEdit.pais" @change="onPaisChange" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none">
+                          <option value="México">México</option>
+                          <option value="Estados Unidos">Estados Unidos</option>
+                          <option value="Argentina">Argentina</option>
+                          <option value="Colombia">Colombia</option>
+                          <option value="Panamá">Panamá</option>
+                          <option value="España">España</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Estado</label>
+                        <select v-model="destEdit.estado" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none">
+                          <option value="" disabled>Selecciona estado</option>
+                          <option v-for="estado in currentStates" :key="estado" :value="estado">{{ estado }}</option>
+                        </select>
+                      </div>
+                      <div>
                         <label class="text-[11px] text-gray-400 mb-0.5 block">Ciudad</label>
                         <input v-model="destEdit.ciudad" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
+                      </div>
+                      <div>
+                        <label class="text-[11px] text-gray-400 mb-0.5 block">Delegación / Municipio</label>
+                        <input v-model="destEdit.delegacion" type="text" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none" />
                       </div>
                       <div class="col-span-2">
                         <label class="text-[11px] text-gray-400 mb-0.5 block">Referencia <span class="text-gray-300">(aparece en la guía)</span></label>
@@ -576,6 +602,15 @@ import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import AdminLayout from '@/components/layout/AdminLayout.vue';
 
+const statesData = {
+  'México': ['Aguascalientes', 'Baja California', 'Baja California Sur', 'Campeche', 'CDMX', 'Chiapas', 'Chihuahua', 'Coahuila', 'Colima', 'Durango', 'Estado de México', 'Guanajuato', 'Guerrero', 'Hidalgo', 'Jalisco', 'Michoacán', 'Morelos', 'Nayarit', 'Nuevo León', 'Oaxaca', 'Puebla', 'Querétaro', 'Quintana Roo', 'San Luis Potosí', 'Sinaloa', 'Sonora', 'Tabasco', 'Tamaulipas', 'Tlaxcala', 'Veracruz', 'Yucatán', 'Zacatecas'],
+  'Estados Unidos': ['California', 'Texas', 'Florida', 'New York', 'Illinois', 'Otro'],
+  'Argentina': ['Buenos Aires', 'CABA', 'Córdoba', 'Santa Fe', 'Mendoza', 'Otro'],
+  'Colombia': ['Antioquia', 'Bogotá', 'Valle del Cauca', 'Cundinamarca', 'Atlántico', 'Otro'],
+  'Panamá': ['Panamá', 'Colón', 'Chiriquí', 'Bocas del Toro', 'Coclé', 'Otro'],
+  'España': ['Madrid', 'Cataluña', 'Andalucía', 'Valencia', 'Galicia', 'Otro']
+};
+
 const route = useRoute();
 const pedido = ref(null);
 const loading = ref(true);
@@ -591,10 +626,15 @@ const selectedRate = ref(null);
 // Datos de destino editables
 const editandoDestino = ref(false);
 const destEdit = ref({
-  nombre: '', telefono: '', calle: '', num_ext: '',
-  colonia: '', ciudad: '', estado: '', cp: '',
+  nombre: '', telefono: '', calle: '', num_ext: '', num_int: '',
+  colonia: '', ciudad: '', delegacion: '', estado: '', pais: 'México', cp: '',
   correo: '', referencia: ''
 });
+
+const currentStates = computed(() => statesData[destEdit.value.pais] || []);
+const onPaisChange = () => {
+  destEdit.value.estado = '';
+};
 
 // Plantillas de paquete
 const packagePresets = ref([]);
@@ -743,9 +783,12 @@ const fetchPedido = async () => {
       telefono:   data.telefono   || '',
       calle:      data.calle      || '',
       num_ext:    data.num_ext    || '',
+      num_int:    data.num_int    || '',
       colonia:    data.colonia    || '',
       ciudad:     data.ciudad     || '',
+      delegacion: data.delegacion || '',
       estado:     data.estado_env || '',
+      pais:       data.pais       || '',
       cp:         data.cp         || '',
       correo:     data.correo     || '',
       referencia: data.notas      || ''

@@ -732,15 +732,15 @@ app.get('/api/pedidos/:id', async (req, res) => {
 // POST create pedido
 app.post('/api/pedidos', async (req, res) => {
   try {
-    const { nombre, correo, telefono, pais, estado_env, ciudad, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total } = req.body;
+    const { nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total } = req.body;
     
     // Generar un número de orden único corto
     const orden = Math.floor(100000 + Math.random() * 900000).toString();
 
     const result = await pool.query(
-      `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *`,
-      [orden, nombre, correo, telefono, pais, estado_env, ciudad, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, envio, total, 'Pendiente de pago']
+      `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
+      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, envio, total, 'Pendiente de pago']
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -825,6 +825,17 @@ app.put('/api/pedidos/:id/estado', async (req, res) => {
 
 // --- Envia.com API Integration ---
 
+const enviaStateMap = {
+  'aguascalientes': 'AG', 'baja california': 'BC', 'baja california sur': 'BS',
+  'campeche': 'CM', 'chiapas': 'CS', 'chihuahua': 'CH', 'ciudad de mexico': 'CX', 'ciudad de méxico': 'CX', 'cdmx': 'CX',
+  'coahuila': 'CO', 'colima': 'CL', 'durango': 'DG', 'estado de mexico': 'EM', 'estado de méxico': 'EM',
+  'guanajuato': 'GT', 'guerrero': 'GR', 'hidalgo': 'HG', 'jalisco': 'JA', 'michoacan': 'MI', 'michoacán': 'MI',
+  'morelos': 'MO', 'nayarit': 'NA', 'nuevo leon': 'NL', 'nuevo león': 'NL', 'oaxaca': 'OA', 'puebla': 'PU',
+  'queretaro': 'QT', 'querétaro': 'QT', 'quintana roo': 'QR', 'san luis potosi': 'SL', 'san luis potosí': 'SL',
+  'sinaloa': 'SI', 'sonora': 'SO', 'tabasco': 'TB', 'tamaulipas': 'TM', 'tlaxcala': 'TL', 'veracruz': 'VE',
+  'yucatan': 'YU', 'yucatán': 'YU', 'zacatecas': 'ZA'
+};
+
 const getEnviaPayload = async (pedido) => {
   let totalWeight = 0;
   for (const item of (pedido.items || [])) {
@@ -836,17 +847,7 @@ const getEnviaPayload = async (pedido) => {
   }
   if (totalWeight < 1) totalWeight = 1;
 
-  const map = {
-    'aguascalientes': 'AG', 'baja california': 'BC', 'baja california sur': 'BS',
-    'campeche': 'CM', 'chiapas': 'CS', 'chihuahua': 'CH', 'ciudad de mexico': 'CX', 'ciudad de méxico': 'CX', 'cdmx': 'CX',
-    'coahuila': 'CO', 'colima': 'CL', 'durango': 'DG', 'estado de mexico': 'EM', 'estado de méxico': 'EM',
-    'guanajuato': 'GT', 'guerrero': 'GR', 'hidalgo': 'HG', 'jalisco': 'JA', 'michoacan': 'MI', 'michoacán': 'MI',
-    'morelos': 'MO', 'nayarit': 'NA', 'nuevo leon': 'NL', 'nuevo león': 'NL', 'oaxaca': 'OA', 'puebla': 'PU',
-    'queretaro': 'QT', 'querétaro': 'QT', 'quintana roo': 'QR', 'san luis potosi': 'SL', 'san luis potosí': 'SL',
-    'sinaloa': 'SI', 'sonora': 'SO', 'tabasco': 'TB', 'tamaulipas': 'TM', 'tlaxcala': 'TL', 'veracruz': 'VE',
-    'yucatan': 'YU', 'yucatán': 'YU', 'zacatecas': 'ZA'
-  };
-  const stateCode = map[(pedido.estado_env || '').toLowerCase().trim()] || 'JA';
+  const stateCode = enviaStateMap[(pedido.estado_env || '').toLowerCase().trim()] || 'JA';
 
   return {
     origin: {
@@ -855,7 +856,11 @@ const getEnviaPayload = async (pedido) => {
     },
     destination: {
       name: pedido.nombre, company: '', email: pedido.correo || 'amigomerchmx@gmail.com', phone: pedido.telefono || '3300000000',
-      street: pedido.calle || 'Conocida', number: pedido.num_ext || 'SN', district: pedido.colonia || 'Centro', city: pedido.ciudad || 'Ciudad', state: stateCode, country: pedido.pais === 'Mexico' ? 'MX' : 'MX', postalCode: pedido.cp || '00000', reference: pedido.notas || ''
+      street: pedido.calle || 'Conocida', 
+      number: pedido.num_int ? `${pedido.num_ext || "SN"} Int. ${pedido.num_int}` : (pedido.num_ext || 'SN'),
+      district: pedido.delegacion ? (pedido.colonia ? `${pedido.colonia}, ${pedido.delegacion}` : pedido.delegacion) : (pedido.colonia || 'Centro'), 
+      city: pedido.ciudad || 'Ciudad',
+      state: stateCode, country: pedido.pais === 'Mexico' ? 'MX' : 'MX', postalCode: pedido.cp || '00000', reference: pedido.notas || ''
     },
     packages: [{
       content: 'Ropa y Accesorios', amount: 1, type: 'box', weight: totalWeight, insurance: 0, declaredValue: parseFloat(pedido.total), weightUnit: 'KG', lengthUnit: 'CM', dimensions: { length: 30, width: 20, height: 10 }
@@ -916,10 +921,10 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
         email:      d.correo     || payload.destination.email,
         phone:      d.telefono   || payload.destination.phone,
         street:     d.calle      || payload.destination.street,
-        number:     d.num_ext    || payload.destination.number,
-        district:   d.colonia    || payload.destination.district,
+        number:     d.num_int ? `${d.num_ext || "1"} Int. ${d.num_int}` : (d.num_ext || payload.destination.number),
+        district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
-        state:      d.estado     || payload.destination.state,
+        state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
         country:    'MX',
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
@@ -1040,10 +1045,10 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         email:      d.correo     || payload.destination.email,
         phone:      d.telefono   || payload.destination.phone,
         street:     d.calle      || payload.destination.street,
-        number:     d.num_ext    || payload.destination.number,
-        district:   d.colonia    || payload.destination.district,
+        number:     d.num_int ? `${d.num_ext || "1"} Int. ${d.num_int}` : (d.num_ext || payload.destination.number),
+        district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
-        state:      d.estado     || payload.destination.state,
+        state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
         country:    'MX',
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
@@ -1504,7 +1509,7 @@ app.get('/api/estadisticas/live', async (_req, res) => {
       SELECT p.id, p.nombre, p.imagen_principal, p.precio, SUM((i->>'cantidad')::int) as vendidos
       FROM pedidos ped
       CROSS JOIN json_array_elements(ped.items::json) as i
-      JOIN productos p ON (i->>'id')::int = p.id
+      JOIN products p ON (i->>'producto_id')::int = p.id
       WHERE p.activo = true AND ped.estado NOT IN ('Cancelado', 'Fallido')
       GROUP BY p.id, p.nombre, p.imagen_principal, p.precio
       ORDER BY vendidos DESC
@@ -1911,6 +1916,23 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
       return res.status(400).json({ error: 'ENVIA_API_KEY no configurada en .env' });
     }
 
+    const stateMap = {
+      'Aguascalientes': 'AG', 'Baja California': 'BC', 'Baja California Sur': 'BS',
+      'Campeche': 'CM', 'CDMX': 'CX', 'Ciudad de México': 'CX', 'Chiapas': 'CS',
+      'Chihuahua': 'CH', 'Coahuila': 'CO', 'Colima': 'CL', 'Durango': 'DG',
+      'Estado de México': 'EM', 'Guanajuato': 'GT', 'Guerrero': 'GR', 'Hidalgo': 'HG',
+      'Jalisco': 'JA', 'Michoacán': 'MI', 'Morelos': 'MO', 'Nayarit': 'NA',
+      'Nuevo León': 'NL', 'Oaxaca': 'OA', 'Puebla': 'PU', 'Querétaro': 'QT',
+      'Quintana Roo': 'QR', 'San Luis Potosí': 'SL', 'Sinaloa': 'SI', 'Sonora': 'SO',
+      'Tabasco': 'TB', 'Tamaulipas': 'TM', 'Tlaxcala': 'TL', 'Veracruz': 'VE',
+      'Yucatán': 'YU', 'Zacatecas': 'ZA'
+    };
+    
+    let enviaState = 'XX';
+    if (pedido.estado_env) {
+      enviaState = stateMap[pedido.estado_env] || pedido.estado_env.substring(0,2).toUpperCase();
+    }
+
     const payload = {
       origin: {
         name: "Amigo Merch",
@@ -1931,10 +1953,10 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         email: pedido.correo || 'contacto@cliente.com',
         phone: pedido.telefono || '0000000000',
         street: pedido.calle || pedido.domicilio || 'Calle Conocida',
-        number: pedido.num_ext || "1",
+        number: pedido.num_int ? `${pedido.num_ext || "1"} Int. ${pedido.num_int}` : (pedido.num_ext || "1"),
         district: pedido.colonia || 'Centro',
-        city: pedido.ciudad || 'Ciudad',
-        state: (pedido.estado_env && pedido.estado_env.substring(0,2).toUpperCase()) || 'XX',
+        city: pedido.delegacion || pedido.ciudad || 'Ciudad',
+        state: enviaState,
         country: "MX",
         postalCode: pedido.cp || '00000'
       },
@@ -1962,6 +1984,62 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         comments: "Pedido " + pedido.orden
       }
     };
+
+    // Override package weight/dims/type if custom values sent from frontend
+    if (req.body.peso || req.body.dims || req.body.type) {
+      const { peso, dims, type } = req.body;
+      if (payload.packages && payload.packages.length > 0) {
+        if (peso)         payload.packages[0].weight = parseFloat(peso) || payload.packages[0].weight;
+        if (dims?.length) payload.packages[0].dimensions.length = parseInt(dims.length) || payload.packages[0].dimensions.length;
+        if (dims?.width)  payload.packages[0].dimensions.width  = parseInt(dims.width)  || payload.packages[0].dimensions.width;
+        if (dims?.height) payload.packages[0].dimensions.height = parseInt(dims.height) || payload.packages[0].dimensions.height;
+        if (type)         payload.packages[0].type = type;
+      }
+    }
+
+    // Override origin if a specific bodega was selected from the frontend
+    if (req.body.origen) {
+      const o = req.body.origen;
+      payload.origin = {
+        name:       o.nombre   || payload.origin.name,
+        company:    o.company  || payload.origin.company,
+        email:      o.email    || payload.origin.email,
+        phone:      o.phone    || payload.origin.phone,
+        street:     o.street   || payload.origin.street,
+        number:     o.number   || payload.origin.number,
+        district:   o.district || payload.origin.district,
+        city:       o.city     || payload.origin.city,
+        state:      o.state    || payload.origin.state,
+        country:    o.country  || 'MX',
+        postalCode: o.postalCode || payload.origin.postalCode,
+        reference:  o.reference || ''
+      };
+    }
+
+    // Override destination if edited from the frontend
+    if (req.body.destino) {
+      const d = req.body.destino;
+      payload.destination = {
+        name:       d.nombre     || payload.destination.name,
+        company:    payload.destination.company,
+        email:      d.correo     || payload.destination.email,
+        phone:      d.telefono   || payload.destination.phone,
+        street:     d.calle      || payload.destination.street,
+        number:     d.num_int ? `${d.num_ext || "1"} Int. ${d.num_int}` : (d.num_ext || payload.destination.number),
+        district:   d.colonia    || payload.destination.district,
+        city:       d.delegacion || d.ciudad || payload.destination.city,
+        state:      d.estado     || payload.destination.state,
+        country:    'MX',
+        postalCode: d.cp         || payload.destination.postalCode,
+        reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
+      };
+    }
+
+    // Override carrier and service
+    if (req.body.carrier && req.body.service) {
+      payload.shipment.carrier = req.body.carrier;
+      payload.shipment.service = req.body.service;
+    }
 
     const response = await fetch(`${enviaUrl}/ship/generate`, {
       method: 'POST',
