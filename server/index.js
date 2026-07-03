@@ -359,9 +359,11 @@ app.get('/api/products', async (req, res) => {
 app.get('/api/products/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const product = await pool.query('SELECT * FROM products WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const product = await pool.query('SELECT * FROM products WHERE (id::text = $1 OR slug = $1) AND deleted_at IS NULL', [id]);
     if (product.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
-    const variations = await pool.query('SELECT * FROM product_variations WHERE product_id = $1 ORDER BY id', [id]);
+    
+    const realProductId = product.rows[0].id;
+    const variations = await pool.query('SELECT * FROM product_variations WHERE product_id = $1 ORDER BY id', [realProductId]);
     res.json({ ...product.rows[0], variaciones: variations.rows });
   } catch (err) {
     console.error(err);
