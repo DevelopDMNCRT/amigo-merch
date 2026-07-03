@@ -832,7 +832,7 @@ const guardarEstado = async () => {
   if (estadoPendiente.value === pedido.value.estado) return;
   savingEstado.value = true;
   try {
-    const body: Record<string, string> = { estado: estadoPendiente.value };
+    const body = { estado: estadoPendiente.value };
     if (estadoPendiente.value === 'Guía Generada') {
       if (envPaqueteria.value) body.paqueteria = envPaqueteria.value;
       if (envNumRastreo.value) body.num_rastreo = envNumRastreo.value;
