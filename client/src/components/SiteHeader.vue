@@ -3,7 +3,7 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import CartDrawer from './CartDrawer.vue'
 import { cartActions, cartGetters } from '../store/cart.js'
-import { currentLang } from '../store/locale.js'
+import { currentLang, formatPrice } from '../store/locale.js'
 import { useLocale } from '../composables/useLocale.js'
 
 const isMenuOpen = ref(false)
@@ -59,12 +59,38 @@ const toggleSearch = () => {
 
 const searchInput = ref(null)
 
+const searchQuery = ref('')
+const allProducts = ref([])
+
+const fetchProducts = async () => {
+  if (allProducts.value.length > 0) return
+  try {
+    const res = await fetch('/api/products')
+    const data = await res.json()
+    allProducts.value = data
+  } catch (err) {
+    console.error('Error fetching products for search:', err)
+  }
+}
+
 watch(isSearchOpen, (val) => {
   if (val) {
+    fetchProducts()
     nextTick(() => {
       searchInput.value?.focus()
     })
+  } else {
+    searchQuery.value = ''
   }
+})
+
+const searchResults = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return []
+  return allProducts.value.filter(p => 
+    p.nombre.toLowerCase().includes(query) || 
+    (p.tienda && p.tienda.toLowerCase().includes(query))
+  ).slice(0, 8)
 })
 
 const toggleLangMenu = () => {
@@ -254,9 +280,34 @@ const currentLanguage = computed(() => languages.find(l => l.code === currentLan
           class="search-fullscreen-input" 
           :placeholder="t('nav.searchPlaceholder')"
           ref="searchInput" 
+          v-model="searchQuery"
           @keyup.esc="toggleSearch"
         />
-        <p class="search-hint">{{ t('nav.searchHint') }}</p>
+        <p class="search-hint" v-if="!searchQuery">{{ t('nav.searchHint') }}</p>
+        
+        <div class="search-results-grid" v-if="searchQuery">
+          <router-link 
+            :to="`/producto/${product.slug || product.id}`" 
+            class="search-result-card" 
+            v-for="product in searchResults" 
+            :key="product.id"
+            @click="toggleSearch"
+          >
+            <div class="search-result-img-wrapper">
+              <img v-if="product.imagen_url" :src="product.imagen_url" :alt="product.nombre" class="search-result-img">
+              <div v-else class="search-result-placeholder"></div>
+            </div>
+            <div class="search-result-info">
+              <span class="search-result-store">{{ product.tienda }}</span>
+              <h4 class="search-result-name">{{ product.nombre }}</h4>
+              <span class="search-result-price">{{ formatPrice(product.precio) }}</span>
+            </div>
+          </router-link>
+          
+          <div v-if="searchResults.length === 0" class="search-no-results">
+            No se encontraron productos que coincidan con "{{ searchQuery }}"
+          </div>
+        </div>
       </div>
     </div>
   </transition>
@@ -318,13 +369,15 @@ const currentLanguage = computed(() => languages.find(l => l.code === currentLan
   background-color: rgba(255, 255, 255, 0.98);
   z-index: 9999;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   backdrop-filter: blur(10px);
+  overflow-y: auto;
+  padding: 100px 0 60px 0;
 }
 
 .close-search {
-  position: absolute;
+  position: fixed;
   top: 40px;
   right: 40px;
   color: var(--text-main);
@@ -374,6 +427,90 @@ const currentLanguage = computed(() => languages.find(l => l.code === currentLan
   margin-top: 24px;
   color: var(--text-muted);
   font-size: 1.1rem;
+}
+
+.search-results-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+  text-align: left;
+}
+
+.search-result-card {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s;
+  background: white;
+  padding: 12px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.search-result-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.search-result-img-wrapper {
+  background: #f8f9fa;
+  border-radius: 12px;
+  aspect-ratio: 1;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.search-result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.search-result-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #eee;
+  border-radius: 8px;
+}
+
+.search-result-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-result-store {
+  font-size: 0.7rem;
+  color: var(--primary-color);
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.search-result-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.search-result-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.search-no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  padding: 40px 0;
 }
 
 .fade-search-enter-active,
