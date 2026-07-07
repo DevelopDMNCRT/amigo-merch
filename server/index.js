@@ -1166,12 +1166,27 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
     });
     const data = await response.json();
 
+    // Log full response for debugging (visible in Vercel logs)
+    console.log('[Envia] Respuesta de /ship/generate/:', JSON.stringify(data));
+
     if (data.meta !== 'generate') {
       return res.status(400).json({ error: 'Error al generar la guía con Envia.com', details: data.error || data });
     }
 
-    const trackingNumber = data.data[0].trackingNumber;
-    const guiaUrl = data.data[0].label;
+    // Validate that data.data exists and has at least one item
+    if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+      console.error('[Envia] data.data vacío o no es un array:', JSON.stringify(data));
+      return res.status(502).json({ error: 'Envia generó la guía pero no devolvió datos del envío. Revisa la plataforma de Envia.', details: data });
+    }
+
+    const shipment = data.data[0];
+    const trackingNumber = shipment.trackingNumber || shipment.tracking_number || null;
+    const guiaUrl = shipment.label || shipment.labelUrl || shipment.pdf || null;
+
+    if (!trackingNumber) {
+      console.error('[Envia] trackingNumber no encontrado en la respuesta:', JSON.stringify(shipment));
+      return res.status(502).json({ error: 'Envia no devolvió número de rastreo. Verifica la guía en la plataforma de Envia.', details: shipment });
+    }
 
     const result = await pool.query(
       'UPDATE pedidos SET tracking_number = $1, guia_url = $2, carrier = $3 WHERE id = $4 RETURNING *',
@@ -1180,8 +1195,8 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to generate label' });
+    console.error('[Envia] Error inesperado al generar guía:', err.message, err.stack);
+    res.status(500).json({ error: 'Error inesperado al generar la guía', details: err.message });
   }
 });
 
