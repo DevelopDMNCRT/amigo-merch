@@ -1832,8 +1832,59 @@ app.post('/api/pagos/procesar', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos del pago o pedidoId' });
     }
 
-    const body = {
+    // ── 1. Obtener datos completos del pedido para enriquecer el pago ─────
+    const pedidoRes = await pool.query('SELECT * FROM pedidos WHERE id = $1', [pedidoId]);
+    if (pedidoRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+    const pedido = pedidoRes.rows[0];
+
+    // ── 2. Formatear items para additional_info ───────────────────────────
+    const itemsRaw = typeof pedido.items === 'string' ? JSON.parse(pedido.items) : (pedido.items || []);
+    const mpItems = itemsRaw.map(item => ({
+      id: String(item.producto_id || item.id || 'producto'),
+      title: item.nombre || 'Producto Amigo Merch',
+      description: item.variante ? `Talla: ${item.variante}` : 'Producto',
+      category_id: 'apparel',
+      quantity: Number(item.cantidad || 1),
+      unit_price: Number(item.precio || 0),
+    }));
+
+    // ── 3. Formatear datos del comprador ─────────────────────────────────
+    const nameParts = (pedido.nombre || 'Cliente').trim().split(/\s+/);
+    const firstName = nameParts[0] || 'Cliente';
+    const lastName = nameParts.slice(1).join(' ') || 'Amigo Merch';
+    const streetNumber = parseInt(pedido.num_ext) || 0;
+
+    const additional_info = {
+      items: mpItems,
+      payer: {
+        first_name: firstName,
+        last_name: lastName,
+        phone: {
+          number: (pedido.telefono || '').replace(/\D/g, '').slice(-10) || '0000000000',
+        },
+        address: {
+          zip_code: (pedido.cp || '00000').slice(0, 10),
+          street_name: pedido.calle || 'Calle desconocida',
+          street_number: streetNumber,
+          city: pedido.ciudad || pedido.estado_env || 'Ciudad',
+        },
+      },
+    };
+
+    // ── 4. Asegurar que el correo del pago coincida con el correo real ────
+    const enrichedFormData = {
       ...formData,
+      payer: {
+        ...(formData.payer || {}),
+        email: pedido.correo || formData.payer?.email,
+      },
+    };
+
+    const body = {
+      ...enrichedFormData,
+      additional_info,
       external_reference: String(pedidoId),
       notification_url: `${process.env.SERVER_URL || 'http://localhost:3000'}/api/pagos/webhook`,
     };
@@ -1841,10 +1892,28 @@ app.post('/api/pagos/procesar', async (req, res) => {
     const payment = new Payment(mpClient);
     const result = await payment.create({ body });
 
-    // result contendrá status: 'approved', 'in_process', 'rejected', etc.
+    console.log(`[MP] Pago pedido ${pedidoId}: status=${result.status} detail=${result.status_detail}`);
+
+    // ── 5. Si el pago fue rechazado, guardar el motivo en la BD ──────────
+    if (result.status === 'rejected') {
+      const motivoFallo = result.status_detail || 'rejected';
+      await pool.query(
+        'UPDATE pedidos SET estado = $1, motivo_fallo = $2 WHERE id = $3',
+        ['Fallido', motivoFallo, pedidoId]
+      ).catch(e => console.error('[MP] Error guardando motivo_fallo:', e.message));
+    }
+
     res.json(result);
   } catch (err) {
     console.error('[MP] Error procesando pago con Brick:', err);
+    // Intentar guardar el error técnico en la BD también
+    const { pedidoId } = req.body || {};
+    if (pedidoId) {
+      pool.query(
+        'UPDATE pedidos SET estado = $1, motivo_fallo = $2 WHERE id = $3',
+        ['Fallido', `Error técnico: ${err.message}`, pedidoId]
+      ).catch(e => console.error('[MP] Error guardando motivo_fallo de excepción:', e.message));
+    }
     res.status(500).json({ error: 'Error al procesar el pago', details: err.message });
   }
 });

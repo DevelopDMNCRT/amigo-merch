@@ -163,6 +163,15 @@
               <p v-else class="text-sm text-gray-400 dark:text-gray-500 italic">Sin notas.</p>
             </div>
 
+            <!-- Motivo de Fallo (solo visible cuando el estado es Fallido) -->
+            <div v-if="pedido.estado === 'Fallido' && pedido.motivo_fallo">
+              <p class="text-xs font-medium text-error-500 dark:text-error-400 uppercase mb-1.5 block">Motivo de Rechazo (Mercado Pago)</p>
+              <div class="w-full rounded-lg border border-error-200 dark:border-error-500/30 bg-error-50 dark:bg-error-500/10 px-4 py-3 text-sm text-error-800 dark:text-error-300 leading-relaxed flex items-start gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <code class="font-mono text-xs">{{ pedido.motivo_fallo }}</code>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -793,6 +802,7 @@ const fetchPedido = async () => {
       total: parseFloat(data.total),
       tracking_number: data.tracking_number,
       guia_url: data.guia_url,
+      motivo_fallo: data.motivo_fallo || null,
       // Campos de dirección individuales
       calle: data.calle, num_ext: data.num_ext, colonia: data.colonia,
       cp: data.cp, estado_env: data.estado_env, pais: data.pais

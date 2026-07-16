@@ -398,10 +398,40 @@ const updateMapFromAddress = async () => {
   }
 }
 
+// Watcher: cuando el usuario escribe su correo, actualiza el Brick de MP en tiempo real
+// Esto elimina la discrepancia entre el correo dummy y el correo real que dispara alarmas de fraude
+watch(() => form.correo, (newEmail) => {
+  if (
+    cardPaymentBrickController &&
+    newEmail &&
+    newEmail.includes('@') &&
+    newEmail.includes('.')
+  ) {
+    cardPaymentBrickController.update({ payer: { email: newEmail } }).catch(() => {
+      // Ignorar silenciosamente errores de actualización del Brick
+    });
+  }
+});
+
 onMounted(async () => {
   if (cartState.items.length === 0) {
     router.push('/')
     return
+  }
+
+  // ── Cargar script antifraude de Mercado Pago (Device Fingerprint) ─────────
+  // Mejora la tasa de aprobación de pagos, especialmente para tarjetas extranjeras.
+  // Se carga de forma segura y silenciosa para no bloquear el checkout si falla.
+  try {
+    if (!document.querySelector('script[src*="mercadopago.com/v2/security.js"]')) {
+      const secScript = document.createElement('script');
+      secScript.src = 'https://www.mercadopago.com/v2/security.js';
+      secScript.setAttribute('view', 'checkout');
+      secScript.async = true;
+      document.body.appendChild(secScript);
+    }
+  } catch (e) {
+    // Ignorar silenciosamente (puede ser bloqueado por Ad-Blockers)
   }
   
   try {
@@ -427,6 +457,21 @@ onMounted(async () => {
 
 const loading = ref(false)
 const checkoutFormRef = ref(null)
+
+// Controlador del Brick para actualizaciones dinámicas (ej. email)
+let cardPaymentBrickController = null;
+
+// Mapa de códigos de rechazo de MP a mensajes amigables para el cliente
+const MP_ERROR_MESSAGES = {
+  cc_rejected_high_risk: 'Tu banco rechazó el pago por seguridad. Llama a tu banco, autoriza compras internacionales e intenta de nuevo.',
+  cc_rejected_call_for_authorize: 'Tu banco requiere que autorices esta compra. Llama al número en la parte posterior de tu tarjeta e intenta de nuevo.',
+  cc_rejected_insufficient_amount: 'Fondos insuficientes. Verifica el saldo de tu tarjeta e intenta con otra.',
+  cc_rejected_bad_filled_card_number: 'El número de tarjeta es incorrecto. Verifica y vuelve a intentarlo.',
+  cc_rejected_bad_filled_date: 'La fecha de vencimiento es incorrecta. Verifica y vuelve a intentarlo.',
+  cc_rejected_bad_filled_security_code: 'El código de seguridad (CVV) es incorrecto. Verifica y vuelve a intentarlo.',
+  cc_rejected_card_disabled: 'Tu tarjeta está deshabilitada. Contacta a tu banco para activarla.',
+  cc_rejected_duplicated_payment: 'Este pago ya fue procesado. Revisa tu correo antes de volver a intentarlo.',
+};
 
 const createOrderAndPay = async (formData) => {
   try {
@@ -491,7 +536,14 @@ const createOrderAndPay = async (formData) => {
     }
   } catch (error) {
     console.error(error);
-    alert('Ocurrió un error al procesar tu compra. Revisa tus datos e intenta nuevamente.');
+    // Detectar el código de rechazo de MP y mostrar un mensaje descriptivo
+    const statusDetail = error?.message || '';
+    const friendlyMsg = MP_ERROR_MESSAGES[statusDetail];
+    if (friendlyMsg) {
+      alert(`⚠️ Pago rechazado\n\n${friendlyMsg}`);
+    } else {
+      alert('Ocurrió un error al procesar tu compra. Revisa tus datos e intenta nuevamente.');
+    }
     throw error;
   }
 }
@@ -501,11 +553,14 @@ const initPaymentBrick = async (publicKey) => {
   const mp = new window.MercadoPago(publicKey, { locale: 'es-MX' });
   const bricksBuilder = mp.bricks();
   
-  bricksBuilder.create("cardPayment", "paymentBrick_container", {
+  // Usar el correo real del formulario si ya fue ingresado, de lo contrario un placeholder temporal
+  const initialEmail = form.correo && form.correo.includes('@') ? form.correo : 'comprador@amigomerch.mx';
+  
+  cardPaymentBrickController = await bricksBuilder.create("cardPayment", "paymentBrick_container", {
     initialization: {
       amount: cartGetters.totalPrice.value + cartGetters.shippingCost.value,
       payer: {
-        email: 'cliente@amigomerch.mx' // Pre-llenado dummy para ocultar el input de correo del Brick
+        email: initialEmail
       }
     },
     customization: {
@@ -513,7 +568,10 @@ const initPaymentBrick = async (publicKey) => {
     },
     callbacks: {
       onReady: () => {
-        // Brick listo
+        // Brick listo — sincronizar correo inicial si ya fue ingresado
+        if (form.correo && form.correo.includes('@') && cardPaymentBrickController) {
+          cardPaymentBrickController.update({ payer: { email: form.correo } }).catch(() => {});
+        }
       },
       onSubmit: (arg) => {
         const formData = arg.formData || arg;
@@ -528,7 +586,7 @@ const initPaymentBrick = async (publicKey) => {
             return reject(new Error("Faltan campos en el formulario de envío"));
           }
           
-          // Reemplazar el correo dummy con el correo real del usuario
+          // Garantizar que el correo real del cliente esté siempre en el formData
           if (formData.payer) {
             formData.payer.email = form.correo;
           }
