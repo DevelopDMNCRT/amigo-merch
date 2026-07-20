@@ -338,7 +338,7 @@ app.get('/api/products', async (req, res) => {
       query += ` AND p.es_publico = true`;
     }
     
-    query += ` ORDER BY p.created_at DESC`;
+    query += ` ORDER BY p.orden ASC, p.created_at DESC`;
 
     const result = await pool.query(query);
     
@@ -352,6 +352,27 @@ app.get('/api/products', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch products' });
+  }
+});
+
+// Update order of products
+app.put('/api/products/orden', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.status(400).json({ error: 'Invalid input' });
+    await client.query('BEGIN');
+    for (let i = 0; i < ids.length; i++) {
+      await client.query('UPDATE products SET orden = $1 WHERE id = $2', [i, ids[i]]);
+    }
+    await client.query('COMMIT');
+    res.json({ message: 'Orden actualizado' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update order' });
+  } finally {
+    client.release();
   }
 });
 
@@ -702,11 +723,32 @@ app.get('/', (_req, res) => res.json({ message: 'Amigo Merch API is running' }))
 // GET all tiendas
 app.get('/api/tiendas', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM tiendas WHERE deleted_at IS NULL ORDER BY nombre ASC');
+    const result = await pool.query('SELECT * FROM tiendas WHERE deleted_at IS NULL ORDER BY orden ASC, nombre ASC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch tiendas' });
+  }
+});
+
+// Update order of tiendas
+app.put('/api/tiendas/orden', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids)) return res.status(400).json({ error: 'Invalid input' });
+    await client.query('BEGIN');
+    for (let i = 0; i < ids.length; i++) {
+      await client.query('UPDATE tiendas SET orden = $1 WHERE id = $2', [i, ids[i]]);
+    }
+    await client.query('COMMIT');
+    res.json({ message: 'Orden actualizado' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update order' });
+  } finally {
+    client.release();
   }
 });
 
