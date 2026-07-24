@@ -1910,7 +1910,6 @@ app.post('/api/pagos/procesar', async (req, res) => {
           zip_code: (pedido.cp || '00000').slice(0, 10),
           street_name: pedido.calle || 'Calle desconocida',
           street_number: streetNumber,
-          city: pedido.ciudad || pedido.estado_env || 'Ciudad',
         },
       },
     };
