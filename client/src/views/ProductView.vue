@@ -105,7 +105,7 @@
                 <label class="option-label">{{ t('product.size') }}</label>
                 <div class="size-selector">
                   <button
-                    v-for="v in variations"
+                    v-for="v in sortedVariations"
                     :key="v.id"
                     class="size-btn"
                     :class="{ active: selectedVariation?.id === v.id }"
@@ -242,15 +242,86 @@ const parsedVariations = computed(() => {
 
 const isColorGroup = (nombre) => nombre.toLowerCase().includes('color');
 
+// Orden predefinido para tallas (de menor a mayor)
+const knownSizeRanks = {
+  '4XS': 5, 'XXXXS': 5, '4X-SMALL': 5,
+  '3XS': 10, 'XXXS': 10, '3X-SMALL': 10,
+  '2XS': 20, 'XXS': 20, '2X-SMALL': 20,
+  'XS': 30, 'X-SMALL': 30, 'EXTRASMALL': 30, 'EXTRA SMALL': 30,
+  'S': 40, 'CH': 40, 'CHICO': 40, 'CHICA': 40, 'SMALL': 40,
+  'M': 50, 'MED': 50, 'MEDIANO': 50, 'MEDIANA': 50, 'MEDIUM': 50,
+  'L': 60, 'G': 60, 'GD': 60, 'GRANDE': 60, 'LARGE': 60,
+  'XL': 70, 'XG': 70, 'EG': 70, 'X-LARGE': 70, 'EXTRALARGE': 70, 'EXTRA GRANDE': 70,
+  '2XL': 80, 'XXL': 80, '2XG': 80, '2EG': 80, '2X-LARGE': 80,
+  '3XL': 90, 'XXXL': 90, '3XG': 90, '3EG': 90, '3X-LARGE': 90,
+  '4XL': 100, 'XXXXL': 100, '4XG': 100, '4EG': 100, '4X-LARGE': 100,
+  '5XL': 110, 'XXXXXL': 110, '5XG': 110, '5EG': 110, '5X-LARGE': 110,
+  '6XL': 120, '6XG': 120,
+  'ÚNICA': 200, 'UNICA': 200, 'UNITALLA': 200, 'OS': 200, 'ONE SIZE': 200, 'TALLA ÚNICA': 200, 'TALLA UNICA': 200
+};
+
+const getSizeRank = (val) => {
+  if (val == null) return 99999;
+  const str = String(val).trim();
+  const clean = str.toUpperCase();
+
+  if (knownSizeRanks[clean] !== undefined) {
+    return knownSizeRanks[clean];
+  }
+
+  const xlMatch = clean.match(/^(\d+)\s*(?:XL|XG|EG|X-LARGE)$/);
+  if (xlMatch) {
+    const num = parseInt(xlMatch[1], 10);
+    return 70 + (num - 1) * 10;
+  }
+  const xsMatch = clean.match(/^(\d+)\s*(?:XS|X-SMALL)$/);
+  if (xsMatch) {
+    const num = parseInt(xsMatch[1], 10);
+    return 40 - num * 10;
+  }
+
+  const numMatch = clean.match(/^(\d+(?:\.\d+)?)/);
+  if (numMatch) {
+    return 1000 + parseFloat(numMatch[1]);
+  }
+
+  const words = clean.split(/[\s\-\/\,]+/);
+  for (const w of words) {
+    if (knownSizeRanks[w] !== undefined) {
+      return knownSizeRanks[w];
+    }
+  }
+
+  return 10000;
+};
+
+const sortOptionsByRank = (items, getValFn = (item) => (typeof item === 'string' ? item : item.valor || '')) => {
+  return [...items].sort((a, b) => {
+    const valA = getValFn(a);
+    const valB = getValFn(b);
+    const rankA = getSizeRank(valA);
+    const rankB = getSizeRank(valB);
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return 0;
+  });
+};
+
+const sortedVariations = computed(() => {
+  return sortOptionsByRank(variations.value, v => v.valor);
+});
+
 // Opciones disponibles para un grupo dado las selecciones anteriores
 const getAvailableOptions = (groupNombre) => {
   const groups = attrGroups.value;
   const idx = groups.findIndex(g => g.nombre === groupNombre);
   const group = groups[idx];
   if (!group) return [];
-  const allOpts = Array.isArray(group.opciones) 
+  const rawOpts = Array.isArray(group.opciones) 
     ? group.opciones 
     : (group.opciones || '').split(',').map(o => o.trim()).filter(Boolean);
+  const allOpts = sortOptionsByRank(rawOpts);
   const prevGroups = groups.slice(0, idx);
   const relevant = parsedVariations.value.filter(v =>
     prevGroups.every(pg => !selectedAttrs.value[pg.nombre] || v.attrs[pg.nombre] === selectedAttrs.value[pg.nombre])
