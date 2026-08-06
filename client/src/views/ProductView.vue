@@ -54,9 +54,7 @@
             </template>
           </div>
 
-          <p v-if="product.descripcion" class="product-description">
-            {{ product.descripcion }}
-          </p>
+          <div v-if="product.descripcion" class="product-description" v-html="product.descripcion"></div>
 
           <div class="product-options">
             <!-- Grupos de atributos (Talla, Color, etc.) -->
@@ -619,6 +617,8 @@ const addToCart = () => {
   line-height: 1.6;
   color: var(--text-muted);
   margin-bottom: 40px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .product-options {
