@@ -31,3 +31,5 @@ server/node_modules/
 admin/dist/
 client/dist/
 server/dist/
+.agents/
+

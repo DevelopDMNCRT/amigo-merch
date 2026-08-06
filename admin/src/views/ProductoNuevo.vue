@@ -45,9 +45,24 @@
 
             <!-- Descripción -->
             <div>
-              <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción</label>
-              <textarea v-model="form.descripcion" rows="5" placeholder="Describe tu producto..."
-                class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent p-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 resize-none"></textarea>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción</label>
+                <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                  <button type="button" @click="applyFormat('bold')" title="Negrita" class="px-2.5 py-1 text-xs font-bold rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-xs hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-1">
+                    <span class="font-black">B</span> Negrita
+                  </button>
+                  <button type="button" @click="applyFormat('italic')" title="Cursiva" class="px-2.5 py-1 text-xs italic font-semibold rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-xs hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-1">
+                    <span class="font-serif italic font-bold">I</span> Cursiva
+                  </button>
+                </div>
+              </div>
+              <div
+                ref="editorRef"
+                contenteditable="true"
+                @input="onEditorInput"
+                @blur="onEditorInput"
+                class="w-full min-h-[130px] max-h-[350px] overflow-y-auto rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent p-4 text-sm text-gray-900 dark:text-white/90 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 leading-relaxed whitespace-pre-wrap"
+              ></div>
             </div>
           </div>
 
@@ -354,7 +369,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import AdminLayout from '@/components/layout/AdminLayout.vue';
 import ImageEditorModal from '@/components/ui/ImageEditorModal.vue';
@@ -364,6 +379,21 @@ import { validateImageFile } from '@/utils/imageValidation';
 const router = useRouter();
 const route = useRoute();
 const isEditing = computed(() => !!route.params.id);
+
+const guardando = ref(false);
+const tiendasList = ref([]);
+const imagenError = ref('');
+const galeriaError = ref('');
+
+// ── Editor modal state ──────────────────────────────────────────────────────
+const showEditorModal  = ref(false);
+const editorImageSrc   = ref('');
+const editorFile       = ref(null);
+const editorCurrentW   = ref(0);
+const editorCurrentH   = ref(0);
+const editorConstraints = ref({});
+const editorTarget     = ref(''); // 'imagen' | 'galeria'
+const editorResolve    = ref(null);
 
 const form = reactive({
   nombre: '',
@@ -393,6 +423,32 @@ const form = reactive({
   imagenPreview: null,
   galeria: [],
   galeriaPreview: []
+});
+
+const editorRef = ref(null);
+
+const applyFormat = (cmd) => {
+  if (editorRef.value) {
+    editorRef.value.focus();
+    document.execCommand(cmd, false, null);
+    form.descripcion = editorRef.value.innerHTML;
+  }
+};
+
+const onEditorInput = () => {
+  if (editorRef.value) {
+    form.descripcion = editorRef.value.innerHTML;
+  }
+};
+
+watch(() => form.descripcion, (newVal) => {
+  nextTick(() => {
+    if (editorRef.value && document.activeElement !== editorRef.value) {
+      if (editorRef.value.innerHTML !== (newVal || '')) {
+        editorRef.value.innerHTML = newVal || '';
+      }
+    }
+  });
 });
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -454,7 +510,7 @@ onMounted(async () => {
           console.warn('Error parsing atributos:', e);
         }
       }
-      form.variaciones = data.variaciones.map(v => ({
+      form.variaciones = (data.variaciones || []).map(v => ({
         ...v,
         peso: v.peso || '',
         color: v.color || '#000000',
@@ -720,22 +776,6 @@ const removeGaleriaImg = (index) => {
   form.galeria.splice(index, 1);
   form.galeriaPreview.splice(index, 1);
 };
-
-const guardando = ref(false);
-const tiendasList = ref([]);
-const imagenError = ref('');
-const galeriaError = ref('');
-
-// ── Editor modal state ──────────────────────────────────────────────────────
-
-const showEditorModal  = ref(false);
-const editorImageSrc   = ref('');
-const editorFile       = ref(null);
-const editorCurrentW   = ref(0);
-const editorCurrentH   = ref(0);
-const editorConstraints = ref({});
-const editorTarget     = ref(''); // 'imagen' | 'galeria'
-const editorResolve    = ref(null);
 
 const openEditor = (file, target, constraints, currentW, currentH) => {
   return new Promise(resolve => {
