@@ -912,12 +912,12 @@ async function manejarDescuentoStock(pedidoId, nuevoEstado) {
 
       if (es_variable && varName) {
         await pool.query(
-          'UPDATE product_variations SET stock = stock - $1 WHERE product_id = $2 AND valor = $3',
+          'UPDATE product_variations SET stock = GREATEST(0, stock - $1) WHERE product_id = $2 AND valor = $3',
           [qty, pId, varName]
         );
       } else {
         await pool.query(
-          'UPDATE products SET stock = stock - $1 WHERE id = $2',
+          'UPDATE products SET stock = GREATEST(0, stock - $1) WHERE id = $2',
           [qty, pId]
         );
       }
