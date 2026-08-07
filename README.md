@@ -114,5 +114,15 @@ npm run dev
   - **Causa Raíz:** En `server/index.js`, al construir la carga útil (`payload`) de `additional_info.payer.address` para el Payment API de Mercado Pago, se estaba enviando la propiedad `city`. La API de Mercado Pago rechaza peticiones con parámetros no reconocidos en la dirección (solo permite `zip_code`, `street_name` y `street_number`), retornando HTTP 400 Bad Request.
   - **Solución:** Se eliminó el parámetro `city` de `additional_info.payer.address` en `server/index.js`, restableciendo el flujo de pago con tarjeta en la pasarela.
 - **Ordenamiento Inteligente de Tallas (27 de Julio de 2026):** Se implementó la función de ordenamiento automático de tallas de menor a mayor (ej. `XS`, `S`, `M`, `L`, `XL`, `2XL`, `3XL`, etc., así como tallas numéricas). Esto aplica tanto en la vista del producto (`ProductView.vue`) para que los clientes elijan su talla en secuencia lógica, como en el generador de variaciones del panel de administración (`ProductoNuevo.vue`).
+- **Fix Crítico — Control Estricto de Inventario, Selección Obligatoria de Talla y Precios en Variaciones (7 de Agosto de 2026):**
+  - **Problemas Resueltos:**
+    1. Venta de productos agotados que reducían el inventario a `-1` (los botones de talla sin stock seguían habilitados).
+    2. Compras de variaciones registradas en `$0 MXN` por vacíos en la configuración del precio de variaciones.
+    3. Compras de productos variables (o bundles) registradas sin seleccionar talla (etiqueta vacía `""`).
+  - **Solución Implementada:**
+    - En `client/src/views/ProductView.vue`: Las opciones sin stock (`stock <= 0`) se deshabilitan visualmente (`available: false`). La función `addToCart` valida que los productos variables tengan seleccionados obligatoriamente todos sus atributos antes de añadirse al carrito, mostrando una alerta descriptiva si falta seleccionar talla.
+    - En `admin/src/views/ProductoNuevo.vue`: Al generar o agregar variaciones, las variaciones heredan por defecto el precio general del producto, previniendo el guardado accidental de variaciones en `$0.00`.
+    - En `server/index.js`: Se protegieron las consultas SQL de actualización de inventario con `GREATEST(0, stock - N)` para impedir que el stock baje a valores negativos en la base de datos.
+
 
 

@@ -678,9 +678,9 @@ const generarVariaciones = () => {
     
     return {
       valor,
-      precio: '',
-      stock: '',
-      peso: '',
+      precio: form.precio || '',
+      stock: '0',
+      peso: form.peso || '',
       color: colorObj ? colorObj.colorHex : '#000000',
       imagen: null,
       imagenPreview: null
@@ -691,9 +691,9 @@ const generarVariaciones = () => {
 const addVariacion = () => {
   form.variaciones.push({
     valor: '',
-    precio: '',
-    stock: '',
-    peso: '',
+    precio: form.precio || '',
+    stock: '0',
+    peso: form.peso || '',
     color: '#000000',
     imagen: null,
     imagenPreview: null
@@ -848,9 +848,9 @@ const guardar = async () => {
       // Serialize variations: use imagen_url for existing images (not blob previews)
       const varsForJson = form.variaciones.map(v => ({
         valor:      v.valor,
-        precio:     v.precio,
-        stock:      v.stock,
-        peso:       v.peso,
+        precio:     (v.precio !== '' && v.precio !== null && v.precio !== undefined) ? v.precio : (form.precio || '0'),
+        stock:      (v.stock !== '' && v.stock !== null && v.stock !== undefined) ? v.stock : '0',
+        peso:       v.peso || form.peso || '0',
         color:      v.color,
         imagen_url: v.imagen instanceof File ? null : (v.imagenPreview && !v.imagenPreview.startsWith('blob:') ? v.imagenPreview : null)
       }));

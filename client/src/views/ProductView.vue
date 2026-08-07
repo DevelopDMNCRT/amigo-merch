@@ -126,6 +126,9 @@
             </div>
           </div>
 
+          <p v-if="addToCartError" class="add-to-cart-error">
+            {{ addToCartError }}
+          </p>
           <!-- Acciones -->
           <div class="product-actions">
             <button class="add-to-cart-large" @click="addToCart">
@@ -326,7 +329,8 @@ const getAvailableOptions = (groupNombre) => {
   );
   return allOpts.map(opt => {
     const match = relevant.find(v => v.attrs[groupNombre] === opt);
-    return { valor: opt, available: !!match, color: match?.color || group.colores?.[opt] || null };
+    const hasStock = match && Number(match.stock) > 0;
+    return { valor: opt, available: !!match && hasStock, color: match?.color || group.colores?.[opt] || null };
   });
 };
 
@@ -414,7 +418,37 @@ const loadProduct = async () => {
 onMounted(() => { loadProduct(); });
 watch(() => route.params.id, () => { loadProduct(); });
 
+const addToCartError = ref('');
+
 const addToCart = () => {
+  addToCartError.value = '';
+
+  if (product.value.es_variable) {
+    const groups = attrGroups.value;
+    if (groups.length > 0) {
+      const missingGroup = groups.find(g => !selectedAttrs.value[g.nombre]);
+      if (missingGroup) {
+        addToCartError.value = `Por favor selecciona ${missingGroup.nombre} antes de agregar al carrito.`;
+        return;
+      }
+    }
+
+    if (selectedVariation.value) {
+      if (Number(selectedVariation.value.stock) <= 0) {
+        addToCartError.value = 'La opción seleccionada se encuentra agotada.';
+        return;
+      }
+    } else if (variations.value.length > 0 && !attrGroups.value.length) {
+      addToCartError.value = 'Por favor selecciona una opción disponible.';
+      return;
+    }
+  } else {
+    if (Number(product.value.stock) <= 0) {
+      addToCartError.value = 'Este producto se encuentra agotado.';
+      return;
+    }
+  }
+
   const productToCart = { ...product.value, precio: discountedPrice.value };
   const label = Object.values(selectedAttrs.value).join(' - ') || selectedVariation.value?.valor || '';
   cartActions.addItem(productToCart, label, quantity.value);
