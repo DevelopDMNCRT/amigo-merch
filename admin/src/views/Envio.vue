@@ -72,50 +72,43 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                 <div>
                   <label class="mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400">1. Continente</label>
-                  <select v-model="selectedContinente" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
-                    <option value="Todos">Todos los Continentes</option>
-                    <option v-for="c in CONTINENTS_LIST" :key="c" :value="c">{{ c }}</option>
-                  </select>
+                  <div class="relative">
+                    <select v-model="selectedContinente" class="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm font-medium text-gray-800 focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-white cursor-pointer">
+                      <option value="Todos">Todos los Continentes</option>
+                      <option v-for="c in CONTINENTS_LIST" :key="c" :value="c">{{ c }}</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label class="mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400">2. Agregar País o Continente</label>
-                  <select v-model="selectedPaisDropdown" @change="onPaisDropdownSelect" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
-                    <option value="" disabled selected>Seleccionar opción...</option>
-                    <option v-if="selectedContinente !== 'Todos'" value="__ALL_CONTINENT__">✨ Agregar TODOS los países de {{ selectedContinente }}</option>
-                    <option v-for="p in paisesDisponiblesContinente" :key="p.code" :value="p.name">{{ p.name }} ({{ p.continent }})</option>
-                  </select>
+                  <div class="relative">
+                    <select v-model="selectedPaisDropdown" @change="onPaisDropdownSelect" class="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 pr-9 text-sm font-medium text-gray-800 focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-white cursor-pointer">
+                      <option value="" disabled selected>Seleccionar opción...</option>
+                      <option v-if="selectedContinente !== 'Todos'" value="__ALL_CONTINENT__">✨ Agregar TODOS los países de {{ selectedContinente }}</option>
+                      <option v-for="p in paisesDisponiblesContinente" :key="p.code" :value="p.name">{{ p.name }} ({{ p.continent }})</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Países Seleccionados</label>
-              <div class="relative w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-400 dark:border-gray-700 dark:bg-gray-800 min-h-[42px] flex items-center">
-                <div class="flex flex-wrap items-center gap-1.5 w-full">
-                  <span v-for="pais in nuevaRegla.paises" :key="pais" class="inline-flex items-center gap-1 rounded bg-gray-50 px-2 py-1 text-[13px] font-medium text-gray-800 border border-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
-                    {{ pais }}
-                    <button @click="removerPais(pais)" type="button" class="text-gray-400 hover:text-gray-800 dark:hover:text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                  </span>
-                  <input 
-                    v-model="paisBusqueda" 
-                    @focus="showPaisesDropdown = true"
-                    @blur="hidePaisesDropdown"
-                    :placeholder="nuevaRegla.paises.length === 0 ? 'Buscar país...' : ''" 
-                    class="flex-1 bg-transparent border-none outline-none focus:ring-0 px-1 py-0.5 text-sm dark:text-white min-w-[100px]" 
-                  />
-                </div>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-                
-                <!-- Dropdown -->
-                <div v-if="showPaisesDropdown && filteredPaises.length > 0" class="absolute left-0 top-[calc(100%+4px)] z-50 max-h-48 w-full overflow-auto rounded-xl bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800 dark:ring-gray-700">
-                  <div v-for="opcion in filteredPaises" :key="opcion" @mousedown.prevent="addPaisOpcion(opcion)" class="cursor-pointer select-none px-4 py-2 text-[13px] text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">
-                    {{ opcion }}
-                  </div>
-                </div>
+              <div class="min-h-[46px] rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm dark:border-gray-700 dark:bg-gray-800 flex flex-wrap items-center gap-1.5">
+                <span v-for="pais in nuevaRegla.paises" :key="pais" class="inline-flex items-center gap-1.5 rounded-lg bg-gray-100 px-2.5 py-1 text-[13px] font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                  {{ pais }}
+                  <button @click="removerPais(pais)" type="button" class="text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </span>
               </div>
             </div>
 
