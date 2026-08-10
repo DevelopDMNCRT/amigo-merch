@@ -66,7 +66,28 @@
           
           <div class="space-y-5">
             <div>
-              <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Países</label>
+              <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Seleccionar por Continente / País</label>
+              
+              <!-- Dropdowns por Continente y País -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label class="mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400">1. Continente</label>
+                  <select v-model="selectedContinente" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                    <option value="Todos">Todos los Continentes</option>
+                    <option v-for="c in CONTINENTS_LIST" :key="c" :value="c">{{ c }}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400">2. Agregar País o Continente</label>
+                  <select v-model="selectedPaisDropdown" @change="onPaisDropdownSelect" class="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                    <option value="" disabled selected>Seleccionar opción...</option>
+                    <option v-if="selectedContinente !== 'Todos'" value="__ALL_CONTINENT__">✨ Agregar TODOS los países de {{ selectedContinente }}</option>
+                    <option v-for="p in paisesDisponiblesContinente" :key="p.code" :value="p.name">{{ p.name }} ({{ p.continent }})</option>
+                  </select>
+                </div>
+              </div>
+
+              <label class="mb-1.5 block text-[13px] font-semibold text-gray-700 dark:text-gray-300">Países Seleccionados</label>
               <div class="relative w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-400 dark:border-gray-700 dark:bg-gray-800 min-h-[42px] flex items-center">
                 <div class="flex flex-wrap items-center gap-1.5 w-full">
                   <span v-for="pais in nuevaRegla.paises" :key="pais" class="inline-flex items-center gap-1 rounded bg-gray-50 px-2 py-1 text-[13px] font-medium text-gray-800 border border-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600">
@@ -273,6 +294,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import AdminLayout from '@/components/layout/AdminLayout.vue';
+import { COUNTRIES_CATALOG, CONTINENTS_LIST, getCountriesByContinent } from '@/utils/countriesCatalog';
 
 
 // --- Reglas de Envío ---
@@ -281,7 +303,7 @@ const mostrarModalRegla = ref(false);
 const savingRegla = ref(false);
 
 // Listas de Opciones predefinidas
-const paisesOptions = ['México', 'Estados Unidos', 'Canadá', 'España', 'Colombia', 'Argentina', 'Chile', 'Perú', 'Ecuador', 'Reino Unido'];
+const paisesOptions = COUNTRIES_CATALOG.map(c => c.name);
 const estadosMexico = [
   'Aguascalientes', 'Baja California', 'Baja California Sur', 'Campeche', 'Chiapas', 'Chihuahua', 
   'Ciudad de México', 'Coahuila', 'Colima', 'Durango', 'Guanajuato', 'Guerrero', 'Hidalgo', 
@@ -294,12 +316,41 @@ const showPaisesDropdown = ref(false);
 const showEstadosDropdown = ref(false);
 const paisBusqueda = ref('');
 const estadoBusqueda = ref('');
+const selectedContinente = ref('Todos');
+const selectedPaisDropdown = ref('');
 const nuevaRegla = ref({ paises: [], estados: [], precio: 0.00 });
 
 // Dropdown filtering logic
+const paisesDisponiblesContinente = computed(() => {
+  const list = getCountriesByContinent(selectedContinente.value);
+  return list.filter(p => !nuevaRegla.value.paises.includes(p.name));
+});
+
+const onPaisDropdownSelect = () => {
+  const val = selectedPaisDropdown.value;
+  if (!val) return;
+  if (val === '__ALL_CONTINENT__') {
+    const list = getCountriesByContinent(selectedContinente.value);
+    list.forEach(p => {
+      if (!nuevaRegla.value.paises.includes(p.name)) {
+        nuevaRegla.value.paises.push(p.name);
+      }
+    });
+  } else {
+    if (!nuevaRegla.value.paises.includes(val)) {
+      nuevaRegla.value.paises.push(val);
+    }
+  }
+  selectedPaisDropdown.value = '';
+};
+
 const filteredPaises = computed(() => {
   const q = paisBusqueda.value.toLowerCase();
-  return paisesOptions.filter(p => !nuevaRegla.value.paises.includes(p) && p.toLowerCase().includes(q));
+  let baseList = COUNTRIES_CATALOG;
+  if (selectedContinente.value !== 'Todos') {
+    baseList = baseList.filter(c => c.continent === selectedContinente.value);
+  }
+  return baseList.map(c => c.name).filter(p => !nuevaRegla.value.paises.includes(p) && p.toLowerCase().includes(q));
 });
 
 const filteredEstados = computed(() => {

@@ -122,7 +122,13 @@ npm run dev
   - **Solución Implementada:**
     - En `client/src/views/ProductView.vue`: Las opciones sin stock (`stock <= 0`) se deshabilitan visualmente (`available: false`). La función `addToCart` valida que los productos variables tengan seleccionados obligatoriamente todos sus atributos antes de añadirse al carrito, mostrando una alerta descriptiva si falta seleccionar talla.
     - En `admin/src/views/ProductoNuevo.vue`: Al generar o agregar variaciones, las variaciones heredan por defecto el precio general del producto, previniendo el guardado accidental de variaciones en `$0.00`.
-    - En `server/index.js`: Se protegieron las consultas SQL de actualización de inventario con `GREATEST(0, stock - N)` para impedir que el stock baje a valores negativos en la base de datos.
+- **Catálogo de Países por Continentes e Integración Internacional en Envíos (10 de Agosto de 2026):**
+  - **Funcionalidades:**
+    1. **Estructuración por Continentes**: Catálogo centralizado en `countriesCatalog` agrupado en *América del Norte*, *América Central y Caribe*, *América del Sur*, *Europa* y *Asia y Oceanía* (incluyendo Japón, China, Taiwán y Australia; con África completamente excluido).
+    2. **Panel de Administración (`admin/src/views/Envio.vue`)**: Configuración de reglas por desplegable doble (Continente -> País individual o "Agregar todos los países del continente"). Preservación total de las reglas de México y sus estados sin alteraciones.
+    3. **Checkout de Clientes (`client/src/views/CheckoutView.vue`)**: Desplegable de país agrupado por `<optgroup label="Continente">`. Enrutamiento dinámico que muestra selector de estados para México e input de texto para regiones internacionales.
+    4. **Integración con Envia.com (`server/index.js`)**: Mapeo dinámico de país a su código oficial ISO-2 de 2 letras (`MX`, `US`, `JP`, `ES`, `CA`, `AU`, etc.), permitiendo cotizaciones y emisión de guías de exportación internacionales (DHL, FedEx, UPS).
+
 
 
 
