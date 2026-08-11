@@ -1131,9 +1131,46 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
         district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
         state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
-        country:    'MX',
+        country:    d.pais ? getCountryIsoCode(d.pais) : payload.destination.country,
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
+      };
+    }
+
+    // Attach customs data for international shipments
+    if (payload.destination.country !== 'MX') {
+      const customsInput = req.body.customs || {};
+      const defaultContents = (rows[0].items || []).map(item => ({
+        description: (item.nombre || 'Product apparel').length >= 15 ? (item.nombre || 'Product apparel') : `${item.nombre || 'Product'} - Cotton apparel`,
+        hsCode: '6109.10',
+        countryOfOrigin: 'MX',
+        price: parseFloat(item.precio || item.price || 10),
+        quantity: parseInt(item.cantidad || 1)
+      }));
+
+      payload.customs = {
+        currency: customsInput.currency || 'MXN',
+        exportReason: customsInput.exportReason || 'SALE',
+        exporterCode: customsInput.exporterCode || 'XAXX010101000',
+        importerCode: customsInput.importerCode || '',
+        dutiable: true,
+        dutiesPayer: customsInput.dutiesPayer || 'RECIPIENT',
+        declaredValue: parseFloat(customsInput.declaredValue || rows[0].total || 100),
+        contents: (customsInput.contents && customsInput.contents.length > 0)
+          ? customsInput.contents.map(c => ({
+              description: (c.description || 'Cotton T-Shirt apparel').length >= 15 ? c.description : `${c.description || 'Cotton T-Shirt'} apparel for adults`,
+              hsCode: c.hsCode || '6109.10',
+              countryOfOrigin: c.countryOfOrigin || 'MX',
+              price: parseFloat(c.price || 10),
+              quantity: parseInt(c.quantity || 1)
+            }))
+          : (defaultContents.length > 0 ? defaultContents : [{
+              description: 'Cotton T-Shirt apparel for adults',
+              hsCode: '6109.10',
+              countryOfOrigin: 'MX',
+              price: parseFloat(rows[0].total || 100),
+              quantity: 1
+            }])
       };
     }
 
@@ -1255,9 +1292,46 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
         state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
-        country:    'MX',
+        country:    d.pais ? getCountryIsoCode(d.pais) : payload.destination.country,
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
+      };
+    }
+
+    // Attach customs data for international shipments
+    if (payload.destination.country !== 'MX') {
+      const customsInput = req.body.customs || {};
+      const defaultContents = (rows[0].items || []).map(item => ({
+        description: (item.nombre || 'Product apparel').length >= 15 ? (item.nombre || 'Product apparel') : `${item.nombre || 'Product'} - Cotton apparel`,
+        hsCode: '6109.10',
+        countryOfOrigin: 'MX',
+        price: parseFloat(item.precio || item.price || 10),
+        quantity: parseInt(item.cantidad || 1)
+      }));
+
+      payload.customs = {
+        currency: customsInput.currency || 'MXN',
+        exportReason: customsInput.exportReason || 'SALE',
+        exporterCode: customsInput.exporterCode || 'XAXX010101000',
+        importerCode: customsInput.importerCode || '',
+        dutiable: true,
+        dutiesPayer: customsInput.dutiesPayer || 'RECIPIENT',
+        declaredValue: parseFloat(customsInput.declaredValue || rows[0].total || 100),
+        contents: (customsInput.contents && customsInput.contents.length > 0)
+          ? customsInput.contents.map(c => ({
+              description: (c.description || 'Cotton T-Shirt apparel').length >= 15 ? c.description : `${c.description || 'Cotton T-Shirt'} apparel for adults`,
+              hsCode: c.hsCode || '6109.10',
+              countryOfOrigin: c.countryOfOrigin || 'MX',
+              price: parseFloat(c.price || 10),
+              quantity: parseInt(c.quantity || 1)
+            }))
+          : (defaultContents.length > 0 ? defaultContents : [{
+              description: 'Cotton T-Shirt apparel for adults',
+              hsCode: '6109.10',
+              countryOfOrigin: 'MX',
+              price: parseFloat(rows[0].total || 100),
+              quantity: 1
+            }])
       };
     }
 

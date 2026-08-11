@@ -312,12 +312,7 @@
                       <div>
                         <label class="text-[11px] text-gray-400 mb-0.5 block">País</label>
                         <select v-model="destEdit.pais" @change="onPaisChange" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white/90 focus:border-[#00B4AA] focus:outline-none">
-                          <option value="México">México</option>
-                          <option value="Estados Unidos">Estados Unidos</option>
-                          <option value="Argentina">Argentina</option>
-                          <option value="Colombia">Colombia</option>
-                          <option value="Panamá">Panamá</option>
-                          <option value="España">España</option>
+                          <option v-for="c in COUNTRIES_CATALOG" :key="c.code" :value="c.name">{{ c.name }}</option>
                         </select>
                       </div>
                       <div>
@@ -423,6 +418,78 @@
                   </div>
                 </div>
                 <p class="text-[11px] text-gray-400 mt-2">{{ pkgDims.length }}×{{ pkgDims.width }}×{{ pkgDims.height }} cm · {{ pkgPeso }} kg</p>
+              </div>
+            </div>
+
+            <!-- ── Sección 1.5: Factura Comercial Aduanal (Solo Envíos Internacionales) ── -->
+            <div v-if="esEnvioInternacional" class="p-5 border-t border-gray-100 dark:border-gray-800 bg-blue-50/40 dark:bg-blue-900/10 space-y-4">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🌐</span>
+                <div>
+                  <h3 class="text-xs font-bold text-gray-800 dark:text-white uppercase tracking-wider">Factura Comercial Aduanal (Envío Internacional)</h3>
+                  <p class="text-[11px] text-gray-500 dark:text-gray-400">Requerido por aduanas y paqueterías internacionales para exportación.</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label class="text-gray-500 dark:text-gray-400 mb-1 block font-medium">RFC / Tax ID Origen (Exportador)</label>
+                  <input v-model="customsData.exporterCode" type="text" placeholder="XAXX010101000" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                </div>
+                <div>
+                  <label class="text-gray-500 dark:text-gray-400 mb-1 block font-medium">Tax ID Destino (Importador - Opcional)</label>
+                  <input v-model="customsData.importerCode" type="text" placeholder="Tax ID / NIF" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                </div>
+                <div>
+                  <label class="text-gray-500 dark:text-gray-400 mb-1 block font-medium">Razón de Exportación</label>
+                  <select v-model="customsData.exportReason" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none">
+                    <option value="SALE">Venta (Commercial Sale)</option>
+                    <option value="GIFT">Regalo (Gift)</option>
+                    <option value="SAMPLE">Muestra (Sample)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-gray-500 dark:text-gray-400 mb-1 block font-medium">Pago de Aranceles e Impuestos</label>
+                  <select v-model="customsData.dutiesPayer" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none">
+                    <option value="RECIPIENT">Destinatario paga en la entrega (DDU / DAP)</option>
+                    <option value="SENDER">Remitente paga (DDP)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Artículos Aduanales -->
+              <div class="space-y-3 pt-2">
+                <p class="text-[11px] font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Artículos para declaración aduanal</p>
+                <div v-for="(item, idx) in customsData.contents" :key="idx" class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 space-y-2 text-xs">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="text-[10px] text-gray-400 mb-0.5 block">Descripción en Inglés (min 15 caracteres) *</label>
+                      <input v-model="item.description" type="text" placeholder="Cotton T-Shirt apparel for adults" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                    </div>
+                    <div>
+                      <label class="text-[10px] text-gray-400 mb-0.5 block">Código HS (Harmonized System Code) *</label>
+                      <input v-model="item.hsCode" type="text" placeholder="6109.10" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs font-mono text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2">
+                    <div>
+                      <label class="text-[10px] text-gray-400 mb-0.5 block">Hecho en</label>
+                      <select v-model="item.countryOfOrigin" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-1.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none">
+                        <option value="MX">México (MX)</option>
+                        <option value="US">Estados Unidos (US)</option>
+                        <option value="CN">China (CN)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="text-[10px] text-gray-400 mb-0.5 block">Precio Unit. (MXN)</label>
+                      <input v-model.number="item.price" type="number" min="0" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                    </div>
+                    <div>
+                      <label class="text-[10px] text-gray-400 mb-0.5 block">Cantidad</label>
+                      <input v-model.number="item.quantity" type="number" min="1" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -627,6 +694,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import AdminLayout from '@/components/layout/AdminLayout.vue';
+import { COUNTRIES_CATALOG } from '@/utils/countriesCatalog';
 
 const statesData = {
   'México': ['Aguascalientes', 'Baja California', 'Baja California Sur', 'Campeche', 'CDMX', 'Chiapas', 'Chihuahua', 'Coahuila', 'Colima', 'Durango', 'Estado de México', 'Guanajuato', 'Guerrero', 'Hidalgo', 'Jalisco', 'Michoacán', 'Morelos', 'Nayarit', 'Nuevo León', 'Oaxaca', 'Puebla', 'Querétaro', 'Quintana Roo', 'San Luis Potosí', 'Sinaloa', 'Sonora', 'Tabasco', 'Tamaulipas', 'Tlaxcala', 'Veracruz', 'Yucatán', 'Zacatecas'],
@@ -655,6 +723,19 @@ const destEdit = ref({
   nombre: '', telefono: '', calle: '', num_ext: '', num_int: '',
   colonia: '', ciudad: '', delegacion: '', estado: '', pais: 'México', cp: '',
   correo: '', referencia: ''
+});
+
+const esEnvioInternacional = computed(() => {
+  const p = (destEdit.value.pais || '').trim().toLowerCase();
+  return p !== '' && p !== 'méxico' && p !== 'mexico';
+});
+
+const customsData = ref({
+  exportReason: 'SALE',
+  exporterCode: 'XAXX010101000',
+  importerCode: '',
+  dutiesPayer: 'RECIPIENT',
+  contents: []
 });
 
 const currentStates = computed(() => statesData[destEdit.value.pais] || []);
@@ -823,6 +904,8 @@ const fetchPedido = async () => {
       correo:     data.correo     || '',
       referencia: data.notas      || ''
     };
+    // Inicializar datos aduanales para envíos internacionales
+    initCustomsData(data.items, data.total);
     // Inicializar el estado pendiente con el valor guardado en BD
     estadoPendiente.value = data.estado;
   } catch (error) {
@@ -830,6 +913,37 @@ const fetchPedido = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const initCustomsData = (items, total) => {
+  const contents = (items || []).map(item => {
+    const rawName = item.nombre || 'Product';
+    let desc = rawName;
+    if (desc.length < 15) desc = `${rawName} - Cotton apparel`;
+    let hs = '6109.10';
+    const lower = rawName.toLowerCase();
+    if (lower.includes('cd') || lower.includes('disco') || lower.includes('album')) hs = '8523.49';
+    if (lower.includes('gorra') || lower.includes('cap') || lower.includes('beanie')) hs = '6505.00';
+    return {
+      description: desc,
+      hsCode: hs,
+      countryOfOrigin: 'MX',
+      price: parseFloat(item.precio || item.price || 10),
+      quantity: parseInt(item.cantidad || 1)
+    };
+  });
+
+  if (!contents.length) {
+    contents.push({
+      description: 'Cotton T-Shirt apparel for adults',
+      hsCode: '6109.10',
+      countryOfOrigin: 'MX',
+      price: parseFloat(total || 100),
+      quantity: 1
+    });
+  }
+
+  customsData.value.contents = contents;
 };
 
 onMounted(() => {
@@ -882,7 +996,8 @@ const cotizarEnvio = async () => {
         dims: pkgDims.value,
         origen: selectedBodega.value,
         type: pkgType.value,
-        destino: destEdit.value
+        destino: destEdit.value,
+        customs: esEnvioInternacional.value ? customsData.value : null
       })
     });
     const data = await res.json();
@@ -924,7 +1039,8 @@ const generarGuia = async () => {
       dims: pkgDims.value,
       origen: selectedBodega.value,
       type: pkgType.value,
-      destino: destEdit.value
+      destino: destEdit.value,
+      customs: esEnvioInternacional.value ? customsData.value : null
     };
     const res = await fetch(`/api/pedidos/${pedido.value.id}/generar-guia`, {
       method: 'POST',
