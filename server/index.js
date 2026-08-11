@@ -2214,6 +2214,24 @@ app.put('/api/configuracion', async (req, res) => {
 
 // --- Reglas de Envío ---
 
+const initReglasEnvioTable = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS reglas_envio (
+        id SERIAL PRIMARY KEY,
+        pais TEXT,
+        estados TEXT,
+        precio NUMERIC(10,2) DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      ALTER TABLE reglas_envio ALTER COLUMN pais TYPE TEXT;
+    `);
+  } catch (err) {
+    console.warn('Init reglas_envio table migration warning:', err.message);
+  }
+};
+initReglasEnvioTable();
+
 app.get('/api/reglas-envio', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM reglas_envio ORDER BY created_at DESC');
@@ -2233,8 +2251,8 @@ app.post('/api/reglas-envio', async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al crear regla de envio' });
+    console.error('Error creando regla de envío:', err);
+    res.status(500).json({ error: err.message || 'Error al crear regla de envio' });
   }
 });
 
@@ -2249,8 +2267,8 @@ app.put('/api/reglas-envio/:id', async (req, res) => {
     if (result.rows.length === 0) return res.status(404).json({ error: 'Regla no encontrada' });
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al actualizar regla de envio' });
+    console.error('Error actualizando regla de envío:', err);
+    res.status(500).json({ error: err.message || 'Error al actualizar regla de envio' });
   }
 });
 
