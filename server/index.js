@@ -1041,6 +1041,23 @@ const getCountryIsoCode = (countryName) => {
   return countryIsoMap[clean] || 'MX';
 };
 
+const getStateCode = (stateName, countryCode) => {
+  if (!stateName) return countryCode === 'MX' ? 'JA' : 'ON';
+  const clean = stateName.trim();
+  if (countryCode === 'MX') {
+    return enviaStateMap[clean.toLowerCase()] || 'JA';
+  }
+  if (clean.length <= 3) {
+    return clean.toUpperCase();
+  }
+  const intlStateMap = {
+    'ontario': 'ON', 'quebec': 'QC', 'british columbia': 'BC', 'alberta': 'AB', 'manitoba': 'MB', 'saskatchewan': 'SK', 'nova scotia': 'NS', 'new brunswick': 'NB',
+    'california': 'CA', 'texas': 'TX', 'florida': 'FL', 'new york': 'NY', 'illinois': 'IL', 'pennsylvania': 'PA', 'ohio': 'OH', 'georgia': 'GA', 'north carolina': 'NC', 'michigan': 'MI',
+    'madrid': 'M', 'barcelona': 'B', 'valencia': 'V', 'sevilla': 'SE'
+  };
+  return intlStateMap[clean.toLowerCase()] || clean.substring(0, 2).toUpperCase();
+};
+
 const getEnviaPayload = async (pedido) => {
   let totalWeight = 0;
   for (const item of (pedido.items || [])) {
@@ -1052,8 +1069,8 @@ const getEnviaPayload = async (pedido) => {
   }
   if (totalWeight < 1) totalWeight = 1;
 
-  const stateCode = enviaStateMap[(pedido.estado_env || '').toLowerCase().trim()] || 'JA';
   const destCountryCode = getCountryIsoCode(pedido.pais);
+  const stateCode = getStateCode(pedido.estado_env || pedido.estado, destCountryCode);
 
   return {
     origin: {
@@ -1121,6 +1138,8 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
     // Override destination if edited from the frontend
     if (req.body.destino) {
       const d = req.body.destino;
+      const targetCountry = d.pais ? getCountryIsoCode(d.pais) : payload.destination.country;
+      const targetState = d.estado ? getStateCode(d.estado, targetCountry) : payload.destination.state;
       payload.destination = {
         name:       d.nombre     || payload.destination.name,
         company:    payload.destination.company,
@@ -1130,8 +1149,8 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
         number:     d.num_int ? `${d.num_ext || "1"} Int. ${d.num_int}` : (d.num_ext || payload.destination.number),
         district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
-        state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
-        country:    d.pais ? getCountryIsoCode(d.pais) : payload.destination.country,
+        state:      targetState,
+        country:    targetCountry,
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
       };
@@ -1176,24 +1195,28 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
 
     // Step 1: Dynamically fetch all active carriers for this account
     let carrierList = [];
-    try {
-      const carriersRes = await fetch(`${enviaQueriesUrl}/carrier?country_code=MX`, {
-        headers: { 'Authorization': `Bearer ${enviaApiKey}` }
-      });
-      const carriersData = await carriersRes.json();
-      if (Array.isArray(carriersData.data)) {
-        carrierList = carriersData.data.map(c => c.carrier_code || c.code || c.name).filter(Boolean);
+    if (payload.destination.country !== 'MX') {
+      carrierList = ['fedex', 'dhl', 'ups'];
+    } else {
+      try {
+        const carriersRes = await fetch(`${enviaQueriesUrl}/carrier?country_code=MX`, {
+          headers: { 'Authorization': `Bearer ${enviaApiKey}` }
+        });
+        const carriersData = await carriersRes.json();
+        if (Array.isArray(carriersData.data)) {
+          carrierList = carriersData.data.map(c => c.carrier_code || c.code || c.name).filter(Boolean);
+        }
+      } catch (e) {
+        console.warn('Could not fetch carrier list from Envia, will try without carrier filter:', e.message);
       }
-    } catch (e) {
-      console.warn('Could not fetch carrier list from Envia, will try without carrier filter:', e.message);
     }
 
     let rates = [];
+    let lastEnviaError = null;
 
     // Step 2a: Try a single multicarrier call (no carrier specified) — returns all available rates
     try {
       const multiPayload = { ...payload };
-      // Remove shipment field to let Envia return all carriers
       delete multiPayload.shipment;
       const response = await fetch(`${enviaApiUrl}/ship/rate/`, {
         method: 'POST',
@@ -1201,8 +1224,11 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
         body: JSON.stringify(multiPayload)
       });
       const data = await response.json();
+      console.log('[Envia Rate Multi Response]:', JSON.stringify(data));
       if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
         rates = data.data;
+      } else {
+        lastEnviaError = data.error?.message || data.message || data.meta || null;
       }
     } catch (e) {
       console.warn('Multicarrier rate call failed, falling back to per-carrier calls:', e.message);
@@ -1219,11 +1245,18 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
             body: JSON.stringify(ratePayload)
           });
           const data = await response.json();
+          console.log(`[Envia Rate Carrier ${carrier} Response]:`, JSON.stringify(data));
           if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
             rates.push(...data.data);
+          } else if (!lastEnviaError) {
+            lastEnviaError = data.error?.message || data.message || null;
           }
         } catch (e) { console.error(`Error rating carrier ${carrier}:`, e.message); }
       }
+    }
+
+    if (rates.length === 0 && lastEnviaError) {
+      return res.json({ rates: [], error: `Envia API: ${lastEnviaError}` });
     }
 
     res.json({ rates });
@@ -1282,6 +1315,8 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
     // Override destination if edited from the frontend
     if (req.body.destino) {
       const d = req.body.destino;
+      const targetCountry = d.pais ? getCountryIsoCode(d.pais) : payload.destination.country;
+      const targetState = d.estado ? getStateCode(d.estado, targetCountry) : payload.destination.state;
       payload.destination = {
         name:       d.nombre     || payload.destination.name,
         company:    payload.destination.company,
@@ -1291,8 +1326,8 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
         number:     d.num_int ? `${d.num_ext || "1"} Int. ${d.num_int}` : (d.num_ext || payload.destination.number),
         district:   d.delegacion ? (d.colonia ? `${d.colonia}, ${d.delegacion}` : d.delegacion) : (d.colonia || payload.destination.district),
         city:       d.ciudad     || payload.destination.city,
-        state:      d.estado ? (enviaStateMap[d.estado.toLowerCase().trim()] || 'JA') : payload.destination.state,
-        country:    d.pais ? getCountryIsoCode(d.pais) : payload.destination.country,
+        state:      targetState,
+        country:    targetCountry,
         postalCode: d.cp         || payload.destination.postalCode,
         reference:  d.referencia !== undefined ? d.referencia : payload.destination.reference
       };

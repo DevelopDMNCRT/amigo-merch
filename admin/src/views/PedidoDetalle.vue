@@ -1018,7 +1018,7 @@ const cotizarEnvio = async () => {
       rates.value = filtered.sort((a, b) => a.totalPrice - b.totalPrice);
       showToast('success', `${filtered.length} opciones encontradas.`);
     } else {
-      showToast('error', 'No se encontraron tarifas para este código postal.');
+      showToast('error', data.error || 'No se encontraron tarifas para este código postal.');
     }
   } catch (err) {
     console.error(err);
