@@ -127,7 +127,17 @@ npm run dev
     1. **Estructuración por Continentes**: Catálogo centralizado en `countriesCatalog` agrupado en *América del Norte*, *América Central y Caribe*, *América del Sur*, *Europa* y *Asia y Oceanía* (incluyendo Japón, China, Taiwán y Australia; con África completamente excluido).
     2. **Panel de Administración (`admin/src/views/Envio.vue`)**: Configuración de reglas por desplegable doble (Continente -> País individual o "Agregar todos los países del continente"). Preservación total de las reglas de México y sus estados sin alteraciones.
     3. **Checkout de Clientes (`client/src/views/CheckoutView.vue`)**: Desplegable de país agrupado por `<optgroup label="Continente">`. Enrutamiento dinámico que muestra selector de estados para México e input de texto para regiones internacionales.
-    4. **Integración con Envia.com (`server/index.js`)**: Mapeo dinámico de país a su código oficial ISO-2 de 2 letras (`MX`, `US`, `JP`, `ES`, `CA`, `AU`, etc.), permitiendo cotizaciones y emisión de guías de exportación internacionales (DHL, FedEx, UPS).
+- **Factura Comercial Aduanal (Commercial Invoice / Customs) para Envíos Internacionales (11 de Agosto de 2026):**
+  - **Problema Resuelto:** Los envíos internacionales (ej. Canadá, EE.UU., Europa, Japón) no pueden cotizarse ni generar guías sin los datos aduanales requeridos por la ley de exportación y por paqueterías como FedEx International, DHL Express o UPS. Además, el backend forzaba erróneamente el país de destino como `MX` al editar la dirección del pedido.
+  - **Solución Implementada:**
+    1. **Panel de Administración (`admin/src/views/PedidoDetalle.vue`)**:
+       - Detección automática de envíos internacionales cuando el país del pedido no es México.
+       - Habilitación del módulo **Factura Comercial Aduanal (Envío Internacional)** con autocompletado inteligente de RFC Origen (`exporterCode`), Razón de exportación (`exportReason`), Pago de aranceles (`dutiesPayer`) y Lista de Artículos Aduanales (descripción obligatoria en inglés de mínimo 15 caracteres, código HS arancelario sugerido como `6109.10` / `8523.49`, precio y cantidad).
+       - Desplegable de países alimentado desde el catálogo centralizado `COUNTRIES_CATALOG` para permitir cualquier país de destino.
+    2. **Servidor Backend (`server/index.js`)**:
+       - Corrección en el override de dirección para conservar la clave ISO-2 del país destino (`getCountryIsoCode(d.pais)`) en lugar de hardcodear `MX`.
+       - Construcción del objeto `customs` estandarizado para Envia.com en `/ship/rate/` y `/ship/generate/`, permitiendo recibir cotizaciones internacionales reales de FedEx, DHL y UPS y emitir guías de exportación en PDF sin trabas aduanales.
+
 
 
 
