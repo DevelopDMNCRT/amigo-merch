@@ -463,12 +463,45 @@
                 <div v-for="(item, idx) in customsData.contents" :key="idx" class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 space-y-2 text-xs">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
-                      <label class="text-[10px] text-gray-400 mb-0.5 block">Descripción en Inglés (min 15 caracteres) *</label>
-                      <input v-model="item.description" type="text" placeholder="Cotton T-Shirt apparel for adults" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                      <label class="text-[10px] text-gray-400 mb-0.5 block font-medium">Descripción en Inglés (min 15 caracteres) *</label>
+                      <input v-model="item.description" type="text" placeholder="Cotton T-Shirt apparel for adults" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2.5 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
                     </div>
                     <div>
-                      <label class="text-[10px] text-gray-400 mb-0.5 block">Código HS (Harmonized System Code) *</label>
-                      <input v-model="item.hsCode" type="text" placeholder="6109.10" class="w-full h-7 rounded border border-gray-200 dark:border-gray-700 bg-transparent px-2 text-xs font-mono text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none" />
+                      <div class="flex items-center justify-between mb-0.5">
+                        <label class="text-[10px] text-gray-400 font-medium">Código HS (Harmonized System Code) *</label>
+                        <span v-if="getHsInfo(item.hsCode, item.customHsCode, item.description).confidence"
+                          class="text-[10px] px-1.5 py-0.5 rounded"
+                          :class="getHsInfo(item.hsCode, item.customHsCode, item.description).badgeClass"
+                        >
+                          {{ getHsInfo(item.hsCode, item.customHsCode, item.description).confidence }}
+                        </span>
+                      </div>
+                      
+                      <div class="space-y-1.5">
+                        <select v-model="item.hsCode" @change="onHsCodeChange(item)" class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-xs text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none font-medium cursor-pointer">
+                          <option v-for="h in HS_CODES_CATALOG" :key="h.code" :value="h.code">
+                            {{ h.title }}
+                          </option>
+                        </select>
+
+                        <!-- Input manual si se elige código personalizado o un código no registrado -->
+                        <input v-if="item.hsCode === 'CUSTOM' || !HS_CODES_CATALOG.some(h => h.code === item.hsCode)"
+                          v-model="item.customHsCode"
+                          type="text"
+                          placeholder="Ej: 6109.10.0011"
+                          class="w-full h-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent px-2.5 text-xs font-mono text-gray-800 dark:text-white focus:border-[#00B4AA] focus:outline-none"
+                        />
+
+                        <!-- Tarjeta Informativa Aduanal (Estilo Envia.com) -->
+                        <div v-if="getHsInfo(item.hsCode, item.customHsCode)" class="p-2 rounded-lg border border-gray-100 dark:border-gray-700/60 bg-gray-50/80 dark:bg-gray-900/50 text-[11px] space-y-0.5">
+                          <div class="flex items-center justify-between font-bold text-gray-800 dark:text-gray-200 font-mono text-[11px]">
+                            <span>{{ item.hsCode === 'CUSTOM' ? (item.customHsCode || 'Código Personalizado') : item.hsCode }}</span>
+                          </div>
+                          <p class="text-gray-500 dark:text-gray-400 italic leading-snug text-[10px]">
+                            {{ getHsInfo(item.hsCode, item.customHsCode).description }}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="grid grid-cols-3 gap-2">
@@ -738,6 +771,147 @@ const customsData = ref({
   contents: []
 });
 
+const HS_CODES_CATALOG = [
+  {
+    code: '6109.10',
+    title: '6109.10 — Playeras y camisetas 100% Algodón (Cotton T-Shirts)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Cotton apparel t-shirt for adults',
+    description: 'Articles of apparel: T-shirts, singlets and other vests, knitted or crocheted. Of cotton. Men\'s, women\'s or boys\' apparel.'
+  },
+  {
+    code: '6109.90',
+    title: '6109.90 — Playeras y tops sintéticos / mezclas (Synthetic T-Shirts)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Synthetic apparel t-shirt for adults',
+    description: 'Articles of apparel: T-shirts, singlets and other vests, knitted or crocheted. Of other textile materials (polyester, blends).'
+  },
+  {
+    code: '6110.20',
+    title: '6110.20 — Sudaderas, hoodies y suéteres de algodón (Cotton Hoodies)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Cotton hoodie sweatshirt apparel for adults',
+    description: 'Jerseys, pullovers, cardigans, waistcoats and similar articles, knitted or crocheted. Of cotton.'
+  },
+  {
+    code: '6110.30',
+    title: '6110.30 — Sudaderas y hoodies sintéticas / fleece (Synthetic Hoodies)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Synthetic fleece hoodie apparel for adults',
+    description: 'Jerseys, pullovers, cardigans, waistcoats and similar articles, knitted or crocheted. Of man-made fibres.'
+  },
+  {
+    code: '6505.00',
+    title: '6505.00 — Gorras, sombreros, bonetes y tocados (Hats, Caps & Headwear)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Casual textile headwear cap for adults',
+    description: 'Hats and other headgear, knitted or crocheted, or made up from lace, felt or other textile fabric.'
+  },
+  {
+    code: '8523.49',
+    title: '8523.49 — Vinilos, CDs y soportes de audio (Vinyl Records & Music CDs)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Audio music album record sound disc',
+    description: 'Discs, tapes, solid-state non-volatile storage devices, smart cards and other media for the recording of sound.'
+  },
+  {
+    code: '4202.92',
+    title: '4202.92 — Mochilas, bolsas de tela, tote bags (Backpacks & Bags)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Textile tote bag backpack container',
+    description: 'Trunks, suit-cases, vanity-cases, executive-cases, brief-cases, school satchels and similar containers. Outer surface of plastic sheeting or textile materials.'
+  },
+  {
+    code: '4911.99',
+    title: '4911.99 — Posters, stickers, calcomanías (Posters, Stickers & Prints)',
+    confidence: 'Categoría Oficial Verificada',
+    suggestedDesc: 'Printed poster sticker paper art print',
+    description: 'Other printed matter, including printed pictures and photographs.'
+  },
+  {
+    code: 'CUSTOM',
+    title: '✏️ Otro código HS personalizado (Ingresar manualmente)',
+    confidence: 'Código Personalizado',
+    suggestedDesc: 'Custom product item apparel',
+    description: 'Permite ingresar cualquier otro código numérico arancelario de 6 a 10 dígitos.'
+  }
+];
+
+const getHsInfo = (code, customCode, description = '') => {
+  const len = (description || '').trim().length;
+  let confidenceLabel = '';
+  let badgeClass = '';
+
+  if (len < 15) {
+    confidenceLabel = 'Descripción incompleta (mín. 15 caracteres)';
+    badgeClass = 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 font-semibold';
+  } else if (len <= 22) {
+    confidenceLabel = 'Nivel de confianza medio';
+    badgeClass = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 font-semibold';
+  } else {
+    confidenceLabel = 'Nivel de confianza alto';
+    badgeClass = 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 font-semibold';
+  }
+
+  if (code === 'CUSTOM') {
+    return {
+      code: customCode || 'Personalizado',
+      title: `${customCode || 'Personalizado'} — Código HS`,
+      confidence: len < 15 ? 'Descripción incompleta (mín. 15 caracteres)' : (len <= 22 ? 'Código Personalizado (Confianza Media)' : 'Código Personalizado Válido'),
+      badgeClass: badgeClass,
+      description: 'Código arancelario del Sistema Armonizado ingresado manualmente.'
+    };
+  }
+
+  const match = HS_CODES_CATALOG.find(h => h.code === code);
+  if (match) {
+    return {
+      ...match,
+      confidence: confidenceLabel,
+      badgeClass: badgeClass
+    };
+  }
+
+  return {
+    code: code || '6109.10',
+    title: `${code || '6109.10'} — Código HS`,
+    confidence: confidenceLabel,
+    badgeClass: badgeClass,
+    description: 'Código arancelario armonizado del Sistema Armonizado (Harmonized System Code).'
+  };
+};
+
+const onHsCodeChange = (item) => {
+  const match = HS_CODES_CATALOG.find(h => h.code === item.hsCode);
+  if (!match || !match.suggestedDesc) return;
+  const raw = (item.rawName || '').trim();
+  if (raw) {
+    let combined = `${raw} - ${match.suggestedDesc}`;
+    if (combined.length < 15) combined += ' for adults';
+    item.description = combined;
+  } else {
+    item.description = match.suggestedDesc;
+  }
+};
+
+const formatCustomsPayload = () => {
+  if (!esEnvioInternacional.value) return null;
+  const raw = customsData.value;
+  return {
+    ...raw,
+    contents: (raw.contents || []).map(c => {
+      const finalHs = (c.hsCode === 'CUSTOM' ? (c.customHsCode || '6109.10') : c.hsCode) || '6109.10';
+      return {
+        description: c.description,
+        hsCode: finalHs,
+        countryOfOrigin: c.countryOfOrigin || 'MX',
+        price: parseFloat(c.price || 10),
+        quantity: parseInt(c.quantity || 1)
+      };
+    })
+  };
+};
+
 const currentStates = computed(() => statesData[destEdit.value.pais] || []);
 const onPaisChange = () => {
   destEdit.value.estado = '';
@@ -918,15 +1092,23 @@ const fetchPedido = async () => {
 const initCustomsData = (items, total) => {
   const contents = (items || []).map(item => {
     const rawName = item.nombre || 'Product';
-    let desc = rawName;
-    if (desc.length < 15) desc = `${rawName} - Cotton apparel`;
     let hs = '6109.10';
     const lower = rawName.toLowerCase();
     if (lower.includes('cd') || lower.includes('disco') || lower.includes('album')) hs = '8523.49';
     if (lower.includes('gorra') || lower.includes('cap') || lower.includes('beanie')) hs = '6505.00';
+    if (lower.includes('sudadera') || lower.includes('hoodie') || lower.includes('sueter')) hs = '6110.20';
+    if (lower.includes('mochila') || lower.includes('bag') || lower.includes('tote')) hs = '4202.92';
+    if (lower.includes('sticker') || lower.includes('poster')) hs = '4911.99';
+
+    const info = HS_CODES_CATALOG.find(h => h.code === hs) || HS_CODES_CATALOG[0];
+    let desc = `${rawName} - ${info.suggestedDesc}`;
+    if (desc.length < 15) desc = `${rawName} - Cotton apparel for adults`;
+
     return {
+      rawName: rawName,
       description: desc,
       hsCode: hs,
+      customHsCode: '',
       countryOfOrigin: 'MX',
       price: parseFloat(item.precio || item.price || 10),
       quantity: parseInt(item.cantidad || 1)
@@ -935,8 +1117,10 @@ const initCustomsData = (items, total) => {
 
   if (!contents.length) {
     contents.push({
+      rawName: 'Cotton T-Shirt',
       description: 'Cotton T-Shirt apparel for adults',
       hsCode: '6109.10',
+      customHsCode: '',
       countryOfOrigin: 'MX',
       price: parseFloat(total || 100),
       quantity: 1
@@ -997,7 +1181,7 @@ const cotizarEnvio = async () => {
         origen: selectedBodega.value,
         type: pkgType.value,
         destino: destEdit.value,
-        customs: esEnvioInternacional.value ? customsData.value : null
+        customs: formatCustomsPayload()
       })
     });
     const data = await res.json();
@@ -1040,7 +1224,7 @@ const generarGuia = async () => {
       origen: selectedBodega.value,
       type: pkgType.value,
       destino: destEdit.value,
-      customs: esEnvioInternacional.value ? customsData.value : null
+      customs: formatCustomsPayload()
     };
     const res = await fetch(`/api/pedidos/${pedido.value.id}/generar-guia`, {
       method: 'POST',
