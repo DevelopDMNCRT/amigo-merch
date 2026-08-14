@@ -263,12 +263,12 @@ const onContinenteChange = () => {
     form.pais = available[0].name
   }
   form.estado = ''
-  calcularEnvio()
+  evaluarEnvio()
 }
 
 const onPaisChange = () => {
   form.estado = ''
-  calcularEnvio()
+  evaluarEnvio()
 }
 
 const reglasEnvio = ref([])
@@ -420,18 +420,41 @@ const updateMapFromAddress = async () => {
 
 // Watcher: cuando el usuario escribe su correo, actualiza el Brick de MP en tiempo real
 // Esto elimina la discrepancia entre el correo dummy y el correo real que dispara alarmas de fraude
-watch(() => form.correo, (newEmail) => {
+watch(() => form.correo, async (newEmail) => {
   if (
     cardPaymentBrickController &&
+    typeof cardPaymentBrickController.update === 'function' &&
     newEmail &&
     newEmail.includes('@') &&
     newEmail.includes('.')
   ) {
-    cardPaymentBrickController.update({ payer: { email: newEmail } }).catch(() => {
+    try {
+      const res = cardPaymentBrickController.update({ payer: { email: newEmail } });
+      if (res && typeof res.catch === 'function') await res;
+    } catch (e) {
       // Ignorar silenciosamente errores de actualización del Brick
-    });
+    }
   }
 });
+
+// Watcher: cuando cambia el costo total (productos + envío internacional/nacional), actualiza el Brick de MP en tiempo real
+watch(
+  () => cartGetters.totalPrice.value + cartGetters.shippingCost.value,
+  async (newTotal) => {
+    if (
+      cardPaymentBrickController &&
+      typeof cardPaymentBrickController.update === 'function' &&
+      newTotal > 0
+    ) {
+      try {
+        const res = cardPaymentBrickController.update({ amount: newTotal });
+        if (res && typeof res.catch === 'function') await res;
+      } catch (err) {
+        console.warn("[MP] Error actualizando monto en Brick:", err);
+      }
+    }
+  }
+);
 
 onMounted(async () => {
   if (cartState.items.length === 0) {

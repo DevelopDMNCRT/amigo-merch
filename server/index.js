@@ -2094,15 +2094,18 @@ app.post('/api/pagos/procesar', async (req, res) => {
 
     const body = {
       ...enrichedFormData,
+      transaction_amount: Number(pedido.total), // 🛡️ Garantiza cobrar el total real grabado en el pedido
       additional_info,
       external_reference: String(pedidoId),
       notification_url: `${process.env.SERVER_URL || 'http://localhost:3000'}/api/pagos/webhook`,
     };
 
+    console.log(`[MP] 💳 Procesando pago para Pedido #${pedidoId}: Cobrando Total Real = $${pedido.total} MXN (Subtotal: $${pedido.subtotal}, Envío: $${pedido.envio})`);
+
     const payment = new Payment(mpClient);
     const result = await payment.create({ body });
 
-    console.log(`[MP] Pago pedido ${pedidoId}: status=${result.status} detail=${result.status_detail}`);
+    console.log(`[MP] Resultado pago pedido #${pedidoId}: status=${result.status} detail=${result.status_detail}`);
 
     // ── 5. Si el pago fue rechazado, guardar el motivo en la BD ──────────
     if (result.status === 'rejected') {
