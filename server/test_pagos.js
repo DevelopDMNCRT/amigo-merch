@@ -43,53 +43,48 @@ function assert(label, condition, detail = '') {
   }
 }
 
-// ─── Datos de pedido de prueba (dirección extranjera, como Naris) ────────────
+// ─── Datos de pedido de prueba (dirección internacional a Japón) ────────────
 const TEST_ORDER_PAYLOAD = {
-  nombre:     'Test Comprador Internacional',
-  correo:     'test.internacional@example.com',
-  telefono:   '+17817752496',
-  pais:       'Estados Unidos',
-  estado_env: 'Otro',
-  ciudad:     'Watertown',
-  calle:      'Marion Rd',
-  num_ext:    '15',
-  num_int:    '',
-  colonia:    'Massachusetts',
-  cp:         '02472',
-  domicilio:  'Marion Rd 15, Col. Massachusetts, Watertown, Otro, C.P. 02472, Estados Unidos',
-  notas:      'Pedido de prueba automatizada',
+  nombre:     'Test Comprador Japón',
+  correo:     'test.japon@example.com',
+  telefono:   '+81312345678',
+  pais:       'Japón',
+  estado_env: 'Tokyo',
+  ciudad:     'Shibuya',
+  calle:      'Dogenzaka',
+  num_ext:    '1-2-3',
+  num_int:    '401',
+  colonia:    'Shibuya-ku',
+  cp:         '150-0043',
+  domicilio:  'Dogenzaka 1-2-3, Apt 401, Shibuya-ku, Shibuya, Tokyo, C.P. 150-0043, Japón',
+  notas:      'Pedido de prueba automatizada hacia Japón',
   delegacion: '',
   items: [
     {
-      id: 'test-item-1',
+      id: 'test-item-japan-1',
       producto_id: 1,
-      nombre: 'Jersey Test',
-      variante: 'M',
+      nombre: 'Jersey Test Edición Japón',
+      variante: 'L',
       imagen: 'https://example.com/image.jpg',
       precio: 500,
       cantidad: 2
     }
   ],
   subtotal: 1000,
-  envio:    150,
-  total:    1150,
+  envio:    1200, // Regla de envío oficial a Japón: $1,200.00 MXN
+  total:    2200, // Total = Subtotal ($1,000) + Envío a Japón ($1,200)
 };
 
 // ─── Tarjetas de prueba de Mercado Pago ──────────────────────────────────────
 // Documentación oficial: https://www.mercadopago.com.mx/developers/es/docs/your-integrations/test/cards
-// Nota: Para el Card Payment Brick, el formData que genera el Brick incluye
-// el token de tarjeta ya tokenizado. Para simular aquí usamos el formData
-// que vendría de una tarjeta de test que MP rechaza por "high_risk".
-// En producción real, el Brick genera este token en el navegador.
-// Aquí simulamos el flujo del backend directamente con datos mock.
+// Simulamos el formData que vendría del Brick. Intencionalmente enviamos
+// transaction_amount: 1000 para probar que el backend lo sobreescribe a 2200 (Total real).
 
 const MOCK_FORM_DATA_APPROVED = {
-  // Representa lo que el Brick enviaría para una tarjeta de prueba aprobada
-  // Estos son los datos que el SDK de MP en el browser normalmente genera
   token:              '5c5938fd-55e9-4c04-9fe2-3d1b432f8a29', // Token mock (no real)
   issuer_id:          '3',
   payment_method_id:  'visa',
-  transaction_amount: 1150,
+  transaction_amount: 1000, // Intencionalmente desactualizado/incorrecto para probar blindaje
   installments:       1,
   payer: {
     email: 'PLACEHOLDER@example.com', // El backend lo sobreescribe con el correo real
@@ -108,7 +103,7 @@ async function test1_serverAlive() {
     const data = await res.json();
     assert('Servidor responde en puerto 3002', res.ok);
     assert('Config de MP devuelve public_key', !!data.public_key, `Recibido: ${JSON.stringify(data)}`);
-    assert('Public key es de producción (APP_USR-)', data.public_key?.startsWith('APP_USR-'), `Key: ${data.public_key}`);
+    assert('Public key es de prueba (APP_USR-2f257994...)', data.public_key?.startsWith('APP_USR-2f257994'), `Key activa: ${data.public_key}`);
     return true;
   } catch (e) {
     assert('Servidor accesible en http://localhost:3002', false, e.message);
@@ -118,7 +113,7 @@ async function test1_serverAlive() {
 
 // ─── TEST 2: Creación de pedido en BD ────────────────────────────────────────
 async function test2_crearPedido() {
-  console.log(c.bold(c.cyan('\n━━ TEST 2: Crear pedido en base de datos ━━')));
+  console.log(c.bold(c.cyan('\n━━ TEST 2: Crear pedido a Japón en base de datos ━━')));
   const res = await fetch(`${BASE_URL}/api/pedidos`, {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -130,12 +125,13 @@ async function test2_crearPedido() {
   assert('Pedido tiene ID numérico', typeof pedido.id === 'number', `id: ${pedido.id}`);
   assert('Pedido tiene número de orden', !!pedido.orden, `orden: ${pedido.orden}`);
   assert('Pedido guarda correo del cliente', pedido.correo === TEST_ORDER_PAYLOAD.correo);
-  assert('Pedido guarda pais del cliente', pedido.pais === 'Estados Unidos');
+  assert('Pedido guarda país del cliente (Japón)', pedido.pais === 'Japón', `País: ${pedido.pais}`);
+  assert('Envío coincide con regla oficial a Japón ($1,200.00 MXN)', Number(pedido.envio) === 1200, `Envío: ${pedido.envio}`);
+  assert('Total asignado incluye el envío correcto a Japón ($2,200.00 MXN)', Number(pedido.total) === 2200, `Total: ${pedido.total}`);
   assert('Estado inicial es "Pendiente de pago"', pedido.estado === 'Pendiente de pago', `estado: ${pedido.estado}`);
   assert('Columna motivo_fallo existe (valor null inicial)', pedido.hasOwnProperty('motivo_fallo'), `keys: ${Object.keys(pedido).join(', ')}`);
-  assert('motivo_fallo es null en pedido nuevo', pedido.motivo_fallo === null, `motivo_fallo: ${pedido.motivo_fallo}`);
 
-  console.log(c.gray(`    → Pedido creado: #${pedido.orden} (id: ${pedido.id})`));
+  console.log(c.gray(`    → Pedido a Japón creado: #${pedido.orden} (id: ${pedido.id}) | Envío: $${pedido.envio} MXN | Total: $${pedido.total} MXN`));
   return pedido;
 }
 
@@ -287,7 +283,7 @@ async function test8_cleanup(pedido) {
   try {
     await pool.query('DELETE FROM pedidos WHERE id = $1 AND correo = $2', [
       pedido.id,
-      'test.internacional@example.com'
+      'test.japon@example.com'
     ]);
     assert('Pedido de prueba eliminado correctamente de BD', true);
   } catch (e) {

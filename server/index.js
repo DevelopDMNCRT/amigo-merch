@@ -876,9 +876,7 @@ app.post('/api/pedidos', async (req, res) => {
     );
     const pedidoCreado = result.rows[0];
 
-    // Enviar correo de confirmación al cliente en background
-    sendOrderConfirmationEmail(pedidoCreado).catch(console.error);
-
+    // Nota: El correo de confirmación de pedido sólo se envía cuando el pago sea APROBADO por Mercado Pago
     res.status(201).json(pedidoCreado);
   } catch (err) {
     console.error(err);
@@ -2107,13 +2105,29 @@ app.post('/api/pagos/procesar', async (req, res) => {
 
     console.log(`[MP] Resultado pago pedido #${pedidoId}: status=${result.status} detail=${result.status_detail}`);
 
-    // ── 5. Si el pago fue rechazado, guardar el motivo en la BD ──────────
-    if (result.status === 'rejected') {
-      const motivoFallo = result.status_detail || 'rejected';
+    // ── 5. Actualizar estado y enviar correo según el resultado del pago ──
+    if (result.status === 'approved' || result.status === 'in_process') {
+      const nuevoEstado = result.status === 'approved' ? 'En proceso' : 'Nuevo';
       await pool.query(
-        'UPDATE pedidos SET estado = $1, motivo_fallo = $2 WHERE id = $3',
+        'UPDATE pedidos SET estado = $1, motivo_fallo = NULL WHERE id = $2',
+        [nuevoEstado, pedidoId]
+      ).catch(e => console.error('[MP] Error actualizando estado aprobado:', e.message));
+
+      const pRes = await pool.query('SELECT * FROM pedidos WHERE id = $1', [pedidoId]);
+      if (pRes.rows.length > 0) {
+        await manejarDescuentoStock(pedidoId, nuevoEstado);
+        sendOrderConfirmationEmail(pRes.rows[0]).catch(console.error);
+      }
+    } else if (result.status === 'rejected') {
+      const motivoFallo = result.status_detail || 'rejected';
+      const updated = await pool.query(
+        'UPDATE pedidos SET estado = $1, motivo_fallo = $2 WHERE id = $3 RETURNING *',
         ['Fallido', motivoFallo, pedidoId]
       ).catch(e => console.error('[MP] Error guardando motivo_fallo:', e.message));
+
+      if (updated && updated.rows && updated.rows.length > 0) {
+        sendStatusEmail(updated.rows[0], 'Fallido').catch(console.error);
+      }
     }
 
     res.json(result);
