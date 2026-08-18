@@ -27,7 +27,7 @@
 
       <div class="products-grid">
         <router-link 
-          :to="`/producto/${product.id}`" 
+          :to="`/producto/${product.slug || product.id}`" 
           class="product-card" 
           v-for="product in sortedProducts" 
           :key="product.id"

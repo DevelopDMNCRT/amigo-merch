@@ -41,7 +41,7 @@ const EMAIL_TRIGGERS = {
         <p>Hemos confirmado tu pago y <strong>ya estamos preparando tu pedido #${p.orden}</strong> con todo el cariño para que llegue perfecto a tus manos.</p>
         <p>Te avisaremos en cuanto lo enviemos. Puedes consultar el estado de tu pedido en cualquier momento aquí:</p>
         <div style="text-align:center;margin:24px 0">
-          <a href="https://amigo-merch.vercel.app/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
+          <a href="https://www.amigomerch.mx/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
         </div>
         <p style="color:#666;font-size:13px">Número de pedido: <strong>#${p.orden}</strong></p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
@@ -66,7 +66,7 @@ const EMAIL_TRIGGERS = {
         </div>` : ''}
         <p>Si tienes alguna duda sobre tu envío, no dudes en contactarnos:</p>
         <div style="text-align:center;margin:24px 0">
-          <a href="https://amigo-merch.vercel.app/contacto" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Contactar a soporte</a>
+          <a href="https://www.amigomerch.mx/contacto" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Contactar a soporte</a>
         </div>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
         <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
@@ -84,7 +84,7 @@ const EMAIL_TRIGGERS = {
         <p>Lamentamos informarte que tu pedido <strong>#${p.orden}</strong> ha sido cancelado.</p>
         <p>Si crees que esto es un error o necesitas ayuda, nuestro equipo está listo para atenderte. Puedes contactarnos directamente desde nuestra página:</p>
         <div style="text-align:center;margin:24px 0">
-          <a href="https://amigo-merch.vercel.app/contacto" style="background:#c62828;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Ir a la sección de contacto</a>
+          <a href="https://www.amigomerch.mx/contacto" style="background:#c62828;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Ir a la sección de contacto</a>
         </div>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
         <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>
@@ -102,7 +102,7 @@ const EMAIL_TRIGGERS = {
         <p>Lamentamos informarte que no pudimos procesar el pago de tu pedido <strong>#${p.orden}</strong>.</p>
         <p>Esto puede ocurrir por distintas razones: fondos insuficientes, datos incorrectos o una restricción de tu banco. ¡Pero no te preocupes, puedes intentarlo nuevamente!</p>
         <div style="text-align:center;margin:24px 0">
-          <a href="https://amigo-merch.vercel.app" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Intentar de nuevo</a>
+          <a href="https://www.amigomerch.mx" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Intentar de nuevo</a>
         </div>
         <p style="color:#666;font-size:13px">Si el problema persiste, contáctanos y con gusto te ayudamos.</p>
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
@@ -157,7 +157,7 @@ async function sendOrderConfirmationEmail(pedido) {
 
       <p>Puedes rastrear el estado de tu pedido en cualquier momento:</p>
       <div style="text-align:center;margin:24px 0">
-        <a href="https://amigo-merch.vercel.app/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
+        <a href="https://www.amigomerch.mx/rastreo" style="background:#237650;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Rastrear mi pedido</a>
       </div>
       <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
       <p style="color:#aaa;font-size:12px;text-align:center">Amigo Merch · <a href="mailto:amigomerchmx@gmail.com" style="color:#aaa">amigomerchmx@gmail.com</a></p>

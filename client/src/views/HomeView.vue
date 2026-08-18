@@ -204,7 +204,7 @@ const submitContactForm = async () => {
           <p class="bestsellers-sub">{{ t('home.bestsellersDesc') }}</p>
         </div>
         <div class="products-grid">
-          <router-link :to="`/producto/${product.id}`" class="product-card" v-for="product in products" :key="product.id">
+          <router-link :to="`/producto/${product.slug || product.id}`" class="product-card" v-for="product in products" :key="product.id">
             <div class="product-image-wrapper">
               <div v-if="!product.imagen_url" class="product-placeholder">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="placeholder-icon">

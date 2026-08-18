@@ -37,7 +37,7 @@
               <!-- Slug Preview -->
               <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 flex-wrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Enlace: <span class="text-brand-600 dark:text-brand-400 font-mono">https://amigo-merch.vercel.app/producto/</span>
+                Enlace: <span class="text-brand-600 dark:text-brand-400 font-mono">https://www.amigomerch.mx/producto/</span>
                 <input v-model="form.slug" @input="slugEditado = true" type="text"
                   class="flex-1 min-w-[150px] bg-transparent border-b border-dashed border-gray-300 dark:border-gray-600 text-brand-600 dark:text-brand-400 font-mono focus:border-brand-500 focus:outline-none p-0 h-5" />
               </div>

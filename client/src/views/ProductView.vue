@@ -160,7 +160,7 @@
       <div class="related-container">
         <h2 class="related-title">{{ t('product.relatedTitle') }}</h2>
         <div class="related-grid">
-          <router-link :to="`/producto/${relProduct.id}`" class="product-card" v-for="relProduct in relatedProducts" :key="relProduct.id">
+          <router-link :to="`/producto/${relProduct.slug || relProduct.id}`" class="product-card" v-for="relProduct in relatedProducts" :key="relProduct.id">
             <div class="product-image-wrapper">
               <div v-if="!relProduct.imagen_url" class="product-placeholder">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="placeholder-icon-sm">
