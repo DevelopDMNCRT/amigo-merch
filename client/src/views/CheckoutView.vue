@@ -145,7 +145,24 @@
               <span>{{ formatPrice(cartGetters.totalPrice.value) }}</span>
             </div>
             <div class="total-row">
-              <span>{{ t('checkout.shipping') }}</span>
+              <span class="shipping-label-container">
+                {{ t('checkout.shipping') }}
+                <span v-if="form.pais === 'México'" class="shipping-type-badge badge-national">
+                  <svg class="shipping-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                  </svg>
+                  Nacional
+                </span>
+                <span v-else-if="form.pais && form.pais !== 'México'" class="shipping-type-badge badge-international">
+                  <svg class="shipping-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.5-.1-.9.1-1.1.5l-.8 1.4c-.2.4-.1.9.2 1.2l4.8 3.8-3.4 3.4-2.2-.6c-.3-.1-.7 0-.9.3l-.4.6c-.2.4-.1.9.2 1.2l3.2 2.4 2.4 3.2c.3.3.8.4 1.2.2l.6-.4c.3-.2.4-.6.3-.9l-.6-2.2 3.4-3.4 3.8 4.8c.3.3.8.4 1.2.2l1.4-.8c.4-.2.6-.6.5-1.1z"></path>
+                  </svg>
+                  Internacional ({{ form.pais }})
+                </span>
+              </span>
               <span v-if="cartGetters.shippingCost.value === 0" style="color: #237650; font-weight: 800;">¡Gratis!</span>
               <span v-else>{{ formatPrice(cartGetters.shippingCost.value) }}</span>
             </div>
@@ -1014,6 +1031,44 @@ textarea.form-input {
 @media (max-width: 900px) {
   .checkout-content { grid-template-columns: 1fr; }
   .checkout-summary-section { order: -1; }
+}
+
+.shipping-label-container {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.shipping-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.shipping-type-badge.badge-national {
+  background-color: rgba(35, 118, 80, 0.12);
+  color: #237650;
+  border: 1px solid rgba(35, 118, 80, 0.3);
+}
+
+.shipping-type-badge.badge-international {
+  background-color: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+.shipping-type-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 600px) {
