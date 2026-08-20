@@ -35,17 +35,24 @@ export const cartGetters = {
   }),
 };
 
+const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
+
 export const cartActions = {
   addItem(product, size, quantity) {
+    const isFreeShippingProduct = PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(product.id));
+    const envioEspecialCalculado = isFreeShippingProduct
+      ? 0
+      : (product.envio_especial !== undefined && product.envio_especial !== null
+          ? Number(product.envio_especial)
+          : null);
+
     const existingItem = cartState.items.find(
       item => item.id === product.id && item.size === size
     );
     if (existingItem) {
       existingItem.quantity += quantity;
       existingItem.price = Number(product.precio ?? product.price ?? 0);
-      existingItem.envioEspecial = product.envio_especial !== undefined && product.envio_especial !== null
-        ? Number(product.envio_especial)
-        : null;
+      existingItem.envioEspecial = envioEspecialCalculado;
     } else {
       cartState.items.push({
         id: product.id,
@@ -53,9 +60,7 @@ export const cartActions = {
         image: product.imagen_url ?? product.image,
         price: Number(product.precio ?? product.price ?? 0),
         tienda: product.tienda ?? product.artist,
-        envioEspecial: product.envio_especial !== undefined && product.envio_especial !== null
-          ? Number(product.envio_especial)
-          : null,
+        envioEspecial: envioEspecialCalculado,
         size,
         quantity,
         cartItemId: Date.now() + Math.random().toString(36).substr(2, 9)

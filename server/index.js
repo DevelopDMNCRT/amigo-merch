@@ -869,10 +869,20 @@ app.post('/api/pedidos', async (req, res) => {
     // Generar un número de orden único corto
     const orden = Math.floor(100000 + Math.random() * 900000).toString();
 
+    // Excepción hardcodeada para envío gratis por ID de producto
+    const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
+    const itemsList = Array.isArray(items) ? items : (typeof items === 'string' ? JSON.parse(items || '[]') : []);
+    const tieneEnvioGratisHardcoded = itemsList.some(i =>
+      PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(i.producto_id || i.id))
+    );
+
+    const finalEnvio = tieneEnvioGratisHardcoded ? 0 : envio;
+    const finalTotal = tieneEnvioGratisHardcoded ? Number(subtotal) : total;
+
     const result = await pool.query(
       `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
-      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, envio, total, 'Pendiente de pago']
+      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, finalEnvio, finalTotal, 'Pendiente de pago']
     );
     const pedidoCreado = result.rows[0];
 
