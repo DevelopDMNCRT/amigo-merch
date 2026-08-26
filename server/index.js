@@ -1090,8 +1090,11 @@ const getEnviaPayload = async (pedido) => {
     product_type: 'apparel'
   }));
 
+  const itemsDeclaredSum = packageItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+  const declaredVal = itemsDeclaredSum > 0 ? itemsDeclaredSum : parseFloat(pedido.total || 10);
+
   const mainPackage = {
-    content: 'Ropa y Accesorios', amount: 1, type: 'box', weight: totalWeight, insurance: 0, declaredValue: parseFloat(pedido.total), weightUnit: 'KG', lengthUnit: 'CM', dimensions: { length: 30, width: 20, height: 10 }
+    content: 'Ropa y Accesorios', amount: 1, type: 'box', weight: totalWeight, insurance: 0, declaredValue: declaredVal, weightUnit: 'KG', lengthUnit: 'CM', dimensions: { length: 30, width: 20, height: 10 }
   };
 
   if (destCountryCode !== 'MX') {
@@ -1099,7 +1102,7 @@ const getEnviaPayload = async (pedido) => {
       name: 'Producto Merch',
       description: 'Ropa y accesorios',
       quantity: 1,
-      price: parseFloat(pedido.total || 10),
+      price: declaredVal,
       product_type: 'apparel'
     }];
   }
