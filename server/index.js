@@ -1075,10 +1075,37 @@ const getEnviaPayload = async (pedido) => {
     const pPeso = pRes.rows[0]?.peso ? parseFloat(pRes.rows[0].peso) : 1;
     totalWeight += pPeso * item.cantidad;
   }
-  if (totalWeight < 1) totalWeight = 1;
-
   const destCountryCode = getCountryIsoCode(pedido.pais);
   const stateCode = getStateCode(pedido.estado_env || pedido.estado, destCountryCode);
+
+  const rawItems = Array.isArray(pedido.items) 
+    ? pedido.items 
+    : (typeof pedido.items === 'string' ? JSON.parse(pedido.items || '[]') : []);
+
+  const packageItems = rawItems.map(item => ({
+    name: String(item.nombre || item.name || 'Producto').substring(0, 50),
+    description: String(item.nombre || item.name || 'Ropa y accesorios').substring(0, 100),
+    quantity: parseInt(item.cantidad || 1),
+    price: parseFloat(item.precio || item.price || 10),
+    product_type: 'apparel'
+  }));
+
+  const itemsDeclaredSum = packageItems.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+  const declaredVal = itemsDeclaredSum > 0 ? itemsDeclaredSum : parseFloat(pedido.total || 10);
+
+  const mainPackage = {
+    content: 'Ropa y Accesorios', amount: 1, type: 'box', weight: totalWeight, insurance: 0, declaredValue: declaredVal, weightUnit: 'KG', lengthUnit: 'CM', dimensions: { length: 30, width: 20, height: 10 }
+  };
+
+  if (destCountryCode !== 'MX') {
+    mainPackage.items = packageItems.length > 0 ? packageItems : [{
+      name: 'Producto Merch',
+      description: 'Ropa y accesorios',
+      quantity: 1,
+      price: declaredVal,
+      product_type: 'apparel'
+    }];
+  }
 
   return {
     origin: {
@@ -1093,9 +1120,7 @@ const getEnviaPayload = async (pedido) => {
       city: pedido.ciudad || 'Ciudad',
       state: stateCode, country: destCountryCode, postalCode: pedido.cp || '00000', reference: pedido.notas || ''
     },
-    packages: [{
-      content: 'Ropa y Accesorios', amount: 1, type: 'box', weight: totalWeight, insurance: 0, declaredValue: parseFloat(pedido.total), weightUnit: 'KG', lengthUnit: 'CM', dimensions: { length: 30, width: 20, height: 10 }
-    }],
+    packages: [mainPackage],
     settings: { printFormat: 'PDF', printSize: 'STOCK_4X6' }
   };
 };
