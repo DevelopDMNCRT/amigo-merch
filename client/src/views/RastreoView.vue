@@ -98,15 +98,12 @@ function stageDate(id) {
   const s = stageStatus(id)
   if (!['completed', 'active', 'failed', 'cancelled'].includes(s)) return null
 
-  // Usamos la fecha real del pedido como base para stage 1
-  const createdAt = result.value.pedido?.created_at
-  const base = createdAt ? new Date(createdAt) : new Date()
-
-  // Para los stages completados, aproximamos: cada stage tarda ~1.5 días
-  const d = new Date(base)
-  d.setDate(d.getDate() + Math.round((id - 1) * 1.5))
-  d.setHours(9 + id, id % 2 === 0 ? 30 : 0, 0, 0)
-  return d
+  // Únicamente mostramos la fecha real del pedido para el Stage 1 (Pedido Recibido)
+  if (id === 1) {
+    const createdAt = result.value.pedido?.created_at
+    return createdAt ? new Date(createdAt) : null
+  }
+  return null
 }
 
 function fmtDate(d) {
@@ -122,17 +119,6 @@ const statusLabel = computed(() => {
   if (result.value.type === 'fallido') return t('rastreo.statusFailed')
   if (result.value.currentStage === 4) return t('rastreo.statusDone')  // Stage 4 = final visible
   return t('rastreo.statusActive')
-})
-
-const etaText = computed(() => {
-  // Sin ETA si el pedido está en error, o ya fue enviado (stage 4)
-  if (!result.value || result.value.type !== 'activo') return null
-  if (result.value.currentStage >= 4) return null
-  const createdAt = result.value.pedido?.created_at
-  const base = createdAt ? new Date(createdAt) : new Date()
-  const d = new Date(base)
-  d.setDate(d.getDate() + (4 - result.value.currentStage + 2))
-  return d.toLocaleDateString(dateLocale.value, { weekday: 'long', day: 'numeric', month: 'long' })
 })
 
 const clienteName = computed(() => result.value?.pedido?.nombre || '')
@@ -323,13 +309,7 @@ const clienteName = computed(() => result.value?.pedido?.nombre || '')
             </div>
           </div>
 
-          <!-- ETA -->
-          <div v-if="etaText" class="eta-row">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            {{ t('rastreo.etaPrefix') }} <strong>{{ etaText }}</strong>
-          </div>
+
 
           <!-- Error CTA -->
           <div v-if="isError" class="error-cta">
