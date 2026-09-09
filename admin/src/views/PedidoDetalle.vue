@@ -193,24 +193,38 @@
 
           <!-- Guía ya generada -->
           <div v-if="pedido.tracking_number" class="p-6 space-y-4 border-b border-gray-100 dark:border-gray-800">
-            <div class="flex flex-col sm:flex-row gap-4 p-4 rounded-xl bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/30">
-              <div class="flex-1">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-xl bg-success-50 dark:bg-success-500/10 border border-success-200 dark:border-success-500/30">
+              <div>
                 <p class="text-xs font-medium text-success-600 dark:text-success-400 uppercase tracking-wider mb-1">Número de guía</p>
-                <p class="text-xl font-bold font-mono text-gray-900 dark:text-white">{{ pedido.tracking_number }}</p>
+                <p class="text-base sm:text-lg font-bold font-mono text-gray-900 dark:text-white break-all select-all tracking-wide">{{ pedido.tracking_number }}</p>
               </div>
-              <div class="flex items-center gap-3">
+              <div class="flex items-center flex-wrap sm:flex-nowrap gap-2">
                 <button 
                   @click="cancelarGuia"
                   :disabled="cancelandoGuia"
-                  class="flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-4 py-2.5 text-sm font-semibold text-error-600 dark:text-error-400 border border-error-200 dark:border-error-500/30 hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors disabled:opacity-50"
+                  class="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-lg bg-white dark:bg-gray-800 text-xs sm:text-sm font-semibold text-error-600 dark:text-error-400 border border-error-200 dark:border-error-500/30 hover:bg-error-50 dark:hover:bg-error-500/10 transition-colors disabled:opacity-50 whitespace-nowrap"
                 >
-                  <svg v-if="cancelandoGuia" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                  <svg v-else xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  <svg v-if="cancelandoGuia" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                   {{ cancelandoGuia ? 'Cancelando...' : 'Cancelar Guía' }}
                 </button>
+                <a 
+                  v-if="pedido.factura_aduanal_url" 
+                  :href="pedido.factura_aduanal_url" 
+                  target="_blank"
+                  class="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-lg bg-sky-600 dark:bg-sky-500 text-xs sm:text-sm font-semibold text-white hover:bg-sky-700 dark:hover:bg-sky-600 transition-colors shadow-sm whitespace-nowrap"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <path d="M8 13h8"/>
+                    <path d="M8 17h8"/>
+                  </svg>
+                  Factura PDF
+                </a>
                 <a :href="pedido.guia_url" target="_blank"
-                  class="flex items-center gap-2 rounded-lg bg-gray-900 dark:bg-white px-4 py-2.5 text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  class="inline-flex items-center justify-center gap-1.5 h-10 px-3.5 rounded-lg bg-gray-900 dark:bg-white text-xs sm:text-sm font-semibold text-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 transition-colors whitespace-nowrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                   Imprimir PDF
                 </a>
               </div>
@@ -1057,6 +1071,7 @@ const fetchPedido = async () => {
       total: parseFloat(data.total),
       tracking_number: data.tracking_number,
       guia_url: data.guia_url,
+      factura_aduanal_url: data.factura_aduanal_url || null,
       motivo_fallo: data.motivo_fallo || null,
       // Campos de dirección individuales
       calle: data.calle, num_ext: data.num_ext, colonia: data.colonia,
@@ -1248,7 +1263,7 @@ const generarGuia = async () => {
     
     pedido.value.tracking_number = data.tracking_number;
     pedido.value.guia_url = data.guia_url;
-    // carrier is also saved now, but we don't strictly need to update the ref here unless we show it.
+    pedido.value.factura_aduanal_url = data.factura_aduanal_url || null;
     if(data.carrier) pedido.value.carrier = data.carrier;
     
     showToast('success', '¡Guía generada exitosamente!');
