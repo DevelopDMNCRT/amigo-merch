@@ -1426,6 +1426,7 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
     const shipment = data.data[0];
     const trackingNumber = shipment.trackingNumber || shipment.tracking_number || null;
     const guiaUrl = shipment.label || shipment.labelUrl || shipment.pdf || null;
+    const facturaAduanalUrl = shipment.commercialInvoice || shipment.invoice || shipment.commercial_invoice || shipment.invoiceUrl || null;
 
     if (!trackingNumber) {
       console.error('[Envia] trackingNumber no encontrado en la respuesta:', JSON.stringify(shipment));
@@ -1433,8 +1434,8 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
     }
 
     const result = await pool.query(
-      'UPDATE pedidos SET tracking_number = $1, guia_url = $2, carrier = $3 WHERE id = $4 RETURNING *',
-      [trackingNumber, guiaUrl, carrier, id]
+      'UPDATE pedidos SET tracking_number = $1, guia_url = $2, carrier = $3, factura_aduanal_url = $4 WHERE id = $5 RETURNING *',
+      [trackingNumber, guiaUrl, carrier, facturaAduanalUrl, id]
     );
 
     res.json(result.rows[0]);
@@ -1476,6 +1477,7 @@ app.post('/api/pedidos/:id/cancelar-guia', async (req, res) => {
     const canceledGuide = {
       tracking_number: pedido.tracking_number,
       guia_url: pedido.guia_url,
+      factura_aduanal_url: pedido.factura_aduanal_url,
       carrier: activeCarrier,
       fecha_cancelacion: new Date().toISOString()
     };
@@ -1485,7 +1487,7 @@ app.post('/api/pedidos/:id/cancelar-guia', async (req, res) => {
 
     // Actualizar pedido en BD
     const result = await pool.query(
-      'UPDATE pedidos SET tracking_number = NULL, guia_url = NULL, carrier = NULL, guias_canceladas = $1 WHERE id = $2 RETURNING *',
+      'UPDATE pedidos SET tracking_number = NULL, guia_url = NULL, carrier = NULL, factura_aduanal_url = NULL, guias_canceladas = $1 WHERE id = $2 RETURNING *',
       [JSON.stringify(guiasCanceladas), id]
     );
 
@@ -2277,9 +2279,10 @@ const initReglasEnvioTable = async () => {
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
       ALTER TABLE reglas_envio ALTER COLUMN pais TYPE TEXT;
+      ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS factura_aduanal_url TEXT;
     `);
   } catch (err) {
-    console.warn('Init reglas_envio table migration warning:', err.message);
+    console.warn('Init DB tables migration warning:', err.message);
   }
 };
 initReglasEnvioTable();
