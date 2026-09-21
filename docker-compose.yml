@@ -1,0 +1,83 @@
+services:
+
+  # ── Base de datos PostgreSQL ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: amigomerch_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       ${POSTGRES_DB:-amigomerch_db}
+      POSTGRES_USER:     ${POSTGRES_USER:-amigomerch_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Error: define POSTGRES_PASSWORD en el archivo .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - amigo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-amigomerch_user} -d ${POSTGRES_DB:-amigomerch_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend Node.js + Express ────────────────────────────────────────────────
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: amigomerch_api
+    restart: unless-stopped
+    environment:
+      # Base de datos — apunta al contenedor postgres (NO a Neon)
+      DATABASE_URL: postgresql://${POSTGRES_USER:-amigomerch_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-amigomerch_db}
+      DB_SSL: "false"
+      PORT: "3002"
+      # Seguridad
+      JWT_SECRET: ${JWT_SECRET:?Error: define JWT_SECRET en el archivo .env}
+      CLIENT_URL: ${CLIENT_URL:-https://amigomerch.mx}
+      # Envia.com
+      ENVIA_API_URL:  ${ENVIA_API_URL}
+      ENVIA_API_KEY:  ${ENVIA_API_KEY}
+      # Mercado Pago
+      MERCADOPAGO_PUBLIC_KEY:   ${MERCADOPAGO_PUBLIC_KEY}
+      MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN}
+      # SMTP
+      SMTP_HOST:   ${SMTP_HOST}
+      SMTP_PORT:   ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER:   ${SMTP_USER}
+      SMTP_PASS:   ${SMTP_PASS}
+      SMTP_FROM:   ${SMTP_FROM}
+      # Cloudinary
+      CLOUDINARY_CLOUD_NAME:   ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY:      ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET:   ${CLOUDINARY_API_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - amigo-network
+
+  # ── Nginx: tienda (80) + admin (8080) ────────────────────────────────────────
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: amigomerch_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "8080:8080"
+    depends_on:
+      - api
+    networks:
+      - amigo-network
+
+# ── Volúmenes y redes ─────────────────────────────────────────────────────────
+volumes:
+  pgdata:
+    name: amigomerch_pgdata
+
+networks:
+  amigo-network:
+    name: amigomerch_network
+    driver: bridge
