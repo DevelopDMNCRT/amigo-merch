@@ -959,18 +959,18 @@ const fetchPackagePresets = async () => {
 const BODEGAS = [
   {
     id: 1,
-    alias: 'CDMX — San Lucas',
+    alias: 'CDMX — Asturias',
     nombre: 'Juan Pablo Castillo Cortes',
     company: 'Amigo Merch',
     email: 'amigomerchmx@gmail.com',
     phone: '5529556508',
-    street: 'Callejón San Miguel',
-    number: '50',
-    district: 'San Lucas',
+    street: 'Marcos Carrillo',
+    number: '198, Int. 50',
+    district: 'Asturias',
     city: 'Ciudad de México',
     state: 'CX',
     country: 'MX',
-    postalCode: '04030',
+    postalCode: '06850',
     reference: ''
   },
   {
