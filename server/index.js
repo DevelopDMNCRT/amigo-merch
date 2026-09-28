@@ -201,7 +201,11 @@ async function sendStatusEmail(pedido, estado) {
 
 const app = express();
 const port = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET no está definido. El servidor no puede iniciar.');
+  process.exit(1);
+}
 
 // Middleware
 app.use(cors());
