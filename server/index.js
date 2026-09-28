@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const fs = require('fs');
 const csv = require('csv-parser');
+const crypto = require('crypto');
 
 const localUpload = multer({ dest: '/tmp/' });
 // ── Mercado Pago ───────────────────────────────────────────────────────────
@@ -2182,8 +2183,49 @@ app.post('/api/pagos/procesar', async (req, res) => {
   }
 });
 
+function verifyMPSignature(req) {
+  const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn('[MP WEBHOOK] MERCADOPAGO_WEBHOOK_SECRET no está configurado');
+    return false;
+  }
+
+  const xSignature = req.headers['x-signature'];
+  const xRequestId = req.headers['x-request-id'];
+  const dataId = req.query['data.id'] || req.body?.data?.id;
+
+  if (!xSignature || !xRequestId || !dataId) {
+    return false;
+  }
+
+  const parts = xSignature.split(',');
+  const ts = parts.find(p => p.trim().startsWith('ts='))?.split('=')[1]?.trim();
+  const v1 = parts.find(p => p.trim().startsWith('v1='))?.split('=')[1]?.trim();
+
+  if (!ts || !v1) {
+    return false;
+  }
+
+  const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(manifest)
+    .digest('hex');
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected, 'hex'), Buffer.from(v1, 'hex'));
+  } catch {
+    return false;
+  }
+}
+
 // POST /api/pagos/webhook — Notificaciones de Mercado Pago
 app.post('/api/pagos/webhook', async (req, res) => {
+  if (!verifyMPSignature(req)) {
+    console.warn('[MP WEBHOOK] Firma HMAC inválida o ausente — request rechazado');
+    return res.status(401).send('Unauthorized');
+  }
+
   try {
     const { type, data } = req.body;
 
