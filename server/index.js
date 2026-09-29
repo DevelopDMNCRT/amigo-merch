@@ -1177,8 +1177,18 @@ const getEnviaPayload = async (pedido) => {
 
   return {
     origin: {
-      name: 'Amigo Merch', company: 'Amigo Merch', email: 'amigomerchmx@gmail.com', phone: '3312345678',
-      street: 'Bodega Principal', number: '1', district: 'Centro', city: 'Zapopan', state: 'JA', country: 'MX', postalCode: '45200', reference: ''
+      name: process.env.ORIGIN_NAME || 'Amigo Merch',
+      company: process.env.ORIGIN_COMPANY || 'Amigo Merch',
+      email: process.env.ORIGIN_EMAIL || process.env.SMTP_USER || 'amigomerchmx@gmail.com',
+      phone: process.env.ORIGIN_PHONE || '3312345678',
+      street: process.env.ORIGIN_STREET || 'Bodega Principal',
+      number: process.env.ORIGIN_NUMBER || '1',
+      district: process.env.ORIGIN_DISTRICT || 'Centro',
+      city: process.env.ORIGIN_CITY || 'Zapopan',
+      state: process.env.ORIGIN_STATE || 'JA',
+      country: process.env.ORIGIN_COUNTRY || 'MX',
+      postalCode: process.env.ORIGIN_POSTAL_CODE || '45200',
+      reference: process.env.ORIGIN_REFERENCE || ''
     },
     destination: {
       name: pedido.nombre, company: '', email: pedido.correo || 'amigomerchmx@gmail.com', phone: pedido.telefono || '3300000000',
