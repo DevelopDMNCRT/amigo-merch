@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -202,6 +203,11 @@ async function sendStatusEmail(pedido, estado) {
 }
 
 const app = express();
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 const port = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
