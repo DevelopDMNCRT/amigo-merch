@@ -12,6 +12,7 @@ const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const fs = require('fs');
 const csv = require('csv-parser');
 const crypto = require('crypto');
+const { z } = require('zod');
 
 const localUpload = multer({ dest: '/tmp/' });
 // ── Mercado Pago ───────────────────────────────────────────────────────────
@@ -286,6 +287,90 @@ const requireAuth = (req, res, next) => {
   }
 };
 
+// ── Esquemas de Validación (Zod) ──────────────────────────────────────────
+const formatZodError = (error) => ({
+  error: 'Datos inválidos',
+  details: error.issues.map(i => ({
+    campo: i.path.join('.'),
+    mensaje: i.message,
+  })),
+});
+
+const ROLES_PERMITIDOS = ['Administrador', 'Operativo', 'admin'];
+
+const CreateUserSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  rol: z.enum(ROLES_PERMITIDOS, {
+    errorMap: () => ({ message: `Rol inválido. Roles permitidos: ${ROLES_PERMITIDOS.join(', ')}` }),
+  }),
+  password: z.string({ required_error: 'La contraseña es requerida' }).min(6, 'La contraseña debe tener al menos 6 caracteres').max(100),
+});
+
+const UpdateUserSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  rol: z.enum(ROLES_PERMITIDOS, {
+    errorMap: () => ({ message: `Rol inválido. Roles permitidos: ${ROLES_PERMITIDOS.join(', ')}` }),
+  }),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(100).optional().or(z.literal('')),
+});
+
+const ReglaEnvioSchema = z.object({
+  pais: z.string({ required_error: 'El país es requerido' }).trim().min(2, 'El país debe tener al menos 2 caracteres').max(200),
+  estados: z.union([
+    z.array(z.string()),
+    z.string().transform((str) => {
+      try { const parsed = JSON.parse(str); return Array.isArray(parsed) ? parsed : [str]; } catch { return [str]; }
+    })
+  ]).nullable().optional(),
+  precio: z.coerce.number({ required_error: 'El precio es requerido' }).min(0, 'El precio no puede ser negativo'),
+});
+
+const ItemPedidoSchema = z.object({
+  id: z.union([z.string(), z.number()]).optional(),
+  producto_id: z.union([z.string(), z.number()]).optional(),
+  nombre: z.string().optional(),
+  variante: z.string().nullable().optional(),
+  precio: z.coerce.number().min(0, 'El precio del item no puede ser negativo'),
+  cantidad: z.coerce.number().int().positive('La cantidad debe ser mayor a 0'),
+  imagen: z.string().optional().nullable(),
+}).refine(item => item.producto_id !== undefined || item.id !== undefined, {
+  message: 'Cada item debe contener id o producto_id',
+});
+
+const ItemsArraySchema = z.preprocess((val) => {
+  if (typeof val === 'string') {
+    try { return JSON.parse(val); } catch { return val; }
+  }
+  return val;
+}, z.array(ItemPedidoSchema).min(1, 'El pedido debe incluir al menos un producto'));
+
+const PedidoSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(150),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  telefono: z.string({ required_error: 'El teléfono es requerido' }).trim().min(7, 'El teléfono debe tener al menos 7 dígitos').max(20),
+  pais: z.string({ required_error: 'El país es requerido' }).trim().min(2, 'El país es requerido').max(100),
+  estado_env: z.string({ required_error: 'El estado es requerido' }).trim().min(1, 'El estado es requerido').max(100),
+  ciudad: z.string({ required_error: 'La ciudad es requerida' }).trim().min(1, 'La ciudad es requerida').max(100),
+  calle: z.string({ required_error: 'La calle es requerida' }).trim().min(1, 'La calle es requerida').max(200),
+  num_ext: z.union([z.string(), z.number()]).transform(v => String(v).trim()).refine(v => v.length > 0, 'El número exterior es requerido'),
+  num_int: z.union([z.string(), z.number()]).transform(v => String(v).trim()).optional().nullable().or(z.literal('')),
+  colonia: z.string().optional().nullable().or(z.literal('')),
+  delegacion: z.string().optional().nullable().or(z.literal('')),
+  cp: z.union([z.string(), z.number()]).transform(v => String(v).trim()).refine(v => /^[\w\-]{3,10}$/.test(v), 'Código postal inválido'),
+  domicilio: z.string().optional().nullable().or(z.literal('')),
+  notas: z.string().optional().nullable().or(z.literal('')),
+  items: ItemsArraySchema,
+  subtotal: z.coerce.number({ required_error: 'Subtotal es requerido' }).min(0, 'El subtotal no puede ser negativo'),
+  envio: z.coerce.number().min(0, 'El costo de envío no puede ser negativo').default(0),
+  total: z.coerce.number({ required_error: 'Total es requerido' }).positive('El total debe ser mayor a 0'),
+  continente: z.string().optional(),
+  numExt: z.any().optional(),
+  numInt: z.any().optional(),
+  estado: z.string().optional(),
+});
+
 // --- Auth Routes ---
 
 app.post('/api/auth/login', loginLimiter, async (req, res) => {
@@ -342,8 +427,11 @@ app.get('/api/users/:id', requireAuth, async (req, res) => {
 });
 
 app.post('/api/users', requireAuth, async (req, res) => {
-  const { nombre, correo, rol, password } = req.body;
-  if (!nombre || !correo || !rol || !password) return res.status(400).json({ error: 'All fields are required' });
+  const parsed = CreateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
+  const { nombre, correo, rol, password } = parsed.data;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
@@ -358,8 +446,15 @@ app.post('/api/users', requireAuth, async (req, res) => {
 });
 
 app.put('/api/users/:id', requireAuth, async (req, res) => {
-  const { id } = req.params;
-  const { nombre, correo, rol, password } = req.body;
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id) || id <= 0) {
+    return res.status(400).json({ error: 'ID de usuario inválido' });
+  }
+  const parsed = UpdateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
+  const { nombre, correo, rol, password } = parsed.data;
   try {
     let query, params;
     if (password && password.length > 0) {
@@ -931,15 +1026,23 @@ app.get('/api/pedidos/:id', requireAuth, async (req, res) => {
 
 // POST create pedido
 app.post('/api/pedidos', async (req, res) => {
+  const parsed = PedidoSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total } = req.body;
+    const {
+      nombre, correo, telefono, pais, estado_env, ciudad,
+      delegacion, calle, num_ext, num_int, colonia, cp,
+      domicilio, notas, items, subtotal, envio, total
+    } = parsed.data;
     
     // Generar un número de orden único criptográficamente seguro
     const orden = crypto.randomBytes(4).toString('hex').toUpperCase();
 
     // Excepción hardcodeada para envío gratis por ID de producto
     const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
-    const itemsList = Array.isArray(items) ? items : (typeof items === 'string' ? JSON.parse(items || '[]') : []);
+    const itemsList = items;
     const tieneEnvioGratisHardcoded = itemsList.some(i =>
       PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(i.producto_id || i.id))
     );
@@ -950,7 +1053,7 @@ app.post('/api/pedidos', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
-      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, finalEnvio, finalTotal, 'Pendiente de pago']
+      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion || null, calle, num_ext, num_int || null, colonia || null, cp, domicilio || null, notas || null, JSON.stringify(items), subtotal, finalEnvio, finalTotal, 'Pendiente de pago']
     );
     const pedidoCreado = result.rows[0];
 
@@ -2480,8 +2583,12 @@ app.get('/api/reglas-envio', async (req, res) => {
 });
 
 app.post('/api/reglas-envio', requireAuth, async (req, res) => {
+  const parsed = ReglaEnvioSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { pais, estados, precio } = req.body;
+    const { pais, estados, precio } = parsed.data;
     const result = await pool.query(
       'INSERT INTO reglas_envio (pais, estados, precio) VALUES ($1, $2, $3) RETURNING *',
       [pais, estados ? JSON.stringify(estados) : null, precio]
@@ -2494,9 +2601,16 @@ app.post('/api/reglas-envio', requireAuth, async (req, res) => {
 });
 
 app.put('/api/reglas-envio/:id', requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id) || id <= 0) {
+    return res.status(400).json({ error: 'ID de regla inválido' });
+  }
+  const parsed = ReglaEnvioSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { id } = req.params;
-    const { pais, estados, precio } = req.body;
+    const { pais, estados, precio } = parsed.data;
     const result = await pool.query(
       'UPDATE reglas_envio SET pais = $1, estados = $2, precio = $3 WHERE id = $4 RETURNING *',
       [pais, estados ? JSON.stringify(estados) : null, precio, id]
