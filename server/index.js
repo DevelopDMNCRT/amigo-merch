@@ -218,6 +218,22 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// Middleware de Autenticación
+const requireAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Token inválido o expirado' });
+  }
+};
+
 // --- Auth Routes ---
 
 app.post('/api/auth/login', async (req, res) => {
@@ -244,31 +260,27 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-app.get('/api/auth/me', async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return res.status(401).json({ error: 'No autorizado' });
-  const token = authHeader.split(' ')[1];
+app.get('/api/auth/me', requireAuth, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const result = await pool.query('SELECT id, nombre, correo, rol FROM users WHERE id = $1', [decoded.id]);
+    const result = await pool.query('SELECT id, nombre, correo, rol FROM users WHERE id = $1', [req.user.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
     const u = result.rows[0];
     res.json({ admin: { id: u.id, username: u.nombre, email: u.correo, rol: u.rol } });
   } catch {
-    res.status(401).json({ error: 'Token inválido o expirado' });
+    res.status(500).json({ error: 'Error del servidor' });
   }
 });
 
 // --- Users CRUD ---
 
-app.get('/api/users', async (_req, res) => {
+app.get('/api/users', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query('SELECT id, nombre, correo, rol, created_at FROM users ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) { res.status(500).json({ error: 'Failed to fetch users' }); }
 });
 
-app.get('/api/users/:id', async (req, res) => {
+app.get('/api/users/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query('SELECT id, nombre, correo, rol, created_at FROM users WHERE id = $1', [id]);
@@ -277,7 +289,7 @@ app.get('/api/users/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Failed to fetch user' }); }
 });
 
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', requireAuth, async (req, res) => {
   const { nombre, correo, rol, password } = req.body;
   if (!nombre || !correo || !rol || !password) return res.status(400).json({ error: 'All fields are required' });
   try {
@@ -293,7 +305,7 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-app.put('/api/users/:id', async (req, res) => {
+app.put('/api/users/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   const { nombre, correo, rol, password } = req.body;
   try {
@@ -315,7 +327,7 @@ app.put('/api/users/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/users/:id', async (req, res) => {
+app.delete('/api/users/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
@@ -360,7 +372,7 @@ app.get('/api/products', async (req, res) => {
 });
 
 // Update order of products
-app.put('/api/products/orden', async (req, res) => {
+app.put('/api/products/orden', requireAuth, async (req, res) => {
   const client = await pool.connect();
   try {
     const { ids } = req.body;
@@ -397,7 +409,7 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 // POST create product
-app.post('/api/products', upload.any(), async (req, res) => {
+app.post('/api/products', requireAuth, upload.any(), async (req, res) => {
   const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
@@ -467,7 +479,7 @@ app.post('/api/products', upload.any(), async (req, res) => {
 });
 
 // PUT update product
-app.put('/api/products/:id', upload.any(), async (req, res) => {
+app.put('/api/products/:id', requireAuth, upload.any(), async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
@@ -550,7 +562,7 @@ app.put('/api/products/:id', upload.any(), async (req, res) => {
 });
 
 // DELETE product (Soft Delete)
-app.delete('/api/products/:id', async (req, res) => {
+app.delete('/api/products/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('UPDATE products SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1', [id]);
@@ -561,7 +573,7 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 // Import CSV products
-app.post('/api/products/migrar-csv', localUpload.single('file'), async (req, res) => {
+app.post('/api/products/migrar-csv', requireAuth, localUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   const results = [];
@@ -672,7 +684,7 @@ app.post('/api/products/migrar-csv', localUpload.single('file'), async (req, res
 });
 
 // Upload image only
-app.post('/api/upload', upload.single('imagen'), (req, res) => {
+app.post('/api/upload', requireAuth, upload.single('imagen'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   res.json({ url: req.file.path, public_id: req.file.filename });
 });
@@ -736,7 +748,7 @@ app.get('/api/tiendas', async (_req, res) => {
 });
 
 // Update order of tiendas
-app.put('/api/tiendas/orden', async (req, res) => {
+app.put('/api/tiendas/orden', requireAuth, async (req, res) => {
   const client = await pool.connect();
   try {
     const { ids } = req.body;
@@ -770,7 +782,7 @@ app.get('/api/tiendas/:id', async (req, res) => {
 });
 
 // POST create tienda
-app.post('/api/tiendas', upload.fields([{ name: 'imagen', maxCount: 1 }, { name: 'header', maxCount: 1 }]), async (req, res) => {
+app.post('/api/tiendas', requireAuth, upload.fields([{ name: 'imagen', maxCount: 1 }, { name: 'header', maxCount: 1 }]), async (req, res) => {
   try {
     const { nombre, publico } = req.body;
     if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
@@ -788,7 +800,7 @@ app.post('/api/tiendas', upload.fields([{ name: 'imagen', maxCount: 1 }, { name:
 });
 
 // PUT update tienda
-app.put('/api/tiendas/:id', upload.fields([{ name: 'imagen', maxCount: 1 }, { name: 'header', maxCount: 1 }]), async (req, res) => {
+app.put('/api/tiendas/:id', requireAuth, upload.fields([{ name: 'imagen', maxCount: 1 }, { name: 'header', maxCount: 1 }]), async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, publico } = req.body;
@@ -812,7 +824,7 @@ app.put('/api/tiendas/:id', upload.fields([{ name: 'imagen', maxCount: 1 }, { na
 });
 
 // DELETE tienda
-app.delete('/api/tiendas/:id', async (req, res) => {
+app.delete('/api/tiendas/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('UPDATE tiendas SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1', [id]);
@@ -826,7 +838,7 @@ app.delete('/api/tiendas/:id', async (req, res) => {
 // --- Pedidos CRUD ---
 
 // GET all pedidos
-app.get('/api/pedidos', async (_req, res) => {
+app.get('/api/pedidos', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query('SELECT * FROM pedidos ORDER BY created_at DESC');
     res.json(result.rows);
@@ -853,7 +865,7 @@ app.get('/api/pedidos/orden/:orden', async (req, res) => {
 });
 
 // GET single pedido
-app.get('/api/pedidos/:id', async (req, res) => {
+app.get('/api/pedidos/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);
@@ -943,7 +955,7 @@ async function manejarDescuentoStock(pedidoId, nuevoEstado) {
 }
 
 // PUT update pedido estado (+ dispara correo según el estado)
-app.put('/api/pedidos/:id/estado', async (req, res) => {
+app.put('/api/pedidos/:id/estado', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { estado, paqueteria, num_rastreo } = req.body;
@@ -1129,7 +1141,7 @@ const getEnviaPayload = async (pedido) => {
   };
 };
 
-app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
+app.post('/api/pedidos/:id/cotizar-envio', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);
@@ -1303,7 +1315,7 @@ app.post('/api/pedidos/:id/cotizar-envio', async (req, res) => {
   }
 });
 
-app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
+app.post('/api/pedidos/:id/generar-guia', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { carrier, service } = req.body;
@@ -1449,7 +1461,7 @@ app.post('/api/pedidos/:id/generar-guia', async (req, res) => {
   }
 });
 
-app.post('/api/pedidos/:id/cancelar-guia', async (req, res) => {
+app.post('/api/pedidos/:id/cancelar-guia', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await pool.query('SELECT * FROM pedidos WHERE id = $1', [id]);
@@ -1503,7 +1515,7 @@ app.post('/api/pedidos/:id/cancelar-guia', async (req, res) => {
 });
 
 // GET Envia.com Wallet Balance
-app.get('/api/envia/saldo', async (req, res) => {
+app.get('/api/envia/saldo', requireAuth, async (req, res) => {
   try {
     const response = await fetch('https://queries.envia.com/user-information?encoded=false', {
       method: 'GET',
@@ -1559,7 +1571,7 @@ app.post('/api/webhooks/envia', async (req, res) => {
 // --- Boletines CRUD ---
 
 // GET all boletines
-app.get('/api/boletines', async (_req, res) => {
+app.get('/api/boletines', requireAuth, async (_req, res) => {
   try {
     const r = await pool.query('SELECT id, asunto, estado, created_at, sent_at FROM boletines ORDER BY created_at DESC');
     res.json(r.rows);
@@ -1567,7 +1579,7 @@ app.get('/api/boletines', async (_req, res) => {
 });
 
 // GET single boletin
-app.get('/api/boletines/:id', async (req, res) => {
+app.get('/api/boletines/:id', requireAuth, async (req, res) => {
   try {
     const r = await pool.query('SELECT * FROM boletines WHERE id = $1', [req.params.id]);
     if (!r.rows.length) return res.status(404).json({ error: 'No encontrado' });
@@ -1576,7 +1588,7 @@ app.get('/api/boletines/:id', async (req, res) => {
 });
 
 // POST create boletin (borrador)
-app.post('/api/boletines', async (req, res) => {
+app.post('/api/boletines', requireAuth, async (req, res) => {
   const { asunto = '', html = '' } = req.body;
   try {
     const r = await pool.query(
@@ -1588,7 +1600,7 @@ app.post('/api/boletines', async (req, res) => {
 });
 
 // PATCH update boletin (asunto, html, estado)
-app.patch('/api/boletines/:id', async (req, res) => {
+app.patch('/api/boletines/:id', requireAuth, async (req, res) => {
   const { asunto, html, estado } = req.body;
   const VALID_ESTADOS = ['Borrador', 'Programado', 'Enviado'];
   if (estado && !VALID_ESTADOS.includes(estado)) return res.status(400).json({ error: 'Estado inválido' });
@@ -1607,7 +1619,7 @@ app.patch('/api/boletines/:id', async (req, res) => {
 });
 
 // DELETE boletin
-app.delete('/api/boletines/:id', async (req, res) => {
+app.delete('/api/boletines/:id', requireAuth, async (req, res) => {
   try {
     const r = await pool.query('DELETE FROM boletines WHERE id = $1 RETURNING id', [req.params.id]);
     if (!r.rows.length) return res.status(404).json({ error: 'No encontrado' });
@@ -1616,7 +1628,7 @@ app.delete('/api/boletines/:id', async (req, res) => {
 });
 
 // POST enviar boletin a todos los suscriptores
-app.post('/api/boletines/:id/enviar', async (req, res) => {
+app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
   try {
     // 1. Obtener el boletín
     const bRes = await pool.query('SELECT * FROM boletines WHERE id = $1', [req.params.id]);
@@ -1697,7 +1709,7 @@ app.post('/api/boletines/:id/enviar', async (req, res) => {
 // --- Clientes (derivados de pedidos + historicos) ---
 
 // Import CSV customers
-app.post('/api/clientes/migrar-csv', localUpload.single('file'), async (req, res) => {
+app.post('/api/clientes/migrar-csv', requireAuth, localUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   const results = [];
@@ -1752,7 +1764,7 @@ app.post('/api/clientes/migrar-csv', localUpload.single('file'), async (req, res
 
 
 // GET all clientes – agrupados por correo desde la tabla pedidos + historico de clientes
-app.get('/api/clientes', async (_req, res) => {
+app.get('/api/clientes', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query(`
       WITH clientes_agrupados AS (
@@ -1787,7 +1799,7 @@ app.get('/api/clientes', async (_req, res) => {
 });
 
 // GET detalle de un cliente: todos sus pedidos ordenados desc
-app.get('/api/clientes/:correo', async (req, res) => {
+app.get('/api/clientes/:correo', requireAuth, async (req, res) => {
   try {
     const { correo } = req.params;
     
@@ -1820,7 +1832,7 @@ app.get('/api/clientes/:correo', async (req, res) => {
 
 
 // GET all suscriptores
-app.get('/api/suscriptores', async (_req, res) => {
+app.get('/api/suscriptores', requireAuth, async (_req, res) => {
   try {
     const result = await pool.query('SELECT id, nombre, correo, created_at FROM suscriptores ORDER BY created_at DESC');
     res.json(result.rows);
@@ -1850,7 +1862,7 @@ app.post('/api/suscriptores', async (req, res) => {
 });
 
 // DELETE suscriptor
-app.delete('/api/suscriptores/:id', async (req, res) => {
+app.delete('/api/suscriptores/:id', requireAuth, async (req, res) => {
   const { id } = req.params;
   try {
     await pool.query('DELETE FROM suscriptores WHERE id = $1', [id]);
@@ -1862,7 +1874,7 @@ app.delete('/api/suscriptores/:id', async (req, res) => {
 });
 
 // --- Estadísticas ---
-app.get('/api/estadisticas/live', async (_req, res) => {
+app.get('/api/estadisticas/live', requireAuth, async (_req, res) => {
   try {
     // 1. Pedidos Nuevos
     const pnRes = await pool.query("SELECT COUNT(*) FROM pedidos WHERE estado = 'Nuevo'");
@@ -1898,7 +1910,7 @@ app.get('/api/estadisticas/live', async (_req, res) => {
 });
 
 // Ventas por mes (Cardiograma)
-app.get('/api/estadisticas/ventas-mes', async (req, res) => {
+app.get('/api/estadisticas/ventas-mes', requireAuth, async (req, res) => {
   try {
     const today = new Date();
     const year = parseInt(req.query.anio) || today.getFullYear();
@@ -1932,7 +1944,7 @@ app.get('/api/estadisticas/ventas-mes', async (req, res) => {
 
 // --- Reporte de Ventas Mensuales ---
 // GET /api/reportes/ventas?anio=2025&tienda_id=1&mes=Enero
-app.get('/api/reportes/ventas', async (req, res) => {
+app.get('/api/reportes/ventas', requireAuth, async (req, res) => {
   try {
     const today = new Date();
     const anio = parseInt(req.query.anio) || today.getFullYear();
@@ -2245,7 +2257,7 @@ app.get('/api/pagos/verificar/:pedidoId', async (req, res) => {
 
 // --- Configuracion ---
 
-app.get('/api/configuracion', async (req, res) => {
+app.get('/api/configuracion', requireAuth, async (req, res) => {
   try {
     const result = await pool.query('SELECT precio_envio, envia_token, envia_modo FROM configuracion LIMIT 1');
     if (result.rows.length === 0) return res.json({ precio_envio: 150, envia_token: '', envia_modo: 'sandbox' });
@@ -2256,7 +2268,7 @@ app.get('/api/configuracion', async (req, res) => {
   }
 });
 
-app.put('/api/configuracion', async (req, res) => {
+app.put('/api/configuracion', requireAuth, async (req, res) => {
   try {
     const { precio_envio, envia_token, envia_modo } = req.body;
     let result = await pool.query('UPDATE configuracion SET precio_envio = $1, envia_token = $2, envia_modo = $3 RETURNING *', [precio_envio, envia_token, envia_modo]);
@@ -2301,7 +2313,7 @@ app.get('/api/reglas-envio', async (req, res) => {
   }
 });
 
-app.post('/api/reglas-envio', async (req, res) => {
+app.post('/api/reglas-envio', requireAuth, async (req, res) => {
   try {
     const { pais, estados, precio } = req.body;
     const result = await pool.query(
@@ -2315,7 +2327,7 @@ app.post('/api/reglas-envio', async (req, res) => {
   }
 });
 
-app.put('/api/reglas-envio/:id', async (req, res) => {
+app.put('/api/reglas-envio/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { pais, estados, precio } = req.body;
@@ -2331,7 +2343,7 @@ app.put('/api/reglas-envio/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/reglas-envio/:id', async (req, res) => {
+app.delete('/api/reglas-envio/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM reglas_envio WHERE id = $1', [id]);
@@ -2345,7 +2357,7 @@ app.delete('/api/reglas-envio/:id', async (req, res) => {
 
 // --- Reporte PDF Stock ---
 
-app.get('/api/reportes/stock-pdf', async (req, res) => {
+app.get('/api/reportes/stock-pdf', requireAuth, async (req, res) => {
   try {
     const PDFDocument = require('pdfkit');
     const doc = new PDFDocument({ margin: 50 });
@@ -2439,7 +2451,7 @@ app.get('/api/reportes/stock-pdf', async (req, res) => {
   }
 });
 
-app.get('/api/reportes/inventario', async (req, res) => {
+app.get('/api/reportes/inventario', requireAuth, async (req, res) => {
   try {
     const productsRes = await pool.query('SELECT id, nombre, es_variable, stock, tienda FROM products WHERE deleted_at IS NULL ORDER BY nombre');
     const varsRes = await pool.query('SELECT product_id, valor, color, stock FROM product_variations');
@@ -2528,7 +2540,7 @@ app.get('/api/settings/mantenimiento', async (_req, res) => {
 });
 
 // PUT mantenimiento status
-app.put('/api/settings/mantenimiento', async (req, res) => {
+app.put('/api/settings/mantenimiento', requireAuth, async (req, res) => {
   try {
     const { mantenimiento } = req.body;
     await pool.query(
@@ -2571,7 +2583,7 @@ const initPackagePresetsTable = async () => {
 initPackagePresetsTable();
 
 // GET all package presets
-app.get('/api/package-presets', async (_req, res) => {
+app.get('/api/package-presets', requireAuth, async (_req, res) => {
   try {
     const { rows } = await pool.query('SELECT * FROM package_presets ORDER BY nombre ASC');
     res.json(rows);
@@ -2582,7 +2594,7 @@ app.get('/api/package-presets', async (_req, res) => {
 });
 
 // POST create package preset
-app.post('/api/package-presets', async (req, res) => {
+app.post('/api/package-presets', requireAuth, async (req, res) => {
   try {
     const { nombre, tipo, peso, largo, ancho, alto } = req.body;
     if (!nombre || !peso || !largo || !ancho || !alto) {
@@ -2600,7 +2612,7 @@ app.post('/api/package-presets', async (req, res) => {
 });
 
 // PUT update package preset
-app.put('/api/package-presets/:id', async (req, res) => {
+app.put('/api/package-presets/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, tipo, peso, largo, ancho, alto } = req.body;
@@ -2617,7 +2629,7 @@ app.put('/api/package-presets/:id', async (req, res) => {
 });
 
 // DELETE package preset
-app.delete('/api/package-presets/:id', async (req, res) => {
+app.delete('/api/package-presets/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query('DELETE FROM package_presets WHERE id = $1', [id]);
