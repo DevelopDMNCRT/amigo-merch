@@ -226,8 +226,8 @@ app.use(cors({
   origin: allowedOrigins,
   credentials: true,
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Rate Limiters para rutas sensibles
 const loginLimiter = rateLimit({
@@ -2592,10 +2592,14 @@ app.get('/api/reportes/inventario', requireAuth, async (req, res) => {
 // Global Error Handler
 app.use((err, _req, res, _next) => {
   console.error('Global error:', err);
+  if (err.type === 'entity.too.large' || err.status === 413) {
+    return res.status(413).json({ error: 'Payload demasiado grande', details: 'El tamaño de la petición excede el límite de 10 MB' });
+  }
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ error: 'Error al subir archivo', details: err.message });
   }
-  res.status(500).json({ error: 'Error interno del servidor', details: err.message || err.toString() });
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({ error: status === 500 ? 'Error interno del servidor' : err.message, details: err.message || err.toString() });
 });
 
 // --- Settings / Configuración ---
