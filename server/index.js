@@ -934,8 +934,8 @@ app.post('/api/pedidos', async (req, res) => {
   try {
     const { nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total } = req.body;
     
-    // Generar un número de orden único corto
-    const orden = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generar un número de orden único criptográficamente seguro
+    const orden = crypto.randomBytes(4).toString('hex').toUpperCase();
 
     // Excepción hardcodeada para envío gratis por ID de producto
     const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
