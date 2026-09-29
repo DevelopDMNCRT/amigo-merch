@@ -213,9 +213,11 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Database Connection
+// DB_SSL=false cuando corre en Docker con postgres local (sin SSL)
+// En Neon (remoto) mantiene SSL habilitado
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.DB_SSL === 'false' ? false : { rejectUnauthorized: false }
 });
 
 // Middleware de Autenticación
