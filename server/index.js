@@ -12,6 +12,7 @@ const { MercadoPagoConfig, Preference, Payment } = require('mercadopago');
 const fs = require('fs');
 const csv = require('csv-parser');
 const crypto = require('crypto');
+const { z } = require('zod');
 
 const localUpload = multer({ dest: '/tmp/' });
 // ── Mercado Pago ───────────────────────────────────────────────────────────
@@ -226,8 +227,8 @@ app.use(cors({
   origin: allowedOrigins,
   credentials: true,
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Rate Limiters para rutas sensibles
 const loginLimiter = rateLimit({
@@ -286,6 +287,90 @@ const requireAuth = (req, res, next) => {
   }
 };
 
+// ── Esquemas de Validación (Zod) ──────────────────────────────────────────
+const formatZodError = (error) => ({
+  error: 'Datos inválidos',
+  details: error.issues.map(i => ({
+    campo: i.path.join('.'),
+    mensaje: i.message,
+  })),
+});
+
+const ROLES_PERMITIDOS = ['Administrador', 'Operativo', 'admin'];
+
+const CreateUserSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  rol: z.enum(ROLES_PERMITIDOS, {
+    errorMap: () => ({ message: `Rol inválido. Roles permitidos: ${ROLES_PERMITIDOS.join(', ')}` }),
+  }),
+  password: z.string({ required_error: 'La contraseña es requerida' }).min(6, 'La contraseña debe tener al menos 6 caracteres').max(100),
+});
+
+const UpdateUserSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  rol: z.enum(ROLES_PERMITIDOS, {
+    errorMap: () => ({ message: `Rol inválido. Roles permitidos: ${ROLES_PERMITIDOS.join(', ')}` }),
+  }),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(100).optional().or(z.literal('')),
+});
+
+const ReglaEnvioSchema = z.object({
+  pais: z.string({ required_error: 'El país es requerido' }).trim().min(2, 'El país debe tener al menos 2 caracteres').max(200),
+  estados: z.union([
+    z.array(z.string()),
+    z.string().transform((str) => {
+      try { const parsed = JSON.parse(str); return Array.isArray(parsed) ? parsed : [str]; } catch { return [str]; }
+    })
+  ]).nullable().optional(),
+  precio: z.coerce.number({ required_error: 'El precio es requerido' }).min(0, 'El precio no puede ser negativo'),
+});
+
+const ItemPedidoSchema = z.object({
+  id: z.union([z.string(), z.number()]).optional(),
+  producto_id: z.union([z.string(), z.number()]).optional(),
+  nombre: z.string().optional(),
+  variante: z.string().nullable().optional(),
+  precio: z.coerce.number().min(0, 'El precio del item no puede ser negativo'),
+  cantidad: z.coerce.number().int().positive('La cantidad debe ser mayor a 0'),
+  imagen: z.string().optional().nullable(),
+}).refine(item => item.producto_id !== undefined || item.id !== undefined, {
+  message: 'Cada item debe contener id o producto_id',
+});
+
+const ItemsArraySchema = z.preprocess((val) => {
+  if (typeof val === 'string') {
+    try { return JSON.parse(val); } catch { return val; }
+  }
+  return val;
+}, z.array(ItemPedidoSchema).min(1, 'El pedido debe incluir al menos un producto'));
+
+const PedidoSchema = z.object({
+  nombre: z.string({ required_error: 'El nombre es requerido' }).trim().min(2, 'El nombre debe tener al menos 2 caracteres').max(150),
+  correo: z.string({ required_error: 'El correo es requerido' }).trim().email('Formato de correo electrónico inválido'),
+  telefono: z.string({ required_error: 'El teléfono es requerido' }).trim().min(7, 'El teléfono debe tener al menos 7 dígitos').max(20),
+  pais: z.string({ required_error: 'El país es requerido' }).trim().min(2, 'El país es requerido').max(100),
+  estado_env: z.string({ required_error: 'El estado es requerido' }).trim().min(1, 'El estado es requerido').max(100),
+  ciudad: z.string({ required_error: 'La ciudad es requerida' }).trim().min(1, 'La ciudad es requerida').max(100),
+  calle: z.string({ required_error: 'La calle es requerida' }).trim().min(1, 'La calle es requerida').max(200),
+  num_ext: z.union([z.string(), z.number()]).transform(v => String(v).trim()).refine(v => v.length > 0, 'El número exterior es requerido'),
+  num_int: z.union([z.string(), z.number()]).transform(v => String(v).trim()).optional().nullable().or(z.literal('')),
+  colonia: z.string().optional().nullable().or(z.literal('')),
+  delegacion: z.string().optional().nullable().or(z.literal('')),
+  cp: z.union([z.string(), z.number()]).transform(v => String(v).trim()).refine(v => /^[\w\-]{3,10}$/.test(v), 'Código postal inválido'),
+  domicilio: z.string().optional().nullable().or(z.literal('')),
+  notas: z.string().optional().nullable().or(z.literal('')),
+  items: ItemsArraySchema,
+  subtotal: z.coerce.number({ required_error: 'Subtotal es requerido' }).min(0, 'El subtotal no puede ser negativo'),
+  envio: z.coerce.number().min(0, 'El costo de envío no puede ser negativo').default(0),
+  total: z.coerce.number({ required_error: 'Total es requerido' }).positive('El total debe ser mayor a 0'),
+  continente: z.string().optional(),
+  numExt: z.any().optional(),
+  numInt: z.any().optional(),
+  estado: z.string().optional(),
+});
+
 // --- Auth Routes ---
 
 app.post('/api/auth/login', loginLimiter, async (req, res) => {
@@ -342,8 +427,11 @@ app.get('/api/users/:id', requireAuth, async (req, res) => {
 });
 
 app.post('/api/users', requireAuth, async (req, res) => {
-  const { nombre, correo, rol, password } = req.body;
-  if (!nombre || !correo || !rol || !password) return res.status(400).json({ error: 'All fields are required' });
+  const parsed = CreateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
+  const { nombre, correo, rol, password } = parsed.data;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
@@ -358,8 +446,15 @@ app.post('/api/users', requireAuth, async (req, res) => {
 });
 
 app.put('/api/users/:id', requireAuth, async (req, res) => {
-  const { id } = req.params;
-  const { nombre, correo, rol, password } = req.body;
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id) || id <= 0) {
+    return res.status(400).json({ error: 'ID de usuario inválido' });
+  }
+  const parsed = UpdateUserSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
+  const { nombre, correo, rol, password } = parsed.data;
   try {
     let query, params;
     if (password && password.length > 0) {
@@ -931,15 +1026,23 @@ app.get('/api/pedidos/:id', requireAuth, async (req, res) => {
 
 // POST create pedido
 app.post('/api/pedidos', async (req, res) => {
+  const parsed = PedidoSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total } = req.body;
+    const {
+      nombre, correo, telefono, pais, estado_env, ciudad,
+      delegacion, calle, num_ext, num_int, colonia, cp,
+      domicilio, notas, items, subtotal, envio, total
+    } = parsed.data;
     
-    // Generar un número de orden único corto
-    const orden = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generar un número de orden único criptográficamente seguro
+    const orden = crypto.randomBytes(4).toString('hex').toUpperCase();
 
     // Excepción hardcodeada para envío gratis por ID de producto
     const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
-    const itemsList = Array.isArray(items) ? items : (typeof items === 'string' ? JSON.parse(items || '[]') : []);
+    const itemsList = items;
     const tieneEnvioGratisHardcoded = itemsList.some(i =>
       PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(i.producto_id || i.id))
     );
@@ -950,7 +1053,7 @@ app.post('/api/pedidos', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *`,
-      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, JSON.stringify(items), subtotal, finalEnvio, finalTotal, 'Pendiente de pago']
+      [orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion || null, calle, num_ext, num_int || null, colonia || null, cp, domicilio || null, notas || null, JSON.stringify(items), subtotal, finalEnvio, finalTotal, 'Pendiente de pago']
     );
     const pedidoCreado = result.rows[0];
 
@@ -1679,6 +1782,14 @@ app.delete('/api/boletines/:id', requireAuth, async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete boletin' }); }
 });
 
+function generarTokenBaja(correo) {
+  const secret = process.env.UNSUBSCRIBE_SECRET || JWT_SECRET;
+  return crypto
+    .createHmac('sha256', secret)
+    .update((correo || '').toLowerCase().trim())
+    .digest('hex');
+}
+
 // POST enviar boletin a todos los suscriptores
 app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
   try {
@@ -1712,8 +1823,11 @@ app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
 
     if (process.env.SMTP_USER) {
       const results = await Promise.allSettled(
-        suscriptores.map(s =>
-          mailer.sendMail({
+        suscriptores.map(s => {
+          const tokenBaja = generarTokenBaja(s.correo);
+          const serverUrl = process.env.SERVER_URL || `${req.protocol}://${req.get('host')}`;
+          const urlBaja = `${serverUrl}/api/suscriptores/baja?correo=${encodeURIComponent(s.correo)}&token=${tokenBaja}`;
+          return mailer.sendMail({
             from:    `"Amigo Merch" <${process.env.SMTP_USER}>`,
             replyTo: 'amigomerchmx@gmail.com',
             to:      s.correo,
@@ -1724,12 +1838,12 @@ app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
                 <hr style="border:none;border-top:1px solid #eee;margin:32px 0;">
                 <p style="color:#aaa;font-size:11px;text-align:center;">
                   Hola ${s.nombre}, recibiste este correo porque estás suscrito al newsletter de Amigo Merch.<br>
-                  <a href="#" style="color:#aaa;">Cancelar suscripción</a>
+                  <a href="${urlBaja}" style="color:#237650;text-decoration:underline;">Cancelar suscripción</a>
                 </p>
               </div>
             `,
-          })
-        )
+          });
+        })
       );
       enviados = results.filter(r => r.status === 'fulfilled').length;
       fallidos = results.filter(r => r.status === 'rejected').length;
@@ -1899,8 +2013,8 @@ app.post('/api/suscriptores', suscriptoresLimiter, async (req, res) => {
   const { nombre, correo } = req.body;
   if (!nombre || !correo) return res.status(400).json({ error: 'Nombre y correo son requeridos' });
   try {
-    // Generate a random 8-char alphanumeric ID
-    const id = Math.random().toString(36).substring(2, 10).toUpperCase();
+    // Generar un ID criptográficamente seguro de 8 caracteres
+    const id = crypto.randomBytes(4).toString('hex').toUpperCase();
     const result = await pool.query(
       'INSERT INTO suscriptores (id, nombre, correo) VALUES ($1, $2, $3) RETURNING *',
       [id, nombre.trim(), correo.trim().toLowerCase()]
@@ -1922,6 +2036,68 @@ app.delete('/api/suscriptores/:id', requireAuth, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to delete suscriptor' });
+  }
+});
+
+// GET /api/suscriptores/baja - Cancelación de suscripción (Público, verificado por HMAC)
+app.get('/api/suscriptores/baja', async (req, res) => {
+  const { correo, token } = req.query;
+  if (!correo || !token) {
+    return res.status(400).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head><meta charset="UTF-8"><title>Parámetros Inválidos — Amigo Merch</title></head>
+      <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+        <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+          <h2 style="color:#dc2626;margin-top:0;">Parámetros inválidos ❌</h2>
+          <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El enlace de cancelación no contiene los parámetros necesarios.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  const tokenStr = String(token).trim();
+  const esperado = generarTokenBaja(String(correo));
+
+  try {
+    const tokenBuf = Buffer.from(tokenStr, 'hex');
+    const esperadoBuf = Buffer.from(esperado, 'hex');
+
+    if (tokenBuf.length !== esperadoBuf.length || !crypto.timingSafeEqual(tokenBuf, esperadoBuf)) {
+      return res.status(403).send(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head><meta charset="UTF-8"><title>Enlace Inválido — Amigo Merch</title></head>
+        <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+          <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+            <h2 style="color:#dc2626;margin-top:0;">Enlace inválido o expirado ❌</h2>
+            <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El token de cancelación no es válido o ha sido alterado.</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+
+    const cleanEmail = String(correo).toLowerCase().trim();
+    await pool.query('DELETE FROM suscriptores WHERE LOWER(correo) = LOWER($1)', [cleanEmail]);
+
+    const sanitizedEmail = cleanEmail.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return res.status(200).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head><meta charset="UTF-8"><title>Suscripción Cancelada — Amigo Merch</title></head>
+      <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+        <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+          <h2 style="color:#237650;margin-top:0;">Suscripción cancelada con éxito ✅</h2>
+          <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El correo <strong>${sanitizedEmail}</strong> ha sido dado de baja correctamente. Ya no recibirás correos promocionales ni boletines informativos.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Error al procesar baja de suscriptor:', err);
+    return res.status(500).send('<h2>Error al procesar la cancelación</h2>');
   }
 });
 
@@ -2407,8 +2583,12 @@ app.get('/api/reglas-envio', async (req, res) => {
 });
 
 app.post('/api/reglas-envio', requireAuth, async (req, res) => {
+  const parsed = ReglaEnvioSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { pais, estados, precio } = req.body;
+    const { pais, estados, precio } = parsed.data;
     const result = await pool.query(
       'INSERT INTO reglas_envio (pais, estados, precio) VALUES ($1, $2, $3) RETURNING *',
       [pais, estados ? JSON.stringify(estados) : null, precio]
@@ -2421,9 +2601,16 @@ app.post('/api/reglas-envio', requireAuth, async (req, res) => {
 });
 
 app.put('/api/reglas-envio/:id', requireAuth, async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id) || id <= 0) {
+    return res.status(400).json({ error: 'ID de regla inválido' });
+  }
+  const parsed = ReglaEnvioSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json(formatZodError(parsed.error));
+  }
   try {
-    const { id } = req.params;
-    const { pais, estados, precio } = req.body;
+    const { pais, estados, precio } = parsed.data;
     const result = await pool.query(
       'UPDATE reglas_envio SET pais = $1, estados = $2, precio = $3 WHERE id = $4 RETURNING *',
       [pais, estados ? JSON.stringify(estados) : null, precio, id]
@@ -2444,6 +2631,86 @@ app.delete('/api/reglas-envio/:id', requireAuth, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al eliminar regla de envio' });
+  }
+});
+
+// --- Bodegas CRUD (Protegido) ---
+
+app.get('/api/bodegas', requireAuth, async (_req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at 
+       FROM bodegas 
+       WHERE activa = true 
+       ORDER BY id ASC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener bodegas:', err);
+    res.status(500).json({ error: 'Error al obtener bodegas' });
+  }
+});
+
+app.post('/api/bodegas', requireAuth, async (req, res) => {
+  try {
+    const { alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, postalCode, reference } = req.body;
+    if (!alias || !nombre) {
+      return res.status(400).json({ error: 'Alias y nombre de bodega son requeridos' });
+    }
+    const result = await pool.query(
+      `INSERT INTO bodegas (alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, reference)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at`,
+      [alias, nombre, empresa || 'Amigo Merch', email, phone, street, number, district, city, state, country || 'MX', postal_code || postalCode, reference || '']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al crear bodega:', err);
+    res.status(500).json({ error: 'Error al crear bodega' });
+  }
+});
+
+app.put('/api/bodegas/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, postalCode, reference, activa } = req.body;
+    const result = await pool.query(
+      `UPDATE bodegas 
+       SET alias = COALESCE($1, alias),
+           nombre = COALESCE($2, nombre),
+           empresa = COALESCE($3, empresa),
+           email = COALESCE($4, email),
+           phone = COALESCE($5, phone),
+           street = COALESCE($6, street),
+           number = COALESCE($7, number),
+           district = COALESCE($8, district),
+           city = COALESCE($9, city),
+           state = COALESCE($10, state),
+           country = COALESCE($11, country),
+           postal_code = COALESCE($12, postal_code),
+           reference = COALESCE($13, reference),
+           activa = COALESCE($14, activa)
+       WHERE id = $15
+       RETURNING id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at`,
+      [alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code || postalCode, reference, activa, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Bodega no encontrada' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al actualizar bodega:', err);
+    res.status(500).json({ error: 'Error al actualizar bodega' });
+  }
+});
+
+app.delete('/api/bodegas/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('UPDATE bodegas SET activa = false WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Bodega no encontrada' });
+    res.json({ message: 'Bodega desactivada correctamente' });
+  } catch (err) {
+    console.error('Error al eliminar bodega:', err);
+    res.status(500).json({ error: 'Error al eliminar bodega' });
   }
 });
 
@@ -2592,10 +2859,14 @@ app.get('/api/reportes/inventario', requireAuth, async (req, res) => {
 // Global Error Handler
 app.use((err, _req, res, _next) => {
   console.error('Global error:', err);
+  if (err.type === 'entity.too.large' || err.status === 413) {
+    return res.status(413).json({ error: 'Payload demasiado grande', details: 'El tamaño de la petición excede el límite de 10 MB' });
+  }
   if (err instanceof multer.MulterError || (err.message && err.message.startsWith('Tipo de archivo no permitido'))) {
     return res.status(400).json({ error: 'Error al subir archivo', details: err.message });
   }
-  res.status(500).json({ error: 'Error interno del servidor', details: err.message || err.toString() });
+  const status = err.status || err.statusCode || 500;
+  res.status(status).json({ error: status === 500 ? 'Error interno del servidor' : err.message, details: err.message || err.toString() });
 });
 
 // --- Settings / Configuración ---
