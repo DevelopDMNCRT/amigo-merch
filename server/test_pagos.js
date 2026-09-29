@@ -10,7 +10,7 @@
  * Referencia tarjetas test MP: https://www.mercadopago.com.mx/developers/es/docs/your-integrations/test/cards
  */
 
-require('dotenv').config({ path: '/Users/yaywiin/Desktop/DEVELOP/amigo-merch/server/.env' });
+require('dotenv').config();
 
 const BASE_URL = `http://localhost:3002`;
 const { Pool } = require('pg');
