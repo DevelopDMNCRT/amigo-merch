@@ -208,7 +208,22 @@ if (!JWT_SECRET) {
 }
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  'https://www.amigomerch.mx',
+  'https://amigomerch.mx',
+  'https://admin.amigomerch.mx',
+  process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
