@@ -99,7 +99,12 @@
                   </td>
                   <!-- Nombre -->
                   <td class="px-5 py-4 sm:px-6 min-w-[180px]">
-                    <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90">{{ p.nombre }}</p>
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <p class="font-semibold text-gray-800 text-theme-sm dark:text-white/90">{{ p.nombre }}</p>
+                      <span v-if="p.envio_gratis" class="text-[10px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded font-medium border border-emerald-200 dark:border-emerald-800">
+                        Envío gratis
+                      </span>
+                    </div>
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 font-mono">{{ p.slug }}</p>
                   </td>
                   <!-- Precio -->
