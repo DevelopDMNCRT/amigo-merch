@@ -247,15 +247,18 @@
                 </div>
                 <!-- Selector de bodega -->
                 <div class="space-y-2">
+                  <div v-if="BODEGAS.length === 0" class="text-xs text-gray-400 py-2">
+                    Cargando bodegas...
+                  </div>
                   <label v-for="b in BODEGAS" :key="b.id"
                     class="flex items-start gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-all"
-                    :class="selectedBodega.id === b.id
+                    :class="selectedBodega?.id === b.id
                       ? 'border-[#00B4AA] bg-[#00B4AA]/5 dark:bg-[#00B4AA]/10'
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'">
                     <div class="mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors"
-                      :class="selectedBodega.id === b.id ? 'border-[#00B4AA]' : 'border-gray-300 dark:border-gray-600'"
+                      :class="selectedBodega?.id === b.id ? 'border-[#00B4AA]' : 'border-gray-300 dark:border-gray-600'"
                       @click="selectedBodega = b">
-                      <div v-if="selectedBodega.id === b.id" class="w-2 h-2 rounded-full bg-[#00B4AA]"></div>
+                      <div v-if="selectedBodega?.id === b.id" class="w-2 h-2 rounded-full bg-[#00B4AA]"></div>
                     </div>
                     <div @click="selectedBodega = b" class="flex-1 min-w-0">
                       <p class="text-xs font-semibold text-gray-800 dark:text-white/90">{{ b.alias }}</p>
@@ -956,42 +959,23 @@ const fetchPackagePresets = async () => {
 };
 
 // Bodegas de origen
-const BODEGAS = [
-  {
-    id: 1,
-    alias: 'CDMX — Asturias',
-    nombre: 'Juan Pablo Castillo Cortes',
-    company: 'Amigo Merch',
-    email: 'amigomerchmx@gmail.com',
-    phone: '5529556508',
-    street: 'Marcos Carrillo',
-    number: '198, Int. 50',
-    district: 'Asturias',
-    city: 'Ciudad de México',
-    state: 'CX',
-    country: 'MX',
-    postalCode: '06850',
-    reference: ''
-  },
-  {
-    id: 2,
-    alias: 'Guadalajara — Americana',
-    nombre: 'Paula Franco',
-    company: 'Amigo Merch',
-    email: 'amigomerchmx@gmail.com',
-    phone: '3310762528',
-    street: 'Calle Guadalupe Zuno',
-    number: '1840-2',
-    district: 'Americana',
-    city: 'Guadalajara',
-    state: 'JA',
-    country: 'MX',
-    postalCode: '44160',
-    reference: 'Dept 2'
-  }
-];
+const BODEGAS = ref([]);
+const selectedBodega = ref(null);
 
-const selectedBodega = ref(BODEGAS[0]);
+const fetchBodegas = async () => {
+  try {
+    const res = await fetch('/api/bodegas');
+    if (res.ok) {
+      const data = await res.json();
+      BODEGAS.value = data;
+      if (data.length > 0 && !selectedBodega.value) {
+        selectedBodega.value = data[0];
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching bodegas:', e);
+  }
+};
 
 // Package dimensions (editable before quoting)
 const pkgPeso = ref(1);
@@ -1148,6 +1132,7 @@ const initCustomsData = (items, total) => {
 onMounted(() => {
   fetchPedido();
   fetchPackagePresets();
+  fetchBodegas();
 });
 
 const guardarEstado = async () => {
@@ -1183,6 +1168,10 @@ const guardarEstado = async () => {
 
 const cotizarEnvio = async () => {
   if (!pedido.value) return;
+  if (!selectedBodega.value) {
+    showToast('error', 'Por favor selecciona una bodega de origen.');
+    return;
+  }
   cotizandoEnvio.value = true;
   rates.value = [];
   selectedRate.value = null;
@@ -1228,7 +1217,7 @@ const cotizarEnvio = async () => {
 };
 
 const generarGuia = async () => {
-  if (!pedido.value || !selectedRate.value) return;
+  if (!pedido.value || !selectedRate.value || !selectedBodega.value) return;
   generandoGuia.value = true;
   try {
     const payload = {
