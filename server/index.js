@@ -1679,6 +1679,14 @@ app.delete('/api/boletines/:id', requireAuth, async (req, res) => {
   } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete boletin' }); }
 });
 
+function generarTokenBaja(correo) {
+  const secret = process.env.UNSUBSCRIBE_SECRET || JWT_SECRET;
+  return crypto
+    .createHmac('sha256', secret)
+    .update((correo || '').toLowerCase().trim())
+    .digest('hex');
+}
+
 // POST enviar boletin a todos los suscriptores
 app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
   try {
@@ -1712,8 +1720,11 @@ app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
 
     if (process.env.SMTP_USER) {
       const results = await Promise.allSettled(
-        suscriptores.map(s =>
-          mailer.sendMail({
+        suscriptores.map(s => {
+          const tokenBaja = generarTokenBaja(s.correo);
+          const serverUrl = process.env.SERVER_URL || `${req.protocol}://${req.get('host')}`;
+          const urlBaja = `${serverUrl}/api/suscriptores/baja?correo=${encodeURIComponent(s.correo)}&token=${tokenBaja}`;
+          return mailer.sendMail({
             from:    `"Amigo Merch" <${process.env.SMTP_USER}>`,
             replyTo: 'amigomerchmx@gmail.com',
             to:      s.correo,
@@ -1724,12 +1735,12 @@ app.post('/api/boletines/:id/enviar', requireAuth, async (req, res) => {
                 <hr style="border:none;border-top:1px solid #eee;margin:32px 0;">
                 <p style="color:#aaa;font-size:11px;text-align:center;">
                   Hola ${s.nombre}, recibiste este correo porque estás suscrito al newsletter de Amigo Merch.<br>
-                  <a href="#" style="color:#aaa;">Cancelar suscripción</a>
+                  <a href="${urlBaja}" style="color:#237650;text-decoration:underline;">Cancelar suscripción</a>
                 </p>
               </div>
             `,
-          })
-        )
+          });
+        })
       );
       enviados = results.filter(r => r.status === 'fulfilled').length;
       fallidos = results.filter(r => r.status === 'rejected').length;
@@ -1922,6 +1933,68 @@ app.delete('/api/suscriptores/:id', requireAuth, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to delete suscriptor' });
+  }
+});
+
+// GET /api/suscriptores/baja - Cancelación de suscripción (Público, verificado por HMAC)
+app.get('/api/suscriptores/baja', async (req, res) => {
+  const { correo, token } = req.query;
+  if (!correo || !token) {
+    return res.status(400).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head><meta charset="UTF-8"><title>Parámetros Inválidos — Amigo Merch</title></head>
+      <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+        <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+          <h2 style="color:#dc2626;margin-top:0;">Parámetros inválidos ❌</h2>
+          <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El enlace de cancelación no contiene los parámetros necesarios.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  const tokenStr = String(token).trim();
+  const esperado = generarTokenBaja(String(correo));
+
+  try {
+    const tokenBuf = Buffer.from(tokenStr, 'hex');
+    const esperadoBuf = Buffer.from(esperado, 'hex');
+
+    if (tokenBuf.length !== esperadoBuf.length || !crypto.timingSafeEqual(tokenBuf, esperadoBuf)) {
+      return res.status(403).send(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head><meta charset="UTF-8"><title>Enlace Inválido — Amigo Merch</title></head>
+        <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+          <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+            <h2 style="color:#dc2626;margin-top:0;">Enlace inválido o expirado ❌</h2>
+            <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El token de cancelación no es válido o ha sido alterado.</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+
+    const cleanEmail = String(correo).toLowerCase().trim();
+    await pool.query('DELETE FROM suscriptores WHERE LOWER(correo) = LOWER($1)', [cleanEmail]);
+
+    const sanitizedEmail = cleanEmail.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return res.status(200).send(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head><meta charset="UTF-8"><title>Suscripción Cancelada — Amigo Merch</title></head>
+      <body style="font-family:sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f9fafb;color:#1f2937;">
+        <div style="background:white;padding:2.5rem;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);text-align:center;max-width:420px;margin:1rem;">
+          <h2 style="color:#237650;margin-top:0;">Suscripción cancelada con éxito ✅</h2>
+          <p style="color:#4b5563;font-size:0.95rem;line-height:1.5;">El correo <strong>${sanitizedEmail}</strong> ha sido dado de baja correctamente. Ya no recibirás correos promocionales ni boletines informativos.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Error al procesar baja de suscriptor:', err);
+    return res.status(500).send('<h2>Error al procesar la cancelación</h2>');
   }
 });
 
