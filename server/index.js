@@ -2520,6 +2520,86 @@ app.delete('/api/reglas-envio/:id', requireAuth, async (req, res) => {
   }
 });
 
+// --- Bodegas CRUD (Protegido) ---
+
+app.get('/api/bodegas', requireAuth, async (_req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at 
+       FROM bodegas 
+       WHERE activa = true 
+       ORDER BY id ASC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener bodegas:', err);
+    res.status(500).json({ error: 'Error al obtener bodegas' });
+  }
+});
+
+app.post('/api/bodegas', requireAuth, async (req, res) => {
+  try {
+    const { alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, postalCode, reference } = req.body;
+    if (!alias || !nombre) {
+      return res.status(400).json({ error: 'Alias y nombre de bodega son requeridos' });
+    }
+    const result = await pool.query(
+      `INSERT INTO bodegas (alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, reference)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+       RETURNING id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at`,
+      [alias, nombre, empresa || 'Amigo Merch', email, phone, street, number, district, city, state, country || 'MX', postal_code || postalCode, reference || '']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al crear bodega:', err);
+    res.status(500).json({ error: 'Error al crear bodega' });
+  }
+});
+
+app.put('/api/bodegas/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code, postalCode, reference, activa } = req.body;
+    const result = await pool.query(
+      `UPDATE bodegas 
+       SET alias = COALESCE($1, alias),
+           nombre = COALESCE($2, nombre),
+           empresa = COALESCE($3, empresa),
+           email = COALESCE($4, email),
+           phone = COALESCE($5, phone),
+           street = COALESCE($6, street),
+           number = COALESCE($7, number),
+           district = COALESCE($8, district),
+           city = COALESCE($9, city),
+           state = COALESCE($10, state),
+           country = COALESCE($11, country),
+           postal_code = COALESCE($12, postal_code),
+           reference = COALESCE($13, reference),
+           activa = COALESCE($14, activa)
+       WHERE id = $15
+       RETURNING id, alias, nombre, empresa, empresa AS company, email, phone, street, number, district, city, state, country, postal_code, postal_code AS "postalCode", reference, activa, created_at`,
+      [alias, nombre, empresa, email, phone, street, number, district, city, state, country, postal_code || postalCode, reference, activa, id]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Bodega no encontrada' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al actualizar bodega:', err);
+    res.status(500).json({ error: 'Error al actualizar bodega' });
+  }
+});
+
+app.delete('/api/bodegas/:id', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('UPDATE bodegas SET activa = false WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Bodega no encontrada' });
+    res.json({ message: 'Bodega desactivada correctamente' });
+  } catch (err) {
+    console.error('Error al eliminar bodega:', err);
+    res.status(500).json({ error: 'Error al eliminar bodega' });
+  }
+});
+
 
 // --- Reporte PDF Stock ---
 
