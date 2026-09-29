@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { upload } = require('./cloudinary');
@@ -228,6 +229,39 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Rate Limiters para rutas sensibles
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Demasiados intentos. Vuelve a intentarlo en 15 minutos.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Límite de mensajes alcanzado. Intenta más tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const suscriptoresLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { error: 'Límite de suscripciones alcanzado. Intenta más tarde.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const pagosLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  message: { error: 'Demasiados intentos de pago. Espera 10 minutos.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Database Connection
 // DB_SSL=false cuando corre en Docker con postgres local (sin SSL)
 // En Neon (remoto) mantiene SSL habilitado
@@ -254,7 +288,7 @@ const requireAuth = (req, res, next) => {
 
 // --- Auth Routes ---
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
   try {
@@ -708,7 +742,7 @@ app.post('/api/upload', requireAuth, upload.single('imagen'), (req, res) => {
 });
 
 // Contact route
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', contactLimiter, async (req, res) => {
   const { name, email, subject, message } = req.body;
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Nombre, correo y mensaje son requeridos' });
@@ -1861,7 +1895,7 @@ app.get('/api/suscriptores', requireAuth, async (_req, res) => {
 });
 
 // POST create suscriptor
-app.post('/api/suscriptores', async (req, res) => {
+app.post('/api/suscriptores', suscriptoresLimiter, async (req, res) => {
   const { nombre, correo } = req.body;
   if (!nombre || !correo) return res.status(400).json({ error: 'Nombre y correo son requeridos' });
   try {
@@ -2104,7 +2138,7 @@ app.get('/api/pagos/config', (req, res) => {
 });
 
 // POST /api/pagos/procesar — Recibe datos del Brick y procesa el pago directo
-app.post('/api/pagos/procesar', async (req, res) => {
+app.post('/api/pagos/procesar', pagosLimiter, async (req, res) => {
   try {
     const { formData, pedidoId } = req.body;
 
