@@ -2592,7 +2592,7 @@ app.get('/api/reportes/inventario', requireAuth, async (req, res) => {
 // Global Error Handler
 app.use((err, _req, res, _next) => {
   console.error('Global error:', err);
-  if (err instanceof multer.MulterError) {
+  if (err instanceof multer.MulterError || (err.message && err.message.startsWith('Tipo de archivo no permitido'))) {
     return res.status(400).json({ error: 'Error al subir archivo', details: err.message });
   }
   res.status(500).json({ error: 'Error interno del servidor', details: err.message || err.toString() });
