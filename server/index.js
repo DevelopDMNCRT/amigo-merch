@@ -1899,8 +1899,8 @@ app.post('/api/suscriptores', suscriptoresLimiter, async (req, res) => {
   const { nombre, correo } = req.body;
   if (!nombre || !correo) return res.status(400).json({ error: 'Nombre y correo son requeridos' });
   try {
-    // Generate a random 8-char alphanumeric ID
-    const id = Math.random().toString(36).substring(2, 10).toUpperCase();
+    // Generar un ID criptográficamente seguro de 8 caracteres
+    const id = crypto.randomBytes(4).toString('hex').toUpperCase();
     const result = await pool.query(
       'INSERT INTO suscriptores (id, nombre, correo) VALUES ($1, $2, $3) RETURNING *',
       [id, nombre.trim(), correo.trim().toLowerCase()]
