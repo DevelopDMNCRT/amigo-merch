@@ -2882,6 +2882,9 @@ app.use((err, _req, res, _next) => {
     return res.status(400).json({ error: 'Error al subir archivo', details: err.message });
   }
   const status = err.status || err.statusCode || 500;
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(status).json({ error: status === 500 ? 'Error interno del servidor' : err.message });
+  }
   res.status(status).json({ error: status === 500 ? 'Error interno del servidor' : err.message, details: err.message || err.toString() });
 });
 
