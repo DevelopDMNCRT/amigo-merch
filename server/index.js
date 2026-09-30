@@ -563,7 +563,7 @@ app.get('/api/products/:id', async (req, res) => {
 
 // POST create product
 app.post('/api/products', requireAuth, upload.any(), async (req, res) => {
-  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
+  const { nombre, descripcion, precio, stock, envio_especial, envio_gratis, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
 
@@ -587,8 +587,8 @@ app.post('/api/products', requireAuth, upload.any(), async (req, res) => {
       .replace(/\s+/g, '-');
 
     const result = await client.query(
-      `INSERT INTO products (nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, imagen_url, galeria_urls, atributos, tienda, flag, preventa_inicio, preventa_fin, peso, descuento)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING *`,
+      `INSERT INTO products (nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, imagen_url, galeria_urls, atributos, tienda, flag, preventa_inicio, preventa_fin, peso, descuento, envio_gratis)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING *`,
       [
         nombre, descripcion || null,
         precio ? parseFloat(precio) : null,
@@ -600,7 +600,8 @@ app.post('/api/products', requireAuth, upload.any(), async (req, res) => {
         (flag === 'Preventa' && preventa_inicio) ? preventa_inicio : null,
         (flag === 'Preventa' && preventa_fin)    ? preventa_fin    : null,
         peso ? parseFloat(peso) : 0,
-        descuento ? parseInt(descuento) : 0
+        descuento ? parseInt(descuento) : 0,
+        envio_gratis === 'true' || envio_gratis === true
       ]
     );
 
@@ -634,7 +635,7 @@ app.post('/api/products', requireAuth, upload.any(), async (req, res) => {
 // PUT update product
 app.put('/api/products/:id', requireAuth, upload.any(), async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, precio, stock, envio_especial, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
+  const { nombre, descripcion, precio, stock, envio_especial, envio_gratis, es_variable, es_publico, slug, atributos, variaciones, tienda, flag, preventa_inicio, preventa_fin, peso, descuento } = req.body;
 
   if (!nombre) return res.status(400).json({ error: 'El nombre es requerido' });
 
@@ -670,7 +671,7 @@ app.put('/api/products/:id', requireAuth, upload.any(), async (req, res) => {
     if (newGaleria.length) galeria_urls = [...galeria_urls, ...newGaleria.map(f => f.path)];
 
     const result = await client.query(
-      `UPDATE products SET nombre=$1, descripcion=$2, precio=$3, stock=$4, envio_especial=$5, es_variable=$6, es_publico=$7, slug=$8, imagen_url=$9, galeria_urls=$10, atributos=$11, tienda=$13, flag=$14, preventa_inicio=$15, preventa_fin=$16, peso=$17, descuento=$18
+      `UPDATE products SET nombre=$1, descripcion=$2, precio=$3, stock=$4, envio_especial=$5, es_variable=$6, es_publico=$7, slug=$8, imagen_url=$9, galeria_urls=$10, atributos=$11, tienda=$13, flag=$14, preventa_inicio=$15, preventa_fin=$16, peso=$17, descuento=$18, envio_gratis=$19
        WHERE id=$12 RETURNING *`,
       [
         nombre, descripcion || null,
@@ -683,7 +684,8 @@ app.put('/api/products/:id', requireAuth, upload.any(), async (req, res) => {
         (flag === 'Preventa' && preventa_inicio) ? preventa_inicio : null,
         (flag === 'Preventa' && preventa_fin)    ? preventa_fin    : null,
         peso ? parseFloat(peso) : 0,
-        descuento ? parseInt(descuento) : 0
+        descuento ? parseInt(descuento) : 0,
+        envio_gratis === 'true' || envio_gratis === true
       ]
     );
 
@@ -1046,15 +1048,23 @@ app.post('/api/pedidos', async (req, res) => {
     // Generar un número de orden único criptográficamente seguro
     const orden = crypto.randomBytes(4).toString('hex').toUpperCase();
 
-    // Excepción hardcodeada para envío gratis por ID de producto
-    const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
+    // Consultar si algún producto del pedido tiene envío gratis en la base de datos
     const itemsList = items;
-    const tieneEnvioGratisHardcoded = itemsList.some(i =>
-      PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(i.producto_id || i.id))
-    );
+    const prodIds = itemsList
+      .map(i => Number(i.producto_id || i.id))
+      .filter(id => !isNaN(id) && id > 0);
 
-    const finalEnvio = tieneEnvioGratisHardcoded ? 0 : envio;
-    const finalTotal = tieneEnvioGratisHardcoded ? Number(subtotal) : total;
+    let tieneEnvioGratis = false;
+    if (prodIds.length > 0) {
+      const { rows } = await pool.query(
+        'SELECT id FROM products WHERE id = ANY($1::int[]) AND envio_gratis = TRUE',
+        [prodIds]
+      );
+      tieneEnvioGratis = rows.length > 0;
+    }
+
+    const finalEnvio = tieneEnvioGratis ? 0 : envio;
+    const finalTotal = tieneEnvioGratis ? Number(subtotal) : total;
 
     const result = await pool.query(
       `INSERT INTO pedidos (orden, nombre, correo, telefono, pais, estado_env, ciudad, delegacion, calle, num_ext, num_int, colonia, cp, domicilio, notas, items, subtotal, envio, total, estado) 
@@ -2887,6 +2897,18 @@ app.use((err, _req, res, _next) => {
   }
   res.status(status).json({ error: status === 500 ? 'Error interno del servidor' : err.message, details: err.message || err.toString() });
 });
+
+// --- Products Table Migrations ---
+const initProductsTable = async () => {
+  try {
+    await pool.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS envio_gratis BOOLEAN DEFAULT FALSE
+    `);
+  } catch (err) {
+    console.error('Error initializing products table migrations:', err);
+  }
+};
+initProductsTable();
 
 // --- Settings / Configuración ---
 const initSettingsTable = async () => {

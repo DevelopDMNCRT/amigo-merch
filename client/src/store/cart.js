@@ -35,11 +35,9 @@ export const cartGetters = {
   }),
 };
 
-const PRODUCTOS_ENVIO_GRATIS_HARDCODED = [449];
-
 export const cartActions = {
   addItem(product, size, quantity) {
-    const isFreeShippingProduct = PRODUCTOS_ENVIO_GRATIS_HARDCODED.includes(Number(product.id));
+    const isFreeShippingProduct = product.envio_gratis === true || product.envio_gratis === 'true' || product.envio_gratis === 1;
     const envioEspecialCalculado = isFreeShippingProduct
       ? 0
       : (product.envio_especial !== undefined && product.envio_especial !== null

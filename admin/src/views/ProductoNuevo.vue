@@ -264,6 +264,19 @@
               </label>
             </div>
 
+            <!-- Switch Envío Gratis -->
+            <div class="border-t border-gray-100 dark:border-gray-800"></div>
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Envío Gratis</h3>
+                <p class="text-xs text-gray-500 mt-0.5">{{ form.envioGratis ? 'Envío gratis activado' : 'Aplica costo de envío estándar' }}</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" v-model="form.envioGratis" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-300 dark:peer-focus:ring-brand-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-brand-500"></div>
+              </label>
+            </div>
+
             <div class="border-t border-gray-100 dark:border-gray-800"></div>
 
             <!-- Flag -->
@@ -410,6 +423,7 @@ const form = reactive({
   descuento: 0,
   esVariable: false,
   esPublico: true,
+  envioGratis: false,
   
   // Variaciones
   atributos: [
@@ -497,6 +511,7 @@ onMounted(async () => {
       form.descuento = data.descuento || 0;
       form.esVariable = data.es_variable;
       form.esPublico = data.es_publico;
+      form.envioGratis = Boolean(data.envio_gratis);
       if (data.atributos) {
         try {
           let parsed = data.atributos;
@@ -841,6 +856,7 @@ const guardar = async () => {
     fd.append('descuento', form.descuento || 0);
     fd.append('es_variable', form.esVariable ? 'true' : 'false');
     fd.append('es_publico',     form.esPublico ? 'true' : 'false');
+    fd.append('envio_gratis',   form.envioGratis ? 'true' : 'false');
     fd.append('slug',           form.slug);
     fd.append('atributos',      JSON.stringify(form.atributos));
 
