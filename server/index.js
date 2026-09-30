@@ -2862,7 +2862,7 @@ app.use((err, _req, res, _next) => {
   if (err.type === 'entity.too.large' || err.status === 413) {
     return res.status(413).json({ error: 'Payload demasiado grande', details: 'El tamaño de la petición excede el límite de 10 MB' });
   }
-  if (err instanceof multer.MulterError) {
+  if (err instanceof multer.MulterError || (err.message && err.message.startsWith('Tipo de archivo no permitido'))) {
     return res.status(400).json({ error: 'Error al subir archivo', details: err.message });
   }
   const status = err.status || err.statusCode || 500;
