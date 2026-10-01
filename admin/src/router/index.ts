@@ -174,15 +174,22 @@ const router = createRouter({
         title: '404 Error',
       },
     },
+    {
+      path: '/login',
+      redirect: '/signin',
+    },
   ],
 })
 
 export default router
 
-const PUBLIC_ROUTES = ['/signin', '/signup', '/error-404']
+const PUBLIC_ROUTES = ['/signin', '/signup', '/error-404', '/login']
 
 router.beforeEach((to, _from, next) => {
   document.title = `${to.meta.title} | Amigo Merch Admin`
-  // Login guard disabled
+  const token = localStorage.getItem('amigo_admin_token')
+  if (!PUBLIC_ROUTES.includes(to.path) && !token) {
+    return next('/signin')
+  }
   next()
 })
