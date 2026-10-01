@@ -25,8 +25,8 @@ window.fetch = async (input: RequestInfo | URL, init: RequestInit = {}) => {
 
   if (response.status === 401 && !url.includes('/api/auth/login')) {
     localStorage.removeItem('amigo_admin_token')
-    if (window.location.pathname !== '/login') {
-      window.location.href = '/login'
+    if (window.location.pathname !== '/signin') {
+      window.location.href = '/signin'
     }
   }
 
