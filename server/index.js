@@ -16,12 +16,12 @@ const crypto = require('crypto');
 const { z } = require('zod');
 
 const localUpload = multer({ dest: '/tmp/' });
-// ── Mercado Pago ───────────────────────────────────────────────────────────
+// Configuración Mercado Pago
 const mpClient = new MercadoPagoConfig({
   accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
 });
 
-// ── Email transporter ──────────────────────────────────────────────────────
+// Configuración Email Transporter
 const mailer = nodemailer.createTransport({
   host:   process.env.SMTP_HOST   || 'smtp.gmail.com',
   port:   parseInt(process.env.SMTP_PORT || '587'),
@@ -293,7 +293,7 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-// ── Esquemas de Validación (Zod) ──────────────────────────────────────────
+// Esquemas de Validación (Zod)
 const formatZodError = (error) => ({
   error: 'Datos inválidos',
   details: error.issues.map(i => ({
@@ -1454,7 +1454,6 @@ app.post('/api/pedidos/:id/cotizar-envio', requireAuth, async (req, res) => {
         body: JSON.stringify(multiPayload)
       });
       const data = await response.json();
-      console.log('[Envia Rate Multi Response]:', JSON.stringify(data));
       if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
         rates = data.data;
       } else {
@@ -1475,7 +1474,6 @@ app.post('/api/pedidos/:id/cotizar-envio', requireAuth, async (req, res) => {
             body: JSON.stringify(ratePayload)
           });
           const data = await response.json();
-          console.log(`[Envia Rate Carrier ${carrier} Response]:`, JSON.stringify(data));
           if (data.meta === 'rate' && Array.isArray(data.data) && data.data.length > 0) {
             rates.push(...data.data);
           } else if (!lastEnviaError) {
@@ -1607,9 +1605,6 @@ app.post('/api/pedidos/:id/generar-guia', requireAuth, async (req, res) => {
     });
     const data = await response.json();
 
-    // Log full response for debugging (visible in Vercel logs)
-    console.log('[Envia] Respuesta de /ship/generate/:', JSON.stringify(data));
-
     if (data.meta !== 'generate') {
       return res.status(400).json({ error: 'Error al generar la guía con Envia.com', details: data.error || data });
     }
@@ -1718,7 +1713,7 @@ app.get('/api/webhooks/envia', (req, res) => {
 app.post('/api/webhooks/envia', async (req, res) => {
   try {
     const payload = req.body;
-    console.log('Webhook Envia recibido:', JSON.stringify(payload, null, 2));
+    console.log('[Webhook Envia] Evento recibido');
     res.status(200).send('OK');
 
     const data = payload.data || payload;
@@ -2270,7 +2265,7 @@ app.get('/api/reportes/ventas', requireAuth, async (req, res) => {
   }
 });
 
-// ── Mercado Pago ──────────────────────────────────────────────────────────
+// Pasarela de Pagos (Mercado Pago)
 
 // POST /api/pagos/crear-preferencia
 // Recibe los datos del pedido ya creado y devuelve el init_point de MP
@@ -2348,14 +2343,14 @@ app.post('/api/pagos/procesar', pagosLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos del pago o pedidoId' });
     }
 
-    // ── 1. Obtener datos completos del pedido para enriquecer el pago ─────
+    // 1. Obtener datos completos del pedido para enriquecer el pago
     const pedidoRes = await pool.query('SELECT * FROM pedidos WHERE id = $1', [pedidoId]);
     if (pedidoRes.rows.length === 0) {
       return res.status(404).json({ error: 'Pedido no encontrado' });
     }
     const pedido = pedidoRes.rows[0];
 
-    // ── 2. Formatear items para additional_info ───────────────────────────
+    // 2. Formatear items para additional_info
     const itemsRaw = typeof pedido.items === 'string' ? JSON.parse(pedido.items) : (pedido.items || []);
     const mpItems = itemsRaw.map(item => ({
       id: String(item.producto_id || item.id || 'producto'),
@@ -2366,7 +2361,7 @@ app.post('/api/pagos/procesar', pagosLimiter, async (req, res) => {
       unit_price: Number(item.precio || 0),
     }));
 
-    // ── 3. Formatear datos del comprador ─────────────────────────────────
+    // 3. Formatear datos del comprador
     const nameParts = (pedido.nombre || 'Cliente').trim().split(/\s+/);
     const firstName = nameParts[0] || 'Cliente';
     const lastName = nameParts.slice(1).join(' ') || 'Amigo Merch';
@@ -2388,7 +2383,7 @@ app.post('/api/pagos/procesar', pagosLimiter, async (req, res) => {
       },
     };
 
-    // ── 4. Asegurar que el correo del pago coincida con el correo real ────
+    // 4. Asegurar que el correo del pago coincida con el correo real
     const enrichedFormData = {
       ...formData,
       payer: {
@@ -2412,7 +2407,7 @@ app.post('/api/pagos/procesar', pagosLimiter, async (req, res) => {
 
     console.log(`[MP] Resultado pago pedido #${pedidoId}: status=${result.status} detail=${result.status_detail}`);
 
-    // ── 5. Actualizar estado y enviar correo según el resultado del pago ──
+    // 5. Actualizar estado y enviar correo según el resultado del pago
     if (result.status === 'approved' || result.status === 'in_process') {
       const nuevoEstado = result.status === 'approved' ? 'En proceso' : 'Nuevo';
       await pool.query(
