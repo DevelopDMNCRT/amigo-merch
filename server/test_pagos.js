@@ -293,7 +293,7 @@ async function test8_cleanup(pedido) {
 
 // Ejecución de la suite
 async function runAll() {
-  console.log(c.bold('\n🧪 SUITE DE PRUEBAS: Sistema de Pagos Antifraude — Amigo Merch'));
+  console.log(c.bold('\nSUITE DE PRUEBAS: Sistema de Pagos Antifraude — Amigo Merch'));
   console.log(c.gray('   Servidor: http://localhost:3002'));
   console.log(c.gray('   BD:       Neon PostgreSQL (producción)'));
   console.log(c.gray('   MP:       Credenciales de producción (sin cargos reales en test)\n'));
@@ -304,7 +304,7 @@ async function runAll() {
   serverOk = await test1_serverAlive();
 
   if (!serverOk) {
-    console.log(c.red('\n⛔ El servidor no está corriendo. Inicia con `npm run dev` en /server.'));
+    console.log(c.red('\nEl servidor no está corriendo. Inicia con `npm run dev` en /server.'));
     process.exit(1);
   }
 
@@ -321,9 +321,9 @@ async function runAll() {
   console.log(c.bold(`\n${'─'.repeat(52)}`));
   console.log(c.bold(`  Resultado: ${passed}/${total} tests pasaron`));
   if (failed === 0) {
-    console.log(c.green(c.bold('  ✅ TODOS LOS TESTS PASARON — Seguro para producción')));
+    console.log(c.green(c.bold('  TODOS LOS TESTS PASARON — Exitoso')));
   } else {
-    console.log(c.red(c.bold(`  ❌ ${failed} TESTS FALLARON — Revisar antes de hacer deploy`)));
+    console.log(c.red(c.bold(`  ${failed} TESTS FALLARON — Revisar errores`)));
   }
   console.log(`${'─'.repeat(52)}\n`);
 
@@ -332,7 +332,7 @@ async function runAll() {
 }
 
 runAll().catch(err => {
-  console.error(c.red('\n💥 Error inesperado en la suite de tests:'), err);
+  console.error(c.red('\nError inesperado en la suite de tests:'), err);
   pool.end();
   process.exit(1);
 });
