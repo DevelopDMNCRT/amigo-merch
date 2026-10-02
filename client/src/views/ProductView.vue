@@ -203,7 +203,6 @@ const { t, tTag } = useLocale();
 
 const route = useRoute();
 
-// Estado
 const quantity = ref(1);
 const selectedImage = ref(null);
 const selectedAttrs = ref({});

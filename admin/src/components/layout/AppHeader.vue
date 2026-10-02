@@ -142,7 +142,6 @@ const toggleApplicationMenu = () => {
   isApplicationMenuOpen.value = !isApplicationMenuOpen.value
 }
 
-// Mantenimiento logic
 const mantenimiento = ref(false)
 const savingMantenimiento = ref(false)
 

@@ -46,5 +46,4 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* App.vue specific styles can go here */
 </style>

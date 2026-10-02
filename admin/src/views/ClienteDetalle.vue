@@ -258,7 +258,6 @@ const promedioOrden = computed(() => totalPedidos.value ? totalGastado.value / t
 const completados   = computed(() => pedidos.value.filter(p => p.estado === 'Completado').length)
 const cancelados    = computed(() => pedidos.value.filter(p => p.estado === 'Cancelado' || p.estado === 'Fallido').length)
 
-// Helpers de UI
 const initials = (nombre) => (nombre || '?').split(' ').slice(0, 2).map(p => p[0]).join('').toUpperCase()
 
 const estadoClase = (estado) => {

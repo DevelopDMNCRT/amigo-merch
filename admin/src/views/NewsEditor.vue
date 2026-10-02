@@ -329,7 +329,7 @@ function showToast(ok, msg) {
   setTimeout(() => { toast.value.show = false; }, 3000);
 }
 
-// ── Formatting ────────────────────────────────────────
+// Formato
 const exec = (cmd) => { editorEl.value.focus(); document.execCommand(cmd, false, null); };
 
 const setFormat = (tag) => {
@@ -370,7 +370,7 @@ const alignButtons = [
   { cmd: 'justifyRight',  label: 'Derecha',   icon: '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="7" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>' },
 ];
 
-// ── Image ─────────────────────────────────────────────
+// Inserción de imagen
 const insertImage = (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -383,7 +383,7 @@ const insertImage = (e) => {
   e.target.value = '';
 };
 
-// ── Columns ───────────────────────────────────────────
+// Columnas
 const insertCols = (n) => {
   if (n === 1) {
     // Reset to single full-width column
@@ -398,7 +398,7 @@ const insertCols = (n) => {
   }
 };
 
-// ── Templates ─────────────────────────────────────────
+// Plantillas
 const tplStyles = 'font-family:Nunito,sans-serif;';
 
 const templates = [
@@ -465,7 +465,7 @@ const applyTemplate = (tpl) => {
   editorEl.value.innerHTML = tpl.html;
 };
 
-// ── Enviar boletín ─────────────────────────────────────────
+// Enviar boletín
 const enviarAhora = async () => {
   if (!boletinId.value || enviando.value || seleccionados.value.length === 0) return;
   if (!confirm(`¿Enviar este boletín a ${seleccionados.value.length} contacto(s) seleccionado(s)?\n\nEsta acción no se puede deshacer.`)) return;
