@@ -398,7 +398,7 @@ const tiendasList = ref([]);
 const imagenError = ref('');
 const galeriaError = ref('');
 
-// ── Editor modal state ──────────────────────────────────────────────────────
+// Estado del modal del editor de imágenes
 const showEditorModal  = ref(false);
 const editorImageSrc   = ref('');
 const editorFile       = ref(null);
@@ -728,7 +728,7 @@ const clearVarImg = (index) => {
   form.variaciones[index].imagen_url = null;
 };
 
-// ── Imagen principal ─────────────────────────────────────────────────────────
+// Imagen principal
 
 const IMG_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, maxWidth: 1000, maxHeight: 1000 };
 
@@ -759,7 +759,7 @@ const onDropImg = async (e) => {
   if (file) await handleImagen(file);
 };
 
-// ── Galería ──────────────────────────────────────────────────────────────────
+// Galería
 
 const onGaleriaChange = async (e) => {
   const files = Array.from(e.target.files);

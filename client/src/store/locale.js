@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 
-// ── Shared reactive language state ────────────────────────────────────────────
+// Idioma reactivo compartido
 export const currentLang = ref('ESP')
 
-// ── Exchange rates (MXN → foreign) updated at runtime ────────────────────────
+// Tasas de cambio (MXN -> divisas)
 // Fallback values used if the fetch fails.
 const FALLBACK = { USD: 1 / 19.5, EUR: 1 / 21.5 }
 export const exchangeRates = ref({ ...FALLBACK })
@@ -16,7 +16,7 @@ const CURRENCY = {
   FRA: { symbol: '€', code: 'EUR' },
 }
 
-// ── Fetch live rates from open.er-api.com (same source Google uses) ──────────
+// Obtener tasas de cambio en tiempo real
 export async function fetchRates() {
   try {
     const res = await fetch('https://open.er-api.com/v6/latest/MXN')
@@ -32,7 +32,7 @@ export async function fetchRates() {
   }
 }
 
-// ── Price formatter ───────────────────────────────────────────────────────────
+// Formateador de precios
 // Receives a price in MXN, applies 15% markup then converts at live rate.
 export function formatPrice(mxnPrice) {
   if (mxnPrice === null || mxnPrice === undefined) return '---'

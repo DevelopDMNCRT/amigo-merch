@@ -194,7 +194,7 @@ const form = reactive({
   publico: false,
 });
 
-// ── Editor modal state ──────────────────────────────────────────────────────
+// Estado del modal del editor de imágenes
 
 const showEditorModal = ref(false);
 const editorImageSrc   = ref('');
@@ -239,7 +239,7 @@ const onEditorCancel = () => {
   editorResolve.value = null;
 };
 
-// ── Foto handlers ───────────────────────────────────────────────────────────
+// Manejadores de foto de perfil
 
 const IMAGEN_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, maxWidth: 800, maxHeight: 800 };
 
@@ -270,7 +270,7 @@ const onDrop = async (e) => {
   if (file) await handleImagen(file);
 };
 
-// ── Header handlers ─────────────────────────────────────────────────────────
+// Manejadores de cabecera (header)
 
 const HEADER_CONSTRAINTS = { maxSize: 5 * 1024 * 1024, exactWidth: 1920, exactHeight: 420 };
 
@@ -301,7 +301,7 @@ const onHeaderDrop = async (e) => {
   if (file) await handleHeader(file);
 };
 
-// ── Lifecycle ────────────────────────────────────────────────────────────────
+// Ciclo de vida
 
 onMounted(async () => {
   if (isEditing.value) {
@@ -318,7 +318,7 @@ onMounted(async () => {
   }
 });
 
-// ── Submit ───────────────────────────────────────────────────────────────────
+// Guardar tienda
 
 const guardarTienda = async () => {
   if (!form.nombre.trim()) {

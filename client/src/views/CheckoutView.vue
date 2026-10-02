@@ -478,7 +478,7 @@ onMounted(async () => {
     return
   }
 
-  // ── Cargar script antifraude de Mercado Pago (Device Fingerprint) ─────────
+  // Carga del script antifraude de Mercado Pago (Device Fingerprint)
   // Mejora la tasa de aprobación de pagos, especialmente para tarjetas extranjeras.
   // Se carga de forma segura y silenciosa para no bloquear el checkout si falla.
   try {

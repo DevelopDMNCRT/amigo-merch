@@ -171,7 +171,7 @@ const destroyCropper = () => {
 
 onBeforeUnmount(destroyCropper);
 
-// ── Crop ────────────────────────────────────────────────────────────────────
+// Recorte
 
 const startCrop = async () => {
   step.value = 'crop';
@@ -214,7 +214,7 @@ const applyCrop = async () => {
   emit('done', new File([blob], props.file?.name || 'imagen.jpg', { type: mimeType }));
 };
 
-// ── Resize ───────────────────────────────────────────────────────────────────
+// Redimensionamiento
 
 const startResize = async () => {
   step.value = 'resize';
@@ -265,7 +265,7 @@ const confirmResize = () => {
   emit('done', new File([resizedBlob.value], props.file?.name || 'imagen.jpg', { type: mimeType }));
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// Utilidades
 
 const loadImage = (src) =>
   new Promise((resolve) => {

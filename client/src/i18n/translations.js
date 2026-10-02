@@ -1,6 +1,6 @@
 export const translations = {
 
-  // ── ESPAÑOL ──────────────────────────────────────────────────────────────────
+  // Español
   ESP: {
     nav: {
       home: 'Inicio',
@@ -250,7 +250,7 @@ export const translations = {
     },
   },
 
-  // ── ENGLISH ──────────────────────────────────────────────────────────────────
+  // English
   ENG: {
     nav: {
       home: 'Home',
@@ -500,7 +500,7 @@ export const translations = {
     },
   },
 
-  // ── FRANÇAIS ─────────────────────────────────────────────────────────────────
+  // Français
   FRA: {
     nav: {
       home: 'Accueil',
