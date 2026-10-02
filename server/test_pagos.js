@@ -20,7 +20,7 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// ─── Colores para consola ────────────────────────────────────────────────────
+// Colores para consola
 const c = {
   green:  (s) => `\x1b[32m${s}\x1b[0m`,
   red:    (s) => `\x1b[31m${s}\x1b[0m`,
@@ -43,7 +43,7 @@ function assert(label, condition, detail = '') {
   }
 }
 
-// ─── Datos de pedido de prueba (dirección internacional a Japón) ────────────
+// Datos de pedido de prueba (dirección internacional a Japón)
 const TEST_ORDER_PAYLOAD = {
   nombre:     'Test Comprador Japón',
   correo:     'test.japon@example.com',
@@ -75,7 +75,7 @@ const TEST_ORDER_PAYLOAD = {
   total:    2200, // Total = Subtotal ($1,000) + Envío a Japón ($1,200)
 };
 
-// ─── Tarjetas de prueba de Mercado Pago ──────────────────────────────────────
+// Tarjetas de prueba de Mercado Pago
 // Documentación oficial: https://www.mercadopago.com.mx/developers/es/docs/your-integrations/test/cards
 // Simulamos el formData que vendría del Brick. Intencionalmente enviamos
 // transaction_amount: 1000 para probar que el backend lo sobreescribe a 2200 (Total real).
@@ -95,7 +95,7 @@ async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// ─── TEST 1: Servidor accesible ───────────────────────────────────────────────
+// Test 1: Servidor accesible
 async function test1_serverAlive() {
   console.log(c.bold(c.cyan('\n━━ TEST 1: Servidor corriendo y respondiendo ━━')));
   try {
@@ -111,7 +111,7 @@ async function test1_serverAlive() {
   }
 }
 
-// ─── TEST 2: Creación de pedido en BD ────────────────────────────────────────
+// Test 2: Creación de pedido en BD
 async function test2_crearPedido() {
   console.log(c.bold(c.cyan('\n━━ TEST 2: Crear pedido a Japón en base de datos ━━')));
   const res = await fetch(`${BASE_URL}/api/pedidos`, {
@@ -135,7 +135,7 @@ async function test2_crearPedido() {
   return pedido;
 }
 
-// ─── TEST 3: Estructura del additional_info (lógica del backend) ──────────────
+// Test 3: Estructura del additional_info
 async function test3_additionalInfo(pedido) {
   console.log(c.bold(c.cyan('\n━━ TEST 3: Verificar lógica de enriquecimiento (additional_info) ━━')));
 
@@ -185,7 +185,7 @@ async function test3_additionalInfo(pedido) {
   return additional_info;
 }
 
-// ─── TEST 4: El correo real sobrescribe al placeholder ────────────────────────
+// Test 4: Sincronización de correo del comprador
 async function test4_emailOverride(pedido) {
   console.log(c.bold(c.cyan('\n━━ TEST 4: Correo del comprador sustituye al placeholder ━━')));
 
@@ -215,7 +215,7 @@ async function test4_emailOverride(pedido) {
   );
 }
 
-// ─── TEST 5: Verificar que motivo_fallo se guarda en BD ──────────────────────
+// Test 5: Guardado de motivo_fallo en BD
 async function test5_motivoFallo(pedido) {
   console.log(c.bold(c.cyan('\n━━ TEST 5: Guardar y leer motivo_fallo en base de datos ━━')));
 
@@ -244,7 +244,7 @@ async function test5_motivoFallo(pedido) {
   console.log(c.gray(`    → Pedido restaurado a "Pendiente de pago" con motivo_fallo = null`));
 }
 
-// ─── TEST 6: El endpoint procesar rechaza pedidos inexistentes ────────────────
+// Test 6: Rechazo de pedidos inexistentes
 async function test6_pedidoInexistente() {
   console.log(c.bold(c.cyan('\n━━ TEST 6: Validación de seguridad — pedido inexistente ━━')));
 
@@ -262,7 +262,7 @@ async function test6_pedidoInexistente() {
   assert('Error descriptivo en respuesta', body.error?.includes('Pedido'), `error: ${body.error}`);
 }
 
-// ─── TEST 7: El endpoint rechaza si faltan datos ──────────────────────────────
+// Test 7: Validación de payload incompleto
 async function test7_validacionDatos() {
   console.log(c.bold(c.cyan('\n━━ TEST 7: Validación de payload incompleto ━━')));
 
@@ -277,7 +277,7 @@ async function test7_validacionDatos() {
   assert('Mensaje de error presente', !!body.error, `body: ${JSON.stringify(body)}`);
 }
 
-// ─── TEST 8: Limpiar pedido de prueba ─────────────────────────────────────────
+// Test 8: Limpiar pedido de prueba
 async function test8_cleanup(pedido) {
   console.log(c.bold(c.cyan('\n━━ TEST 8: Limpieza — eliminar pedido de prueba ━━')));
   try {
@@ -291,9 +291,9 @@ async function test8_cleanup(pedido) {
   }
 }
 
-// ─── EJECUTAR TODOS LOS TESTS ─────────────────────────────────────────────────
+// Ejecución de la suite
 async function runAll() {
-  console.log(c.bold('\n🧪 SUITE DE PRUEBAS: Sistema de Pagos Antifraude — Amigo Merch'));
+  console.log(c.bold('\nSUITE DE PRUEBAS: Sistema de Pagos Antifraude — Amigo Merch'));
   console.log(c.gray('   Servidor: http://localhost:3002'));
   console.log(c.gray('   BD:       Neon PostgreSQL (producción)'));
   console.log(c.gray('   MP:       Credenciales de producción (sin cargos reales en test)\n'));
@@ -304,7 +304,7 @@ async function runAll() {
   serverOk = await test1_serverAlive();
 
   if (!serverOk) {
-    console.log(c.red('\n⛔ El servidor no está corriendo. Inicia con `npm run dev` en /server.'));
+    console.log(c.red('\nEl servidor no está corriendo. Inicia con `npm run dev` en /server.'));
     process.exit(1);
   }
 
@@ -316,14 +316,14 @@ async function runAll() {
   await test7_validacionDatos();
   await test8_cleanup(pedido);
 
-  // ─── Resumen ─────────────────────────────────────────────────────────────
+  // Resumen
   const total = passed + failed;
   console.log(c.bold(`\n${'─'.repeat(52)}`));
   console.log(c.bold(`  Resultado: ${passed}/${total} tests pasaron`));
   if (failed === 0) {
-    console.log(c.green(c.bold('  ✅ TODOS LOS TESTS PASARON — Seguro para producción')));
+    console.log(c.green(c.bold('  TODOS LOS TESTS PASARON — Exitoso')));
   } else {
-    console.log(c.red(c.bold(`  ❌ ${failed} TESTS FALLARON — Revisar antes de hacer deploy`)));
+    console.log(c.red(c.bold(`  ${failed} TESTS FALLARON — Revisar errores`)));
   }
   console.log(`${'─'.repeat(52)}\n`);
 
@@ -332,7 +332,7 @@ async function runAll() {
 }
 
 runAll().catch(err => {
-  console.error(c.red('\n💥 Error inesperado en la suite de tests:'), err);
+  console.error(c.red('\nError inesperado en la suite de tests:'), err);
   pool.end();
   process.exit(1);
 });
