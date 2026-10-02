@@ -327,7 +327,6 @@ const togglePasswordVisibility = () => {
 }
 
 const handleSubmit = () => {
-  // Implement form submission logic here
   console.log('Form submitted', {
     firstName: firstName.value,
     lastName: lastName.value,

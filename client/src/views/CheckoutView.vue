@@ -342,7 +342,6 @@ watch(() => [form.pais, form.estado], () => {
   evaluarEnvio();
 });
 
-// Map Modal Logic
 const isMapModalOpen = ref(false)
 let map = null
 let marker = null
@@ -571,7 +570,6 @@ const createOrderAndPay = async (formData) => {
       total
     };
 
-    // 1. Crear pedido en BD
     const pedidoRes = await fetch('/api/pedidos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -580,7 +578,6 @@ const createOrderAndPay = async (formData) => {
     if (!pedidoRes.ok) throw new Error('Error al crear el pedido');
     const pedido = await pedidoRes.json();
 
-    // 2. Procesar el pago con el backend
     const payRes = await fetch("/api/pagos/procesar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

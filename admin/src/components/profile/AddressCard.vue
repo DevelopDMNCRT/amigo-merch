@@ -167,8 +167,6 @@ import Modal from './Modal.vue'
 const isProfileAddressModal = ref(false)
 
 const saveProfile = () => {
-  // Implement save profile logic here
-  console.log('Profile saved')
   isProfileInfoModal.value = false
 }
 </script>

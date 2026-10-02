@@ -138,5 +138,4 @@ const users = ref([
 </script>
 
 <style scoped>
-/* Add any additional styles here if needed */
 </style>

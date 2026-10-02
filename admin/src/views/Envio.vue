@@ -313,7 +313,6 @@ const selectedContinente = ref('Todos');
 const selectedPaisDropdown = ref('');
 const nuevaRegla = ref({ paises: [], estados: [], precio: 0.00 });
 
-// Dropdown filtering logic
 const paisesDisponiblesContinente = computed(() => {
   const list = getCountriesByContinent(selectedContinente.value);
   return list.filter(p => !nuevaRegla.value.paises.includes(p.name));
@@ -354,8 +353,6 @@ const filteredEstados = computed(() => {
 const hidePaisesDropdown = () => { setTimeout(() => showPaisesDropdown.value = false, 150); };
 const hideEstadosDropdown = () => { setTimeout(() => showEstadosDropdown.value = false, 150); };
 
-
-// FETCH Reglas
 const fetchReglas = async () => {
   try {
     const res = await fetch('/api/reglas-envio');
@@ -363,7 +360,6 @@ const fetchReglas = async () => {
   } catch (e) { console.error('Error fetching reglas:', e); }
 };
 
-// PARSE Estados helper
 const parseEstados = (estadosStr) => {
   if (!estadosStr) return [];
   try {
@@ -373,7 +369,6 @@ const parseEstados = (estadosStr) => {
   } catch(e) { return []; }
 };
 
-// ABRIR Modal
 const abrirModalRegla = () => {
   nuevaRegla.value = { paises: [], estados: [], precio: null };
   paisBusqueda.value = '';
@@ -381,7 +376,6 @@ const abrirModalRegla = () => {
   mostrarModalRegla.value = true;
 };
 
-// EDITAR Regla
 const editarRegla = (regla) => {
   nuevaRegla.value = {
     id: regla.id,
@@ -396,7 +390,6 @@ const editarRegla = (regla) => {
   mostrarModalRegla.value = true;
 };
 
-// CHIPS Logic
 const addPaisOpcion = (pais) => {
   nuevaRegla.value.paises.push(pais);
   paisBusqueda.value = '';
